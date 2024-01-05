@@ -114,6 +114,8 @@
 % This solves the problems with links which leads after the picture
 \usepackage[all]{hypcap}
 
+\usepackage{subcaption}
+
 
 % Informace o práci/projektu / Information about the thesis
 %---------------------------------------------------------------------------
@@ -201,89 +203,89 @@ Uvedl jsem všechny literární prameny, publikace a další zdroje, ze kterých
 % \raggedbottom
 
 \begin{document}
-  % Vysazeni titulnich stran / Typesetting of the title pages
-  % ----------------------------------------------
-  \maketitle
-  % Obsah
-  % ----------------------------------------------
+% Vysazeni titulnich stran / Typesetting of the title pages
+% ----------------------------------------------
+\maketitle
+% Obsah
+% ----------------------------------------------
+\setlength{\parskip}{0pt}
+
+{\hypersetup{hidelinks}\tableofcontents}
+
+% Seznam obrazku a tabulek (pokud prace obsahuje velke mnozstvi obrazku, tak se to hodi)
+% List of figures and list of tables (if the thesis contains a lot of pictures, it is good)
+\ifczech
+  \renewcommand\listfigurename{Seznam obrázků}
+\fi
+\ifslovak
+\renewcommand\listfigurename{Zoznam obrázkov}
+\fi
+{\hypersetup{hidelinks}\listoffigures}
+
+\ifczech
+  \renewcommand\listtablename{Seznam tabulek}
+\fi
+\ifslovak
+  \renewcommand\listtablename{Zoznam tabuliek}
+\fi
+% {\hypersetup{hidelinks}\listoftables}
+
+% Seznam zkratek / List of abbreviations
+%\ifczech
+%  \renewcommand*\glossaryname{Seznam zkratek}%
+%  \renewcommand*\entryname{Zkratka}
+%  \renewcommand*\descriptionname{Význam}
+%\fi
+%\ifslovak
+%  \renewcommand*\glossaryname{Zoznam skratiek}%
+%  \renewcommand*\entryname{Skratka}
+%  \renewcommand*\descriptionname{Význam}
+%\fi
+%\ifenglish
+%  \renewcommand*\glossaryname{List of abbreviations}%
+%  \renewcommand*\entryname{Abbreviation}
+%  \renewcommand*\descriptionname{Meaning}
+%\fi
+% Definice zkratek - z textu se odkazují např. \Gls{TF–IDF}
+% Definition of abbreviations - referred from the text e.g. \Gls{TF–IDF}
+%\newglossaryentry{TF–IDF}
+%{
+%  name={TF–IDF},
+%  description={Term Frequency-Inverse Document Frequency}
+%}
+% 
+%\setglossarystyle{superragged}
+%\printglossaries
+
+
+\ifODSAZ
+  \setlength{\parskip}{0.5\bigskipamount}
+\else
   \setlength{\parskip}{0pt}
+\fi
 
-  {\hypersetup{hidelinks}\tableofcontents}
-  
-  % Seznam obrazku a tabulek (pokud prace obsahuje velke mnozstvi obrazku, tak se to hodi)
-  % List of figures and list of tables (if the thesis contains a lot of pictures, it is good)
-  \ifczech
-    \renewcommand\listfigurename{Seznam obrázků}
-  \fi
-  \ifslovak
-    \renewcommand\listfigurename{Zoznam obrázkov}
-  \fi
-  {\hypersetup{hidelinks}\listoffigures}
-  
-  \ifczech
-    \renewcommand\listtablename{Seznam tabulek}
-  \fi
-  \ifslovak
-    \renewcommand\listtablename{Zoznam tabuliek}
-  \fi
-  % {\hypersetup{hidelinks}\listoftables}
+% vynechani stranky v oboustrannem rezimu
+% Skip the page in the two-sided mode
+\iftwoside
+  \cleardoublepage
+\fi
 
-  % Seznam zkratek / List of abbreviations
-  %\ifczech
-  %  \renewcommand*\glossaryname{Seznam zkratek}%
-  %  \renewcommand*\entryname{Zkratka}
-  %  \renewcommand*\descriptionname{Význam}
-  %\fi
-  %\ifslovak
-  %  \renewcommand*\glossaryname{Zoznam skratiek}%
-  %  \renewcommand*\entryname{Skratka}
-  %  \renewcommand*\descriptionname{Význam}
-  %\fi
-  %\ifenglish
-  %  \renewcommand*\glossaryname{List of abbreviations}%
-  %  \renewcommand*\entryname{Abbreviation}
-  %  \renewcommand*\descriptionname{Meaning}
-  %\fi
-  % Definice zkratek - z textu se odkazují např. \Gls{TF–IDF}
-  % Definition of abbreviations - referred from the text e.g. \Gls{TF–IDF}
-  %\newglossaryentry{TF–IDF}
-  %{
-  %  name={TF–IDF},
-  %  description={Term Frequency-Inverse Document Frequency}
-  %}
-  % 
-  %\setglossarystyle{superragged}
-  %\printglossaries
+% Text prace / Thesis text
+% ----------------------------------------------
+\ifenglish
+  \input{projekt-01-kapitoly-chapters-en}
+\else
+  \input{projekt-01-kapitoly-chapters}
+\fi
 
+% Kompilace po částech (viz výše, nutno odkomentovat a zakomentovat input výše)
+% Compilation piecewise (see above, it is necessary to uncomment it and comment out input above)
+%\subfile{chapters/projekt-01-uvod-introduction}
+% ...
+%\subfile{chapters/projekt-05-zaver-conclusion}
 
-  \ifODSAZ
-    \setlength{\parskip}{0.5\bigskipamount}
-  \else
-    \setlength{\parskip}{0pt}
-  \fi
-
-  % vynechani stranky v oboustrannem rezimu
-  % Skip the page in the two-sided mode
-  \iftwoside
-    \cleardoublepage
-  \fi
-
-  % Text prace / Thesis text
-  % ----------------------------------------------
-  \ifenglish
-    \input{projekt-01-kapitoly-chapters-en}
-  \else
-    \input{projekt-01-kapitoly-chapters}
-  \fi
-  
-  % Kompilace po částech (viz výše, nutno odkomentovat a zakomentovat input výše)
-  % Compilation piecewise (see above, it is necessary to uncomment it and comment out input above)
-  %\subfile{chapters/projekt-01-uvod-introduction}
-  % ...
-  %\subfile{chapters/projekt-05-zaver-conclusion}
-
-  % Pouzita literatura / Bibliography
-  % ----------------------------------------------
+% Pouzita literatura / Bibliography
+% ----------------------------------------------
 \ifslovak
   \makeatletter
   \def\@openbib@code{\addcontentsline{toc}{chapter}{Literatúra}}
@@ -295,27 +297,27 @@ Uvedl jsem všechny literární prameny, publikace a další zdroje, ze kterých
     \def\@openbib@code{\addcontentsline{toc}{chapter}{Literatura}}
     \makeatother
     \bibliographystyle{bib-styles/Pysny/czplain}
-  \else 
+  \else
     \makeatletter
     \def\@openbib@code{\addcontentsline{toc}{chapter}{Bibliography}}
     \makeatother
     \bibliographystyle{bib-styles/Pysny/enplain}
-  %  \bibliographystyle{alpha}
+    %  \bibliographystyle{alpha}
   \fi
 \fi
-  \begin{flushleft}
+\begin{flushleft}
   \bibliography{projekt-20-literatura-bibliography}
-  \end{flushleft}
+\end{flushleft}
 
-  % vynechani stranky v oboustrannem rezimu
-  % Skip the page in the two-sided mode
-  \iftwoside
-    \cleardoublepage
-  \fi
+% vynechani stranky v oboustrannem rezimu
+% Skip the page in the two-sided mode
+\iftwoside
+  \cleardoublepage
+\fi
 
-  % Prilohy / Appendices
-  % ---------------------------------------------
-  \appendix
+% Prilohy / Appendices
+% ---------------------------------------------
+\appendix
 \ifczech
   \renewcommand{\appendixpagename}{Přílohy}
   \renewcommand{\appendixtocname}{Přílohy}
@@ -333,44 +335,44 @@ Uvedl jsem všechny literární prameny, publikace a další zdroje, ze kterých
 %\iftwoside
 %  \cleardoublepage
 %\fi
-  
+
 \ifslovak
-%  \section*{Zoznam príloh}
-%  \addcontentsline{toc}{section}{Zoznam príloh}
+  %  \section*{Zoznam príloh}
+  %  \addcontentsline{toc}{section}{Zoznam príloh}
 \else
   \ifczech
-%    \section*{Seznam příloh}
-%    \addcontentsline{toc}{section}{Seznam příloh}
+    %    \section*{Seznam příloh}
+    %    \addcontentsline{toc}{section}{Seznam příloh}
   \else
-%    \section*{List of Appendices}
-%    \addcontentsline{toc}{section}{List of Appendices}
+    %    \section*{List of Appendices}
+    %    \addcontentsline{toc}{section}{List of Appendices}
   \fi
 \fi
-  \startcontents[chapters]
-  \setlength{\parskip}{0pt} 
-  % seznam příloh / list of appendices
-  % \printcontents[chapters]{l}{0}{\setcounter{tocdepth}{2}}
-  
-  \ifODSAZ
-    \setlength{\parskip}{0.5\bigskipamount}
-  \else
-    \setlength{\parskip}{0pt}
-  \fi
-  
-  % vynechani stranky v oboustrannem rezimu
-  \iftwoside
-    \cleardoublepage
-  \fi
-  
-  % Přílohy / Appendices
-  \ifenglish
-    \input{projekt-30-prilohy-appendices-en}
-  \else
-    \input{projekt-30-prilohy-appendices}
-  \fi
-  
-  % Kompilace po částech (viz výše, nutno odkomentovat)
-  % Compilation piecewise (see above, it is necessary to uncomment it)
-  %\subfile{projekt-30-prilohy-appendices}
-  
+\startcontents[chapters]
+\setlength{\parskip}{0pt}
+% seznam příloh / list of appendices
+% \printcontents[chapters]{l}{0}{\setcounter{tocdepth}{2}}
+
+\ifODSAZ
+  \setlength{\parskip}{0.5\bigskipamount}
+\else
+  \setlength{\parskip}{0pt}
+\fi
+
+% vynechani stranky v oboustrannem rezimu
+\iftwoside
+  \cleardoublepage
+\fi
+
+% Přílohy / Appendices
+\ifenglish
+  \input{projekt-30-prilohy-appendices-en}
+\else
+  \input{projekt-30-prilohy-appendices}
+\fi
+
+% Kompilace po částech (viz výše, nutno odkomentovat)
+% Compilation piecewise (see above, it is necessary to uncomment it)
+%\subfile{projekt-30-prilohy-appendices}
+
 \end{document}

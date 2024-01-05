@@ -211,50 +211,85 @@ The app costs 19.99 US dollars and does not require a subscription. However, it 
 \section{RTMPose}
 
 \section{Evaluation}
+To accurately measure the performance of a pose estimation model, it is necessary to have a dataset with ground truth annotations. Since there is no such dataset for side view pose estimation of cyclists, new small evaluation dataset was created. It consists of 12 videos in 3 different enviroments with various camera angles and riding positions (riding on hoods, drops, tops and aero position on the drops). The videos were shot in FullHD resolution at 30 FPS.
 
-DSAD
+Before shooting the videos, orange colored markers were placed on the camera-facing side of the rider's body. These markers were placed on the following locations:
+
+\begin{itemize}
+    \item Fifth metatarsal of the foot
+    \item Heel
+    \item Ankle
+    \item Knee
+    \item Hip
+    \item Shoulder
+    \item Elbow
+    \item Wrist
+\end{itemize}
+
+\begin{figure}
+
+    \centering
+    \includegraphics[width=1\linewidth]{obrazky-figures/eval_dataset_in_hoods.png}
+
+    \includegraphics[width=1\linewidth]{obrazky-figures/eval_dataset_out_aero.png}
+
+    \caption{Examples of the evaluation dataset. The first video shows the rider pedaling indoors on the hoods. The second video shows the rider pedaling outdoors in the aero position on the hoods.}
 
 
-\begin{tabular}{p{3.5cm} rrrrrrr}
-    \toprule
-    \textbf{Model}                   & \textbf{Ankle} & \textbf{Knee} & \textbf{Hip} & \textbf{Shoulder} & \textbf{Elbow} & \textbf{Wrist} & \textbf{Mean} \\
+    \label{fig:evaluation_markers}
+\end{figure}
 
-    \midrule
-    rtmpose-l-256x192                & 3.43           & 3.79          & 2.15         & 3.39              & 1.21           & 1.58           & 2.59          \\
-    rtmpose-l-384x288                & 3.26           & 3.53          & 3.33         & 2.93              & 1.44           & 1.43           & 2.65          \\
-    rtmpose-l-halpe26-256x192        & 3.31           & 3.75          & 2.74         & 3.42              & 1.27           & 1.85           & 2.72          \\
-    rtmpose-m-384x288                & 3.40           & 3.84          & 3.27         & 3.26              & 1.34           & 1.59           & 2.78          \\
-    rtmpose-m-halpe26-384x288        & 3.76           & 3.68          & 3.96         & 3.02              & 1.34           & 1.65           & 2.90          \\
-    rtmpose-m-halpe26-256x192        & 3.56           & 3.92          & 2.97         & 3.34              & 1.71           & 2.11           & 2.94          \\
-    rtmpose-m-256x192                & 4.10           & 4.19          & 2.84         & 3.50              & 1.58           & 2.08           & 3.05          \\
-    rtmpose-s-256x192                & 5.19           & 4.40          & 2.83         & 3.93              & 1.95           & 2.20           & 3.42          \\
-    rtmpose-s-halpe26-256x192        & 4.74           & 4.38          & 2.89         & 3.94              & 2.30           & 2.47           & 3.45          \\
-    td-hm\_hrnet-w32\_coco-256x192   & 3.17           & 4.46          & 4.31         & 4.17              & 2.37           & 2.30           & 3.46          \\
-    yoloxpose\_m\_coco-640           & 3.77           & 5.68          & 3.66         & 4.20              & 2.06           & 2.55           & 3.65          \\
-    rtmpose-t-halpe26-256x192        & 5.09           & 4.96          & 3.19         & 4.86              & 2.95           & 2.65           & 3.95          \\
-    rtmpose-l-wholebody-256x192      & 3.65           & 5.16          & 5.01         & 4.52              & 3.41           & 2.81           & 4.09          \\
-    rtmpose-t-256x192                & 6.17           & 4.98          & 3.16         & 4.70              & 2.99           & 2.75           & 4.13          \\
-    simcc\_vipnas-mbv3\_coco-256x192 & 6.39           & 6.00          & 4.53         & 4.36              & 3.01           & 2.86           & 4.53          \\
-    rtmpose-m-wholebody-256x192      & 5.57           & 6.16          & 4.94         & 4.78              & 3.62           & 3.44           & 4.75          \\
-    \bottomrule
-\end{tabular}
+To annotate the videos, the markers were tracked using the first version of the bikefit application described in \textcolor{red}{TODO}. The application tracks the markers in a lower resolution. To get the ground truth annotations, the marker positions were then scaled to the original resolution of the video.
 
-ZASDADA
+\begin{table}
+    \setlength{\tabcolsep}{4pt}
 
-\begin{tabular}{p{3.5cm} rrrrrrrrr}
-    \toprule
-    \textbf{Model}               & \textbf{Foot} & \textbf{Heel} & \textbf{Ankle} & \textbf{Knee} & \textbf{Hip} & \textbf{Shoulde}r & \textbf{Elbow} & \textbf{Wrist} & \textbf{Mean} \\
+    \begin{tabular}{l rrrrrrr}
+        \toprule
+        \textbf{Model}                   & \textbf{Ankle} & \textbf{Knee} & \textbf{Hip} & \textbf{Shoulder} & \textbf{Elbow} & \textbf{Wrist} & \textbf{Mean} \\
 
-    \midrule
-    rtmpose-l\_halpe26-256x192   & 5.96          & 4.34          & 3.31           & 3.75          & 2.74         & 3.42              & 1.27           & 1.85           & 3.33          \\
-    rtmpose-m\_halpe26-384x288   & 6.36          & 4.22          & 3.76           & 3.68          & 3.96         & 3.02              & 1.34           & 1.65           & 3.50          \\
-    rtmpose-m\_halpe26-256x192   & 5.97          & 5.34          & 3.56           & 3.92          & 2.97         & 3.34              & 1.71           & 2.11           & 3.62          \\
-    rtmpose-s\_halpe26-256x192   & 6.01          & 6.23          & 4.74           & 4.38          & 2.89         & 3.94              & 2.30           & 2.47           & 4.12          \\
-    rtmpose-t\_halpe26-256x192   & 6.78          & 6.45          & 5.09           & 4.96          & 3.19         & 4.86              & 2.95           & 2.65           & 4.62          \\
-    rtmpose-l\_wholebody-256x192 & 6.49          & 6.23          & 3.65           & 5.16          & 5.01         & 4.52              & 3.41           & 2.81           & 4.66          \\
-    rtmpose-m\_wholebody-256x192 & 8.13          & 8.12          & 5.57           & 6.16          & 4.94         & 4.78              & 3.62           & 3.44           & 5.59          \\
-    \bottomrule
-\end{tabular}
+        \midrule
+        rtmpose-l-256x192                & 3.43           & 3.79          & 2.15         & 3.39              & 1.21           & 1.58           & 2.59          \\
+        rtmpose-l-384x288                & 3.26           & 3.53          & 3.33         & 2.93              & 1.44           & 1.43           & 2.65          \\
+        rtmpose-l-halpe26-256x192        & 3.31           & 3.75          & 2.74         & 3.42              & 1.27           & 1.85           & 2.72          \\
+        rtmpose-m-384x288                & 3.40           & 3.84          & 3.27         & 3.26              & 1.34           & 1.59           & 2.78          \\
+        rtmpose-m-halpe26-384x288        & 3.76           & 3.68          & 3.96         & 3.02              & 1.34           & 1.65           & 2.90          \\
+        rtmpose-m-halpe26-256x192        & 3.56           & 3.92          & 2.97         & 3.34              & 1.71           & 2.11           & 2.94          \\
+        rtmpose-m-256x192                & 4.10           & 4.19          & 2.84         & 3.50              & 1.58           & 2.08           & 3.05          \\
+        rtmpose-s-256x192                & 5.19           & 4.40          & 2.83         & 3.93              & 1.95           & 2.20           & 3.42          \\
+        rtmpose-s-halpe26-256x192        & 4.74           & 4.38          & 2.89         & 3.94              & 2.30           & 2.47           & 3.45          \\
+        td-hm\_hrnet-w32\_coco-256x192   & 3.17           & 4.46          & 4.31         & 4.17              & 2.37           & 2.30           & 3.46          \\
+        yoloxpose\_m\_coco-640           & 3.77           & 5.68          & 3.66         & 4.20              & 2.06           & 2.55           & 3.65          \\
+        rtmpose-t-halpe26-256x192        & 5.09           & 4.96          & 3.19         & 4.86              & 2.95           & 2.65           & 3.95          \\
+        rtmpose-l-wholebody-256x192      & 3.65           & 5.16          & 5.01         & 4.52              & 3.41           & 2.81           & 4.09          \\
+        rtmpose-t-256x192                & 6.17           & 4.98          & 3.16         & 4.70              & 2.99           & 2.75           & 4.13          \\
+        simcc\_vipnas-mbv3\_coco-256x192 & 6.39           & 6.00          & 4.53         & 4.36              & 3.01           & 2.86           & 4.53          \\
+        rtmpose-m-wholebody-256x192      & 5.57           & 6.16          & 4.94         & 4.78              & 3.62           & 3.44           & 4.75          \\
+        \bottomrule
+    \end{tabular}
+    \caption{Evaluation results on the evaluation dataset.}
+\end{table}
+
+
+\begin{table}
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{l rrrrrrrrr}
+        \toprule
+        \textbf{Model}               & \textbf{Foot} & \textbf{Heel} & \textbf{Ankle} & \textbf{Knee} & \textbf{Hip} & \textbf{Shoulde}r & \textbf{Elbow} & \textbf{Wrist} & \textbf{Mean} \\
+
+        \midrule
+        rtmpose-l\_halpe26-256x192   & 5.96          & 4.34          & 3.31           & 3.75          & 2.74         & 3.42              & 1.27           & 1.85           & 3.33          \\
+        rtmpose-m\_halpe26-384x288   & 6.36          & 4.22          & 3.76           & 3.68          & 3.96         & 3.02              & 1.34           & 1.65           & 3.50          \\
+        rtmpose-m\_halpe26-256x192   & 5.97          & 5.34          & 3.56           & 3.92          & 2.97         & 3.34              & 1.71           & 2.11           & 3.62          \\
+        rtmpose-s\_halpe26-256x192   & 6.01          & 6.23          & 4.74           & 4.38          & 2.89         & 3.94              & 2.30           & 2.47           & 4.12          \\
+        rtmpose-t\_halpe26-256x192   & 6.78          & 6.45          & 5.09           & 4.96          & 3.19         & 4.86              & 2.95           & 2.65           & 4.62          \\
+        rtmpose-l\_wholebody-256x192 & 6.49          & 6.23          & 3.65           & 5.16          & 5.01         & 4.52              & 3.41           & 2.81           & 4.66          \\
+        rtmpose-m\_wholebody-256x192 & 8.13          & 8.12          & 5.57           & 6.16          & 4.94         & 4.78              & 3.62           & 3.44           & 5.59          \\
+        \bottomrule
+    \end{tabular}
+    \caption{Evaluation results on the evaluation dataset.}
+
+\end{table}
 
 \section{Comparison to marker based system}
 
