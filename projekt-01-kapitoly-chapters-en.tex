@@ -153,7 +153,7 @@ The markers are placed by the fitter on the rider's body. Accurate placement of 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/retul_markers.png}
-    \caption{Placement of the markers used by Retül. (Screenshot from instructional \href{https://youtu.be/k-FsejpibKE?si=MxGCyxb2Jn7vXVaj}{instructional video} by Retül.)}
+    \caption{Placement of the markers used by Retül. (Screenshot from instructional instructional video by Retül \cite{retulMarkersYoutube}.)}
     \label{fig:retul_markers}
 \end{figure}
 
@@ -164,7 +164,7 @@ Data Captured by Retül includes a wide range of joint angles and movements such
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/retul_app.png}
-    \caption{Retül's software showing the captured data. (Screenshot from  \href{https://youtu.be/hZgI87DUUbU?si=E3C55SrHN9Lan0bT}{instructional video} by Retül.)}
+    \caption{Retül's software showing the captured data. (Screenshot from  instructional video by Retül \cite{retulScreenYoutube}.)}
     \label{fig:retul_app}
 \end{figure}
 
@@ -186,7 +186,7 @@ Despite the fact that Retül is a very popular bike fitting system, it has some 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/bike_fast_fit_elite.png}
-    \caption{Side view image with predicted keypoints in BikeFast Fit Elite. (Screenshot from  \href{https://youtu.be/4xhFhvIM7R4?si=S4a8ghVu8foHFj2s}{promotional video} by BikeFast Fit Elite.)}
+    \caption{Side view image with predicted keypoints in BikeFast Fit Elite. (Screenshot from promotional video \cite{bikeFastFitElitev2Youtube} by BikeFast Fit Elite.)}
     \label{fig:bikefastfit_keypoints}
 \end{figure}
 
@@ -221,7 +221,7 @@ The goal of this section is to evaluate the performance of pose estimation model
 
 The models are evaluated on a custom dataset, which is described in section \ref{evaluation_dataset}. The evaluation metrics are described in section \ref{evaluation_metrics}. The results are shown in section \ref{evaluation_results}.
 
-The models are ran using the MMPose framework, with the Inferencer API and the PyTorch backend. Topdown models (models that output the pose results on cropped person images) use the RTMDet-nano model for person detection.
+The models are ran using the MMPose framework \cite{mmpose2020}, with the Inferencer API and the PyTorch backend. Topdown models (models that require inputs cropped to the bounding box of the person) use the RTMDet-nano model \cite{rtmdet} from the MMDetetection framework \cite{mmdetection} for person detection.
 
 Since no models predict the fifth metatarsal of the foot, the small toe landmark is used instead for the models that predict it.
 
