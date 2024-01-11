@@ -48,12 +48,12 @@ Proper saddle height is therefore a balance between power output and comfort. It
 \subsection{Saddle Setback}
 Saddle setback or saddle fore and aft position refers to the horizontal position of the saddle with respect to the bottom bracket.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{obrazky-figures/saddle_fore_aft.jpg}
-    \caption{Saddle setback is adjusted by sliding the saddle saddle rails forward or backward in the seatpost clamp. Taken from Bike Fit Adviser's \href{https://www.youtube.com/watch?app=desktop&v=SZhWVZq2qUc}{video} on saddle setback.}
-    \label{fig:saddle_fore_aft}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{obrazky-figures/saddle_fore_aft.jpg}
+%     \caption{Saddle setback is adjusted by sliding the saddle saddle rails forward or backward in the seatpost clamp. Taken from Bike Fit Adviser's \href{https://www.youtube.com/watch?app=desktop&v=SZhWVZq2qUc}{video} on saddle setback.}
+%     \label{fig:saddle_fore_aft}
+% \end{figure}
 
 Setback is most often measured at the 3 o'clock position of the crank. At this position, the rider's knee should be directly above the pedal spindle. Having the knee too far back it is harder to generate power. Having the knee too far forward can lead to knee pain due to increased forces on the kneecap \cite{burtbikefit}.
 
@@ -209,6 +209,28 @@ The app costs 19.99 US dollars and does not require a subscription. However, it 
 \chapter{Pose estimation algorithms}
 
 \section{RTMPose}
+
+RTMPose \cite{rtmpose} is a pose estimation model from the authors of the MMPose framework \cite{mmpose2020}. It is designed to bridge the gap between the excellent performance of 2D pose estimation on public benchmarks and its application in the industrial community, which still suffers from heavy model parameters and high latency.
+
+The RTMPose models are also designed to be lightweight and fast, so they can be ran on mobile devices. The authors claim, that the RTMPose-m achieves 75.8\% AP on COCO with 90+ FPS on an Intel i7-11700 CPU and 430+ FPS on an NVIDIA GTX 1660 Ti GPU. The RTMPose-s model, achieving 72.2\% AP on COCO was also tested on a mobile device with the Snapdragon 865 chip, running at 70+ FPS.
+
+The RTMPose models are based on the top-down pose estimation approach. They use a two-stage framework, where the first stage is a person detector and the second stage is a pose estimator. The person detector is used to crop the image to the bounding box of the person. The pose estimator then predicts the keypoints for the cropped image. The authors claim that this approach is more accurate than the bottom-up approach, while still being faster in cases where the number of people in the image is lower than 6.
+
+The CSPNeXt backbone is used in the RTMPose models. This backbone is primarly designed for object detection. Authors claim that backbones designed for image classification, such as ResNet, are not optimal for dense tasks such as pose estimation, object detection, semantic segmentation, etc. Some backbones using high-resolution feature maps or advanced transformer architectures achieve good results, but suffer from high computional cost, high latency or difficulties in deployment. The CSPNeXt backbone is designed to have a good balance of speed and accuracy.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/rtmpose_architecture.png}
+    \caption{Architecture of the RTMPose model. Taken from \cite{rtmpose}.}
+    \label{fig:rtmpose_architecture}
+\end{figure}
+
+For prediction of the keypoints, the RTMPose models utilize the SimCC \cite{simcc} algorithm. SimCC reformulates human pose estimation as two classification tasks for horizontal and vertical coordinates. To reduce quantization error, SimCC can use a larger number of bins for the classification tasks. This can lead to better accuracy, while still being faster than post-processing methods commonly used with tradional heatmap based pose estimation models.
+
+To better use spatial information, the RTMPose models use a Gated Attention Unit (GAU) \cite{gau} module. The GAU has faster speed, lower memory cost and better accuracy than the commonly used self-attention module.
+
+
+
 
 \section{HRNet}
 
