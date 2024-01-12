@@ -210,13 +210,15 @@ The app costs 19.99 US dollars and does not require a subscription. However, it 
 
 \section{RTMPose}
 
-RTMPose \cite{rtmpose} is a pose estimation model from the authors of the MMPose framework \cite{mmpose2020}. It is designed to bridge the gap between the excellent performance of 2D pose estimation on public benchmarks and its application in the industrial community, which still suffers from heavy model parameters and high latency.
+RTMPose \cite{rtmpose} is a pose estimation model from the authors of the MMPose framework \cite{mmpose2020}. It is designed to bridge the gap between the excellent performance of 2D pose estimation on public benchmarks and its application in the industrial community, which still suffers from heavy models and high latency.
 
-The RTMPose models are also designed to be lightweight and fast, so they can be ran on mobile devices. The authors claim, that the RTMPose-m achieves 75.8\% AP on COCO with 90+ FPS on an Intel i7-11700 CPU and 430+ FPS on an NVIDIA GTX 1660 Ti GPU. The RTMPose-s model, achieving 72.2\% AP on COCO was also tested on a mobile device with the Snapdragon 865 chip, running at 70+ FPS.
+The RTMPose models are designed to be lightweight and fast. The authors claim, that the RTMPose-m achieves 75.8\% AP on COCO with 90+ FPS on an Intel i7-11700 CPU and 430+ FPS on an NVIDIA GTX 1660 Ti GPU. The RTMPose-s model, achieving 72.2\% AP on COCO was also tested on a mobile device with the Snapdragon 865 chip, running at 70+ FPS.
 
-The RTMPose models are based on the top-down pose estimation approach. They use a two-stage framework, where the first stage is a person detector and the second stage is a pose estimator. The person detector is used to crop the image to the bounding box of the person. The pose estimator then predicts the keypoints for the cropped image. The authors claim that this approach is more accurate than the bottom-up approach, while still being faster in cases where the number of people in the image is lower than 6.
+\subsection{Architecture}
 
-The CSPNeXt backbone is used in the RTMPose models. This backbone is primarly designed for object detection. Authors claim that backbones designed for image classification, such as ResNet, are not optimal for dense tasks such as pose estimation, object detection, semantic segmentation, etc. Some backbones using high-resolution feature maps or advanced transformer architectures achieve good results, but suffer from high computional cost, high latency or difficulties in deployment. The CSPNeXt backbone is designed to have a good balance of speed and accuracy.
+The RTMPose models are based on the top-down pose estimation approach. They use a two-stage prediction, where the first stage is a person detector and the second stage is a pose estimator. The person detector is used to crop the image to the bounding box of the person. The pose estimator then predicts the keypoints for the cropped image. The authors claim that this approach is more accurate than the bottom-up approach, while still being faster in cases where the number of people in the image is lower than 6.
+
+The CSPNeXt backbone is used in the RTMPose models. This backbone is primarly designed for object detection. Authors claim that backbones designed for image classification, are not optimal for dense tasks such as pose estimation, object detection, semantic segmentation, etc. Some backbones using high-resolution feature maps or advanced transformer architectures achieve good results, but suffer from high computional cost, high latency or difficulties in deployment. The CSPNeXt backbone is designed to have a good balance of speed and accuracy.
 
 \begin{figure}[htbp]
     \centering
@@ -227,7 +229,16 @@ The CSPNeXt backbone is used in the RTMPose models. This backbone is primarly de
 
 For prediction of the keypoints, the RTMPose models utilize the SimCC \cite{simcc} algorithm. SimCC reformulates human pose estimation as two classification tasks for horizontal and vertical coordinates. To reduce quantization error, SimCC can use a larger number of bins for the classification tasks. This can lead to better accuracy, while still being faster than post-processing methods commonly used with tradional heatmap based pose estimation models.
 
-To better use spatial information, the RTMPose models use a Gated Attention Unit (GAU) \cite{gau} module. The GAU has faster speed, lower memory cost and better accuracy than the commonly used self-attention module.
+To better use spatial information, the RTMPose models use a Gated Attention Unit (GAU) \cite{gau} module. The GAU has faster speed, lower memory cost and better accuracy than the commonly used self-attention module, proposed in the Transformer architecture \cite{attentionIsAllYouNeed}.
+
+\subsection{Model versions}
+This work evaluates the following RTMPose models:
+
+\begin{description}
+    \item[RTMPose Body8 models:] These models are trained and evaluated on the Body8 dataset consisting of 8 pose estimation datasets (AI Challenger \cite{ai_challenger}, MS-COCO \cite{coco}, CrowdPose \cite{crowdpose}, MPII \cite{mpii}, sub-JHMDB \cite{JHMDB}, Halpe \cite{halpe}, PoseTrack18 \cite{posetrack} and OCHuman \cite{ochuman}). They predict 17 keypoints, as defined in the COCO dataset.
+    \item[RTMPose Halpe26 models:] These models are also trained and evaluated on the Body8 dataset. However, they predict 26 keypoints, as defined in the Halpe26 dataset.
+    \item[RTMPose WholeBody models:] These models are trained and evaluated on the COCO-WholeBody \cite{coco-wholebody} and UBody \cite{ubody} datasets. They predict 133 keypoints, as defined in the COCO-WholeBody dataset.
+\end{description}
 
 
 
@@ -314,20 +325,20 @@ The good results of the RTMPose models are not surprising, since they were train
         \textbf{Model}                   & \textbf{Ankle} & \textbf{Knee} & \textbf{Hip}  & \textbf{Shoulder} & \textbf{Elbow} & \textbf{Wrist} & \textbf{Mean} \\
 
         \midrule
-        rtmpose-l-256x192                & 3.43           & 3.79          & \textbf{2.15} & 3.39              & \textbf{1.21}  & 1.58           & \textbf{2.59} \\
-        rtmpose-l-384x288                & 3.26           & \textbf{3.53} & 3.33          & \textbf{2.93}     & 1.44           & \textbf{1.43}  & 2.65          \\
+        rtmpose-l\_body8-256x192         & 3.43           & 3.79          & \textbf{2.15} & 3.39              & \textbf{1.21}  & 1.58           & \textbf{2.59} \\
+        rtmpose-l\_body8-384x288         & 3.26           & \textbf{3.53} & 3.33          & \textbf{2.93}     & 1.44           & \textbf{1.43}  & 2.65          \\
         rtmpose-l-halpe26-256x192        & 3.31           & 3.75          & 2.74          & 3.42              & 1.27           & 1.85           & 2.72          \\
-        rtmpose-m-384x288                & 3.40           & 3.84          & 3.27          & 3.26              & 1.34           & 1.59           & 2.78          \\
+        rtmpose-m\_body8-384x288         & 3.40           & 3.84          & 3.27          & 3.26              & 1.34           & 1.59           & 2.78          \\
         rtmpose-m-halpe26-384x288        & 3.76           & 3.68          & 3.96          & 3.02              & 1.34           & 1.65           & 2.90          \\
         rtmpose-m-halpe26-256x192        & 3.56           & 3.92          & 2.97          & 3.34              & 1.71           & 2.11           & 2.94          \\
-        rtmpose-m-256x192                & 4.10           & 4.19          & 2.84          & 3.50              & 1.58           & 2.08           & 3.05          \\
-        rtmpose-s-256x192                & 5.19           & 4.40          & 2.83          & 3.93              & 1.95           & 2.20           & 3.42          \\
+        rtmpose-m\_body8-256x192         & 4.10           & 4.19          & 2.84          & 3.50              & 1.58           & 2.08           & 3.05          \\
+        rtmpose-s\_body8-256x192         & 5.19           & 4.40          & 2.83          & 3.93              & 1.95           & 2.20           & 3.42          \\
         rtmpose-s-halpe26-256x192        & 4.74           & 4.38          & 2.89          & 3.94              & 2.30           & 2.47           & 3.45          \\
         td-hm\_hrnet-w32\_coco-256x192   & \textbf{3.17}  & 4.46          & 4.31          & 4.17              & 2.37           & 2.30           & 3.46          \\
         yoloxpose\_m\_coco-640           & 3.77           & 5.68          & 3.66          & 4.20              & 2.06           & 2.55           & 3.65          \\
         rtmpose-t-halpe26-256x192        & 5.09           & 4.96          & 3.19          & 4.86              & 2.95           & 2.65           & 3.95          \\
         rtmpose-l-wholebody-256x192      & 3.65           & 5.16          & 5.01          & 4.52              & 3.41           & 2.81           & 4.09          \\
-        rtmpose-t-256x192                & 6.17           & 4.98          & 3.16          & 4.70              & 2.99           & 2.75           & 4.13          \\
+        rtmpose-t\_body8-256x192         & 6.17           & 4.98          & 3.16          & 4.70              & 2.99           & 2.75           & 4.13          \\
         simcc\_vipnas-mbv3\_coco-256x192 & 6.39           & 6.00          & 4.53          & 4.36              & 3.01           & 2.86           & 4.53          \\
         rtmpose-m-wholebody-256x192      & 5.57           & 6.16          & 4.94          & 4.78              & 3.62           & 3.44           & 4.75          \\
         \bottomrule
