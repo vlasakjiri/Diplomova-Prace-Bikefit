@@ -206,7 +206,43 @@ The app costs 19.99 US dollars and does not require a subscription. However, it 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Pose estimation algorithms}
+\chapter{Pose estimation models}
+
+This chapter describes some of the good performing pose estimation algorithms and compares their performance on the task of side view pose estimation of cyclists.
+
+Not all of the models predict the same keypoints. The models predict either 17 keypoints, as defined in the COCO dataset \cite{coco}, 26 keypoints, as defined in the Halpe26 dataset \cite{halpe}, or 133 keypoints, as defined in the COCO-WholeBody dataset \cite{coco-wholebody}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.2\textwidth}
+        \centering
+
+        \includegraphics[height=8cm]{obrazky-figures/coco_landmarks.png}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+        \label{fig:image1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.25\textwidth}
+        \centering
+
+        \includegraphics[height=8cm]{obrazky-figures/halpe_landmarks.jpg}
+        % \caption{Halpe26 keypoints. Taken from \cite{halpe}.}
+        \label{fig:image2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+
+        \includegraphics[height=8cm]{obrazky-figures/coco_wholebody_landmarks.png}
+        % \caption{COCO-WholeBody keypoints. Taken from \cite{coco-wholebody}.}
+        \label{fig:image3}
+    \end{subfigure}
+
+    \caption{Sets of keypoints used by the MS-COCO dataset (image taken from \cite{coco}), the Halpe26 dataset (image taken from \cite{halpe}) and the COCO-WholeBody dataset (image taken from \cite{halpe}).}
+    \label{fig:subfigures}
+\end{figure}
+
+
 
 \section{RTMPose}
 
@@ -223,7 +259,7 @@ The CSPNeXt backbone is used in the RTMPose models. This backbone is primarly de
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/rtmpose_architecture.png}
-    \caption{Architecture of the RTMPose model. Taken from \cite{rtmpose}.}
+    \caption{Architecture of the RTMPose models, which comprises of a CSPNeXt backbone, a convolutional layer, a fully-connected layer, and a Gated Attention Unit (GAU) designed to enhance K keypoint representations. Subsequently, the process of 2D pose estimation is treated as two separate classification tasks for the x-axis and y-axis coordinates. This involves predicting the horizontal and vertical positions of keypoints. Taken from \cite{rtmpose}.}
     \label{fig:rtmpose_architecture}
 \end{figure}
 
