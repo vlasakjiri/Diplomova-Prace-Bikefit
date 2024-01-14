@@ -281,8 +281,35 @@ This work evaluates the following RTMPose models:
 
 \section{HRNet}
 
-\section{YOLOX}
+The HRNet (High-Resolution Network) \cite{hrnet} pose estimation architecture is characterized by its emphasis on maintaining high-resolution representations throughout the network. Unlike conventional methods that downsample the input image early in the network, HRNet adopts a multi-resolution approach, preserving detailed information essential for accurate pose estimation.
 
+A notable feature of the HRNet pose estimation architecture is its ability to capture both local and global context effectively. The network consists of parallel branches, each processing different resolutions of the input image, and these branches are interconnected, facilitating the exchange of information between different scales. This design allows HRNet to address challenges associated with scale variations in human poses, ensuring robust performance in capturing both fine details and overall pose structure.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/hrnet_architecture.png}
+    \caption{Architecture of the HRNet models. The HRNet models consists of three parallel branches, each processing different resolutions of the input image. These branches are interconnected, facilitating the exchange of information between different scales. Taken from \cite{hrnet}.}
+    \label{fig:hrnet_architecture}
+\end{figure}
+
+This work evaluates the HRNet-W32 model, which uses heatmap to predict the keypoints. The HRNet-W32 model is trained on the COCO dataset and predicts 17 keypoints, as defined in the COCO dataset.
+
+
+\section{YOLOX-Pose}
+YOLOX-Pose  is a one-stage human pose estimation model that distinguishes itself from traditional top-down and bottom-up methods. The authors claim that YOLOX-Pose is the first one-stage human pose estimation model that achieves comparable performance to the state-of-the-art two-stage methods.
+
+The one-stage approach has some advantages over bottom-up and top-down approaches. Bottom-up approaches first detect keypoints and then group them into poses. The grouping step is not learned and needs to be hand-crafted. This can lead to inaccurate results, especially in cases where the keypoints from different people are close together.
+
+Top-down approaches first detect people and then predict keypoints for each person. This approach is favored by SOTA models, but the processing time grows linearly with the number of people in the image. This can lead to slow processing times in cases where there are many people in the image. SOTA methods also often use heavy detectors, which further increases the processing time.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/yolopose_architecture.png}
+    \caption{Architecture of the original YOLO-Pose model, which was based on the anchor-based YOLOv5 detector. The YOLOX-Pose model, which is evaluated in this work, is based on the anchorless YOLOX detector. Taken from \cite{yoloPose}.}
+    \label{fig:yolopose_architecture}
+\end{figure}
+
+The original YOLO-pose \cite{yoloPose} model uses the anchor-based YOLOv5 detector \cite{yolov5}. The YOLOX-Pose model, which is evaluated in this work, uses the YOLOX detector \cite{yolox}. The YOLOX detector is based on the YOLOv5 detector, but uses anchor-free approach, which does not require the anchor boxes to be predefined. This allows the YOLOX detector to be more flexible. The YOLOX detector generally outperforms the YOLOv5 detector on the COCO dataset.
 \section{VIP-NAS}
 
 \section{Evaluation}
