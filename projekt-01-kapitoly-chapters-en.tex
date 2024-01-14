@@ -310,7 +310,20 @@ Top-down approaches first detect people and then predict keypoints for each pers
 \end{figure}
 
 The original YOLO-pose \cite{yoloPose} model uses the anchor-based YOLOv5 detector \cite{yolov5}. The YOLOX-Pose model, which is evaluated in this work, uses the YOLOX detector \cite{yolox}. The YOLOX detector is based on the YOLOv5 detector, but uses anchor-free approach, which does not require the anchor boxes to be predefined. This allows the YOLOX detector to be more flexible. The YOLOX detector generally outperforms the YOLOv5 detector on the COCO dataset.
-\section{VIP-NAS}
+
+The YOLOX-Pose model is trained on the COCO dataset and predicts 17 keypoints, as defined in the COCO dataset.
+
+\section{ViPNAS}
+
+The ViPNAS (Video Pose Estimation via Neural Architecture Search) \cite{vipnas} model focuses on video pose estimation, employing two networks: S-ViPNet and T-ViPNet.
+
+The S-ViPNet is used on invidual frames and keyframes in the video to predict the keypoints. The lightweight T-ViPNet network is used on non-keyframes to propagate the pose estimations. It extracts features from the current frame and also fuses heatmaps from the previous frame. The fused features are then used to predict the keypoints.
+
+To find the optimal architectures for the S-ViPNet and T-ViPNet networks, the authors used neural architecture search (NAS). The search space for the S-ViPNet network is called the spatial-level search space. It consists of 5 dimensions (depth, width, kernel size, group and attention). The search space for the T-ViPNet network is called the temporal-level search space. It searches for the optimal fusion operation (addition, multiplication or concatenation) and the best stage of features to fuse.
+
+This work evaluates the modified S-ViPNet model with the MobileNetV3 \cite{mobilenetv3} backbone and SimCC \cite{simcc} algorithm instead of predicting heatmaps. The model is trained on the COCO dataset and predicts 17 keypoints, as defined in the COCO dataset.
+
+
 
 \section{Evaluation}
 The goal of this section is to evaluate the performance of pose estimation models on the task of side view pose estimation of cyclists and find the best model for use in the bikefit application.
