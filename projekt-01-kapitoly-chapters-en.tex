@@ -323,9 +323,35 @@ To find the optimal architectures for the S-ViPNet and T-ViPNet networks, the au
 
 This work evaluates the modified S-ViPNet model with the MobileNetV3 \cite{mobilenetv3} backbone and SimCC \cite{simcc} algorithm instead of predicting heatmaps. The model is trained on the COCO dataset and predicts 17 keypoints, as defined in the COCO dataset.
 
+\section{Results on COCO}
 
 
-\section{Evaluation}
+\begin{table}[htbp]
+    \setlength{\tabcolsep}{4pt}
+    \centering
+    \begin{tabular}{lcccccc}
+        \toprule
+        \textbf{Model}              & \textbf{Input Size} & \textbf{AP} & \textbf{AP-50} & \textbf{AP-75} & \textbf{AR} & \textbf{AR-50} \\
+        \midrule
+        rtmpose-l                   & 256x192             & 0.758       & 0.906          & 0.826          & 0.806       & 0.942          \\
+        pose\_hrnet\_w32            & 256x192             & 0.749       & 0.906          & 0.821          & 0.804       & 0.945          \\
+        rtmpose-m                   & 256x192             & 0.746       & 0.899          & 0.817          & 0.795       & 0.935          \\
+        simcc\_S-ViPNAS-MobileNetV3 & 256x192             & 0.695       & 0.883          & 0.772          & 0.755       & 0.927          \\
+        rtmpose-s                   & 256x192             & 0.716       & 0.892          & 0.789          & 0.768       & 0.929          \\
+        yoloxpose\_m                & 640x640             & 0.695       & 0.899          & 0.766          & 0.733       & 0.926          \\
+        rtmpose-t                   & 256x192             & 0.682       & 0.883          & 0.759          & 0.736       & 0.920          \\
+
+
+        \bottomrule
+    \end{tabular}
+    \caption{Evaluation results on the custom bike fitting dataset, including the heel and fifth metatarsal of the foot. Results for the other keypoints can be found in table \ref{tab:evaluation_results_coco}. Each column represents the mean Bounding Box Normalized Distance for the given keypoint. The results are sorted by the overall mean Bounding Box Normalized Distance (spanning all keypoints), defined in section \ref{evaluation_metrics}. The best results are highlighted in bold. The model names are derived from their MMPose config files.}
+    \label{tab:evaluation_results_coco}
+
+\end{table}
+
+
+
+\chapter{Evaluation on pose estimation of cyclists}
 The goal of this section is to evaluate the performance of pose estimation models on the task of side view pose estimation of cyclists and find the best model for use in the bikefit application.
 
 The models are evaluated on a custom dataset, which is described in section \ref{evaluation_dataset}. The evaluation metrics are described in section \ref{evaluation_metrics}. The results are shown in section \ref{evaluation_results}.
@@ -336,7 +362,7 @@ Since no models predict the fifth metatarsal of the foot, the small toe landmark
 
 
 
-\subsection{Evaluation dataset}
+\section{Evaluation dataset}
 \label{evaluation_dataset}
 To accurately measure the performance of a pose estimation model, it is necessary to have a dataset with ground truth annotations. Since there is no such dataset for side view pose estimation of cyclists, new small evaluation dataset was created. It consists of 12 videos in 3 different enviroments with various camera angles and riding positions (riding on hoods, drops, tops and aero position on the drops). The videos were shot in FullHD resolution at 30 FPS.
 
@@ -368,7 +394,7 @@ Before shooting the videos, orange colored markers were placed on the camera-fac
 
 To annotate the videos, the markers were tracked using the first version of the bikefit application described in \textcolor{red}{TODO}. The application tracks the markers in a lower resolution. To get the ground truth annotations, the marker positions were then scaled to the original resolution of the video.
 
-\subsection{Evaluation Metrics}
+\section{Evaluation Metrics}
 \label{evaluation_metrics}
 
 In assessing the performance of pose estimation models, widely used metrics, such as Mean Average Precision (mAP), or Object Keypoint Similarity (OKS) may not adequately gauge accuracy in scenarios involving video data where all keypoints of interest are consistently visible and accurately predicted. Similarly, relying solely on the L2 distance for evaluation proves inadequate due to the inherent variations in scale among different videos.
@@ -387,9 +413,9 @@ Here, in the BBND formula:
 
 This adjustment allows for a scaled representation of the distance metric, effectively normalizing it with respect to the average bounding box dimension. BBND offers easy to interpret results, with a lower value indicating a more accurate prediction. It also allows for a more direct comparison of the performance of different models, as the metric is not affected by the scale of the video.
 
-\subsection{Results}
+\section{Results}
 \label{evaluation_results}
-At first the models are evaluated using only the keypoints that all models predict. These keypoints are the ankle, knee, hip, shoulder, elbow and wrist. The results are shown in table \ref{tab:evaluation_results_coco}. The best results are achieved by the rtmpose-l-256x192 model, but most of the bigger RTMPose models outperform the other models. The best model achieves a mean BBND of 2.59\%. This means that the average distance between the predicted keypoints and the ground truth keypoints is 2.59\% of the average bounding box dimension.
+At first the models are evaluated using only the keypoints that all models predict. These keypoints are the ankle, knee, hip, shoulder, elbow and wrist. The results are shown in table \ref{tab:evaluation_results_all}. The best results are achieved by the rtmpose-l-256x192 model, but most of the bigger RTMPose models outperform the other models. The best model achieves a mean BBND of 2.59\%. This means that the average distance between the predicted keypoints and the ground truth keypoints is 2.59\% of the average bounding box dimension.
 
 The good results of the RTMPose models are not surprising, since they were trained on multiple datasets, while the other models were trained only on the COCO dataset. The RTMPose models trained to predict the COCO keypoints perform slightly better than the halpe26 models, which were trained to predict 26 keypoints and significantly better than the wholebody models, which were trained to predict 133 keypoints.
 
@@ -420,7 +446,7 @@ The good results of the RTMPose models are not surprising, since they were train
         \bottomrule
     \end{tabular}
     \caption{Evaluation results on the custom bike fitting dataset, using only MS-COCO keypoints (excluding heel and fifth metatarsal of the foot). Each column represents the mean Bounding Box Normalized Distance for the given keypoint. The results are sorted by the mean Bounding Box Normalized Distance, defined in section \ref{evaluation_metrics}. The best results are highlighted in bold. The model names are derived from their MMPose config files.}
-    \label{tab:evaluation_results_coco}
+    \label{tab:evaluation_results_all}
 
 \end{table}
 
