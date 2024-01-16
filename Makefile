@@ -16,7 +16,7 @@ $(CO).ps: $(CO).dvi
 
 $(CO).pdf: clean
 	pdflatex $(CO)
-	-bibtex $(CO)2024-01-05-11-23-08.png
+	-bibtex $(CO)
 	# makeglossaries $(CO)
 	# makeglossaries-lite $(CO)
 	pdflatex $(CO)

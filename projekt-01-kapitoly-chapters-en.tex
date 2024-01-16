@@ -14,7 +14,7 @@
 \chapter{Bikefit}
 This chapter explains the standard process of bikefitting, the motivation behind it and compares several commonly used software systems used for bikefitting all over the world.
 
-\section{An introduction to bikefitting}
+\section{An Introduction to Bikefitting}
 Cycling is massively popular activity world-wide. However, having incorrectly set position on the bike can lead to unnecessary pain and injuries. Having a position that does not suit the rider can also have a drastic effect on performance.
 
 Due to these reasons, experts, known as bikefitters help cyclists with the setup of saddle position, handlebar position and sometimes even choosing the right parts such as saddle, handlebars or cranks.
@@ -24,7 +24,7 @@ Bikefit sessions are done mostly in person and while most professional cycling t
 
 This section draws from Phil Burt's Bike Fit 2nd Edition: Optimise Your Bike Position for High Performance and Injury Avoidance book \cite{burtbikefit}.
 
-\section{Bikefit measurements}
+\section{Bikefit Measurements}
 This section describes the most common measurements used in bikefitting. These measurements can be accessed from a video using automatic bike fitting software and are simple enough to adjust by the rider themselves.
 
 \subsection{Saddle Height}
@@ -75,7 +75,7 @@ While optimal handlebar height and reach are highly individual, there are some g
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Existing software systems for bikefitting}
+\section{Existing Solutions for Automated Bikefitting}
 
 \subsection{MyVeloFit}
 \href{https://www.myvelofit.com/}{MyVeloFit}  is a web application that uses pose estimation model to predict the joint locations for a side view video of the user pedaling their bike on an indoor trainer. Based on location of these joints, joint angles are then computed. On the basis of these angles and their relation to average angles, suggestions are made for adjusting the position of the saddle and handlebars.
@@ -206,7 +206,7 @@ The app costs 19.99 US dollars and does not require a subscription. However, it 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Pose estimation models}
+\chapter{Pose Estimation Models}
 
 This chapter describes some of the good performing pose estimation algorithms and compares their performance on the task of side view pose estimation of cyclists.
 
@@ -267,7 +267,7 @@ For prediction of the keypoints, the RTMPose models utilize the SimCC \cite{simc
 
 To better use spatial information, the RTMPose models use a Gated Attention Unit (GAU) \cite{gau} module. The GAU has faster speed, lower memory cost and better accuracy than the commonly used self-attention module, proposed in the Transformer architecture \cite{attentionIsAllYouNeed}.
 
-\subsection{Model versions}
+\subsection{Model Versions}
 This work evaluates the following RTMPose models:
 
 \begin{description}
@@ -353,7 +353,7 @@ The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achi
 
 
 
-\chapter{Evaluation on pose estimation of cyclists}
+\chapter{Evaluation on Pose Estimation of Cyclists}
 The goal of this section is to evaluate the performance of pose estimation models on the task of side view pose estimation of cyclists and find the best model for use in the bikefit application.
 
 The models are evaluated on a custom dataset, which is described in section \ref{evaluation_dataset}. The evaluation metrics are described in section \ref{evaluation_metrics}. The results are shown in section \ref{evaluation_results}.
@@ -364,7 +364,7 @@ Since no models predict the fifth metatarsal of the foot, the small toe landmark
 
 
 
-\section{Evaluation dataset}
+\section{Evaluation Dataset}
 \label{evaluation_dataset}
 To accurately measure the performance of a pose estimation model, it is necessary to have a dataset with ground truth annotations. Since there is no such dataset for side view pose estimation of cyclists, new small evaluation dataset was created. It consists of 12 videos in 3 different enviroments with various camera angles and riding positions (riding on hoods, drops, tops and aero position on the drops). The videos were shot in FullHD resolution at 30 FPS.
 
@@ -417,7 +417,9 @@ This adjustment allows for a scaled representation of the distance metric, effec
 
 \section{Results}
 \label{evaluation_results}
-At first the models are evaluated using only the keypoints that all models predict. These keypoints are the ankle, knee, hip, shoulder, elbow and wrist. The results are shown in table \ref{tab:evaluation_results_all}. The best results are achieved by the rtmpose-l-256x192 model, but most of the bigger RTMPose models outperform the other models. The best model achieves a mean BBND of 2.59\%. This means that the average distance between the predicted keypoints and the ground truth keypoints is 2.59\% of the average bounding box dimension.
+At first the models are evaluated using only the keypoints that all models predict. These keypoints are the ankle, knee, hip, shoulder, elbow and wrist. The results are shown in table \ref{tab:evaluation_results_all}. The best results are achieved by the rtmpose-l-256x192 model, but most of the bigger RTMPose models outperform the other models. This is in contrast to the results on the COCO dataset, where HRNet-W32 model performed similarly to the RTMPose-l model. The decrease in performance of the HRNet-W32 model is probably caused by the fact that it was trained only on the COCO dataset, while the RTMPose models were trained on multiple datasets and are therefore better used to pose estimation for cycling.
+
+The best model achieves a mean BBND of 2.59\%. This means that the average distance between the predicted keypoints and the ground truth keypoints is 2.59\% of the average bounding box dimension.
 
 The good results of the RTMPose models are not surprising, since they were trained on multiple datasets, while the other models were trained only on the COCO dataset. The RTMPose models trained to predict the COCO keypoints perform slightly better than the halpe26 models, which were trained to predict 26 keypoints and significantly better than the wholebody models, which were trained to predict 133 keypoints.
 
@@ -480,20 +482,31 @@ The models which also output heel and top of the foot keypoints are evaluated in
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Pose Estimation Dataset for Bikefitting}
+\chapter{Training Pose Estimation Model for Bikefitting}
+\section{Dataset}
+\section{Training Setup}
+\section{Model Compression}
+
+\subsection{Pruning}
+
+\subsection{Quantization}
+\section{Results}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Architechture and Implementation of the Bikefit Application}
 
-\section{Application with Marker Based Tracking}
+\section{Video Upload and Processing}
+
+\section{Marker-based Tracking}
+
+\section{Pose Estimation}
+
+\section{Video Player}
+
+\section{Presentation of the Results and Recommendations}
 
 
-\section{Model compression}
-
-\subsection{Group-Fisher pruning}
-
-\subsection{Float16 quantization}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
