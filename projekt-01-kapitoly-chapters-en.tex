@@ -324,27 +324,29 @@ To find the optimal architectures for the S-ViPNet and T-ViPNet networks, the au
 This work evaluates the modified S-ViPNet model with the MobileNetV3 \cite{mobilenetv3} backbone and SimCC \cite{simcc} algorithm instead of predicting heatmaps. The model is trained on the COCO dataset and predicts 17 keypoints, as defined in the COCO dataset.
 
 \section{Results on COCO}
+To compare the potential of the methods, the results of the models on the COCO dataset are shown in table \ref{tab:evaluation_results_coco}. All of the methods were trained only on the COCO dataset and predict the same keypoints. The results are taken from MMPose documentation \cite{mmpose2020}.
 
+The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achieving the best results. The HRNet-W32 model also performs well but it is a much larger and slower model. However, the other lightweight models such as YOLOX-Pose and ViPNAS-MobileNetV3 perform significantly worse than even the medium and small RTMPose models. Overall the RTMPose models show very promising results compared to the other models.
 
 \begin{table}[htbp]
     \setlength{\tabcolsep}{4pt}
     \centering
     \begin{tabular}{lcccccc}
         \toprule
-        \textbf{Model}              & \textbf{Input Size} & \textbf{AP} & \textbf{AP-50} & \textbf{AP-75} & \textbf{AR} & \textbf{AR-50} \\
+        \textbf{Model}              & \textbf{Input Size} & \textbf{AP}    & \textbf{AP-50} & \textbf{AP-75} & \textbf{AR}    & \textbf{AR-50} \\
         \midrule
-        rtmpose-l                   & 256x192             & 0.758       & 0.906          & 0.826          & 0.806       & 0.942          \\
-        pose\_hrnet\_w32            & 256x192             & 0.749       & 0.906          & 0.821          & 0.804       & 0.945          \\
-        rtmpose-m                   & 256x192             & 0.746       & 0.899          & 0.817          & 0.795       & 0.935          \\
-        simcc\_S-ViPNAS-MobileNetV3 & 256x192             & 0.695       & 0.883          & 0.772          & 0.755       & 0.927          \\
-        rtmpose-s                   & 256x192             & 0.716       & 0.892          & 0.789          & 0.768       & 0.929          \\
-        yoloxpose\_m                & 640x640             & 0.695       & 0.899          & 0.766          & 0.733       & 0.926          \\
-        rtmpose-t                   & 256x192             & 0.682       & 0.883          & 0.759          & 0.736       & 0.920          \\
+        \textbf{rtmpose-l}          & \textbf{256x192}    & \textbf{0.758} & \textbf{0.906} & \textbf{0.826} & \textbf{0.806} & 0.942          \\
+        pose\_hrnet\_w32            & 256x192             & 0.749          & 0.906          & 0.821          & 0.804          & \textbf{0.945} \\
+        rtmpose-m                   & 256x192             & 0.746          & 0.899          & 0.817          & 0.795          & 0.935          \\
+        rtmpose-s                   & 256x192             & 0.716          & 0.892          & 0.789          & 0.768          & 0.929          \\
+        simcc\_S-ViPNAS-MobileNetV3 & 256x192             & 0.695          & 0.883          & 0.772          & 0.755          & 0.927          \\
+        yoloxpose\_m                & 640x640             & 0.695          & 0.899          & 0.766          & 0.733          & 0.926          \\
+        rtmpose-t                   & 256x192             & 0.682          & 0.883          & 0.759          & 0.736          & 0.920          \\
 
 
         \bottomrule
     \end{tabular}
-    \caption{Evaluation results on the custom bike fitting dataset, including the heel and fifth metatarsal of the foot. Results for the other keypoints can be found in table \ref{tab:evaluation_results_coco}. Each column represents the mean Bounding Box Normalized Distance for the given keypoint. The results are sorted by the overall mean Bounding Box Normalized Distance (spanning all keypoints), defined in section \ref{evaluation_metrics}. The best results are highlighted in bold. The model names are derived from their MMPose config files.}
+    \caption{Results of the models on the COCO dataset. The results are sorted by the Average precision (AP). The AP describes the average precision over Object Keypoint Similarity (OKS) thresholds from 0.5 to 0.95 with a step size of 0.05. The AR describes the average recall over OKS thresholds from 0.5 to 0.95 with a step size of 0.05. The AP-50 and AR-50 are the same as AP and AR, but only for OKS threshold of 0.5. Similarly AR-75 is average recall with OKS threshold of 0.75. The results are taken from MMPose documentation \cite{mmpose2020}.}
     \label{tab:evaluation_results_coco}
 
 \end{table}
