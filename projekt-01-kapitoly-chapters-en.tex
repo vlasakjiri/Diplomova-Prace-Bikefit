@@ -210,6 +210,10 @@ The app costs 19.99 US dollars and does not require a subscription. However, it 
 
 This chapter describes some of the good performing pose estimation algorithms and compares their performance on the task of side view pose estimation of cyclists.
 
+Pose estimation is a computer vision task that involves predicting the locations of keypoints on a person in an image or a video. The keypoints are usually the joints of the person, such as the ankle, knee, hip, shoulder, elbow, wrist, etc. The pose estimation models are usually trained on datasets that contain images or videos with annotated keypoints. The models are then evaluated on the same datasets.
+
+There are multiple approaches to pose estimation. The most common approaches are the top-down approach and the bottom-up approach. The top-down approach first detects people in the image and then predicts the keypoints for each person. The bottom-up approach first predicts the keypoints and then groups them into poses using hand writte post processing algorithms. Another approach is the one-stage approach, which predicts the keypoints directly from the image without the need for post processing. This work evaluates three pose estimation models using the top-down approach (RTMPose, HRNet and ViPNAS), described in sections \ref{rtmpose}, \ref{hrnet} and \ref{vipnas} and one pose estimation model using the one-stage approach (YOLOX-Pose), described in section \ref{yolox-pose}.
+
 Not all of the models predict the same keypoints. The models predict either 17 keypoints, as defined in the COCO dataset \cite{coco}, 26 keypoints, as defined in the Halpe26 dataset \cite{halpe}, or 133 keypoints, as defined in the COCO-WholeBody dataset \cite{coco-wholebody}.
 
 \begin{figure}[htbp]
@@ -245,6 +249,7 @@ Not all of the models predict the same keypoints. The models predict either 17 k
 
 
 \section{RTMPose}
+\label{rtmpose}
 
 RTMPose \cite{rtmpose} is a pose estimation model from the authors of the MMPose framework \cite{mmpose2020}. It is designed to bridge the gap between the excellent performance of 2D pose estimation on public benchmarks and its application in the industrial community, which still suffers from heavy models and high latency.
 
@@ -280,6 +285,7 @@ This work evaluates the following RTMPose models:
 
 
 \section{HRNet}
+\label{hrnet}
 
 The HRNet (High-Resolution Network) \cite{hrnet} pose estimation architecture is characterized by its emphasis on maintaining high-resolution representations throughout the network. Unlike conventional methods that downsample the input image early in the network, HRNet adopts a multi-resolution approach, preserving detailed information essential for accurate pose estimation.
 
@@ -296,6 +302,8 @@ This work evaluates the HRNet-W32 model, which uses heatmap to predict the keypo
 
 
 \section{YOLOX-Pose}
+\label{yolox-pose}
+
 YOLOX-Pose  is a one-stage human pose estimation model that distinguishes itself from traditional top-down and bottom-up methods. The authors claim that YOLOX-Pose is the first one-stage human pose estimation model that achieves comparable performance to the state-of-the-art two-stage methods.
 
 The one-stage approach has some advantages over bottom-up and top-down approaches. Bottom-up approaches first detect keypoints and then group them into poses. The grouping step is not learned and needs to be hand-crafted. This can lead to inaccurate results, especially in cases where the keypoints from different people are close together.
@@ -314,6 +322,7 @@ The original YOLO-pose \cite{yoloPose} model uses the anchor-based YOLOv5 detect
 The YOLOX-Pose model is trained on the COCO dataset and predicts 17 keypoints, as defined in the COCO dataset.
 
 \section{ViPNAS}
+\label{vipnas}
 
 The ViPNAS (Video Pose Estimation via Neural Architecture Search) \cite{vipnas} model focuses on video pose estimation, employing two networks: S-ViPNet and T-ViPNet.
 
@@ -354,6 +363,8 @@ The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achi
 
 
 \chapter{Evaluation on Pose Estimation of Cyclists}
+\label{evaluation}
+
 The goal of this section is to evaluate the performance of pose estimation models on the task of side view pose estimation of cyclists and find the best model for use in the bikefit application.
 
 The models are evaluated on a custom dataset, which is described in section \ref{evaluation_dataset}. The evaluation metrics are described in section \ref{evaluation_metrics}. The results are shown in section \ref{evaluation_results}.
@@ -483,6 +494,8 @@ The models which also output heel and top of the foot keypoints are evaluated in
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Training Pose Estimation Model for Bikefitting}
+\label{training_pose_estimation_model_for_bikefitting}
+
 \section{Dataset}
 \section{Training Setup}
 \section{Model Compression}
@@ -496,15 +509,35 @@ The models which also output heel and top of the foot keypoints are evaluated in
 
 \chapter{Architechture and Implementation of the Bikefit Application}
 
+This chapter describes the web application for bike fitting. Implementing the application as a web application has several advantages over implementing it as a mobile or desktop application. The web application can be used on any device with a web browser. This allows the application to be used on mobile devices, tablets, laptops and desktop computers. The user also does not need to download and install anything.
+
+Most web applications are implemented using the client-server architecture with the video processing and other more complicated tasks (such as pose estimation) being performed on the server. This has several disadvantages. The server needs to be powerful enough to handle the load of multiple users. This can be quite expensive for heavy models and a lot of users. The user data also needs to be sent to the server, which means the user needs to be online when using the application and the users can be concerned about their privacy.
+
+To avoid these disadvantages, most of the bussiness logic of the application (including video processing, keypoint estimation and generation of the suggestions) is implemented on the client side.
+
+The application is implemented using the Svelte framework \cite{svelte}. Svelte is a component framework similar to React \cite{react} or Vue \cite{vue}. It is used to create reactive user interfaces. Svelte compiles the application to vanilla JavaScript, which means the application does not need to include a large framework library. This makes the application smaller and faster. Svelte also has a built-in state management system, which is used to store the application state.
+
+To process the video frame by frame, the application uses the WebCodecs API. The details of the implementation are described in section \ref{video_upload_and_processing}.
+
+To estimate the keypoints, multiple approaches were tested. First approach uses colored markers, which are placed on the parts of the body, whose position needs to be estimated (foot, heel, ankle, knee, hip, shoulder, elbow, wrist). The markers are then detected using color thresholding and tracked using a method similar to SORT. This approach is implemented using the OpenCV.js library \cite{opencvjs}. The details of the implementation are described in section \ref{marker_based_tracking}.
+
+The second approach uses the RTMPose pose estimation model and a person detector. The models run in the browser using the Tensorflow.js library \cite{tensorflowjs}. The models are described in section \ref{rtmpose} and evaluated in chapter \ref{evaluation}. To improve the performance of the pose estimation models on the task of side view pose estimation of cyclists, the models are trained on a custom dataset. The details of the training are described in section \ref{training_pose_estimation_model_for_bikefitting}. The details of the implementation are described in section \ref{pose_estimation}.
+
+
 \section{Video Upload and Processing}
+\label{video_upload_and_processing}
 
 \section{Marker-based Tracking}
+\label{marker_based_tracking}
 
 \section{Pose Estimation}
+\label{pose_estimation}
 
 \section{Video Player}
 
 \section{Presentation of the Results and Recommendations}
+
+\section{User Authentication and Data Storage}
 
 
 
