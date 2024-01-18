@@ -515,17 +515,37 @@ Most web applications are implemented using the client-server architecture with 
 
 To avoid these disadvantages, most of the bussiness logic of the application (including video processing, keypoint estimation and generation of the suggestions) is implemented on the client side.
 
-The application is implemented using the Svelte framework \cite{svelte}. Svelte is a component framework similar to React \cite{react} or Vue \cite{vue}. It is used to create reactive user interfaces. Svelte compiles the application to vanilla JavaScript, which means the application does not need to include a large framework library. This makes the application smaller and faster. Svelte also has a built-in state management system, which is used to store the application state.
+The application is implemented using the Svelte framework\footnote{\url{https://svelte.dev/}} . Svelte is a component framework similar to React\footnote{\url{https://react.dev/}} or Vue\footnote{\url{https://vuejs.org/}}. It is used to create reactive user interfaces. Svelte compiles the application to vanilla JavaScript, which means the application does not need to include a large framework library. This makes the application smaller and faster. Svelte also has a built-in state management system, which is used to store the application state.
 
 To process the video frame by frame, the application uses the WebCodecs API. The details of the implementation are described in section \ref{video_upload_and_processing}.
 
 To estimate the keypoints, multiple approaches were tested. First approach uses colored markers, which are placed on the parts of the body, whose position needs to be estimated (foot, heel, ankle, knee, hip, shoulder, elbow, wrist). The markers are then detected using color thresholding and tracked using a method similar to SORT. This approach is implemented using the OpenCV.js library \cite{opencvjs}. The details of the implementation are described in section \ref{marker_based_tracking}.
 
-The second approach uses the RTMPose pose estimation model and a person detector. The models run in the browser using the Tensorflow.js library \cite{tensorflowjs}. The models are described in section \ref{rtmpose} and evaluated in chapter \ref{evaluation}. To improve the performance of the pose estimation models on the task of side view pose estimation of cyclists, the models are trained on a custom dataset. The details of the training are described in section \ref{training_pose_estimation_model_for_bikefitting}. The details of the implementation are described in section \ref{pose_estimation}.
+The second approach uses the RTMPose pose estimation model and a person detector. The models run in the browser using the Tensorflow.js library\footnote{\url{https://www.tensorflow.org/js}}. The models are described in section \ref{rtmpose} and evaluated in chapter \ref{evaluation}. To improve the performance of the pose estimation models on the task of side view pose estimation of cyclists, the models are trained on a custom dataset. The details of the training are described in section \ref{training_pose_estimation_model_for_bikefitting}. The details of the implementation are described in section \ref{pose_estimation}.
 
 
 \section{Video Upload and Processing}
 \label{video_upload_and_processing}
+At first, the video needs to be uploaded to the application. The video is uploaded using the HTML5 file input. The file path is then converted to a URL using the \texttt{URL.createObjectURL()} method. This URL is then used as the source of the video element (more on that in section \ref{video_player}). The video element is then used to display the video.
+
+\subsection{Accessing the Video Frames}
+
+To accurately estimate the keypoints, the application needs to access all of the video frames and process them. This is not trivial to do in the browser. The browser does not allow the application to access the video frames directly.
+
+To process the video frame by frame, the application uses the WebCodecs API\footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API}}. The WebCodecs API is a low-level API for encoding and decoding audio and video. It gives developers access to the invididual frames of the video. It is the only way to access the frames of the video in the browser. Simple and commonly used method is to simultaneously play the video and draw the video  frames to a canvas element and then access the pixels of the canvas. However, this method only does not work well if the processing is computationally expensive, since the video is played in real time. This leads to skipping of the frames and not all of the frames are processed. The WebCodecs API allows the application to process the video at its own pace.
+
+Because the API is relatively new, it is not yet supported by all browsers. Figure \ref{fig:caniuseWebcodecs} shows the browser support for the WebCodecs API as of January 2024. The API is supported by all browsers based on Chromium (Google Chrome, Microsoft Edge, Opera, Brave, etc.). It is Partially supported by Safari and Safari on iOS (video only) and not supported by Firefox. Overall based on CanIUse data\footnote{\url{https://caniuse.com/webcodecs}}, the API is supported by 87.6\% of the users, where 74.5\% of the users have full support and 13.1\% of the users have partial support.
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/caniuseWebcodecs.png}
+    \caption{Browser support as of January 2024 for the WebCodecs API. Taken from \url{https://caniuse.com/webcodecs}.}
+    \label{fig:caniuseWebcodecs}
+\end{figure}
+
+Due to the low-level design of the WebCodecs API, it is not easy to use. Moreover, the API is quite new and not very well documented so there is not a lot of examples. The developer also needs to take care of demuxing the media containers. This work uses the getVideoFrames.js library\footnote{\url{https://github.com/josephrocca/getVideoFrames.js}} from josephrocca. The library internally uses the WebCodecs API and MP4Box.js\footnote{\url{https://github.com/gpac/mp4box.js/}} for demuxing mp4 files, but provides a simple interface for accessing the video frames. The library is used to get the video frames and then the frames are processed as described in sections \ref{marker_based_tracking} and \ref{pose_estimation}.
+
 
 \section{Marker-based Tracking}
 \label{marker_based_tracking}
@@ -534,6 +554,7 @@ The second approach uses the RTMPose pose estimation model and a person detector
 \label{pose_estimation}
 
 \section{Video Player}
+\label{video_player}
 
 \section{Presentation of the Results and Recommendations}
 
