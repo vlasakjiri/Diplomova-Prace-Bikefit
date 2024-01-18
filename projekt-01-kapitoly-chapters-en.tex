@@ -543,12 +543,52 @@ Because the API is relatively new, it is not yet supported by all browsers. Figu
     \caption{Browser support as of January 2024 for the WebCodecs API. Taken from \url{https://caniuse.com/webcodecs}.}
     \label{fig:caniuseWebcodecs}
 \end{figure}
+Due to the low-level design of the WebCodecs API, it is not easy to use. Moreover, the API is quite new and not very well documented so there is not a lot of examples. The developer also needs to take care of demuxing the media containers. This work uses the getVideoFrames.js library\footnote{\url{https://github.com/josephrocca/getVideoFrames.js}} from josephrocca. The library internally uses the WebCodecs API and MP4Box.js\footnote{\url{https://github.com/gpac/mp4box.js/}} for demuxing mp4 files, but provides a simple interface for accessing the video frames. The library is used to get the video frames and then the frames are processed as described in sections \ref{marker_based_tracking} and \ref{pose_estimation}. Listing \ref{getVideoFrames} shows an example usage of the getVideoFrames.js library.
 
-Due to the low-level design of the WebCodecs API, it is not easy to use. Moreover, the API is quite new and not very well documented so there is not a lot of examples. The developer also needs to take care of demuxing the media containers. This work uses the getVideoFrames.js library\footnote{\url{https://github.com/josephrocca/getVideoFrames.js}} from josephrocca. The library internally uses the WebCodecs API and MP4Box.js\footnote{\url{https://github.com/gpac/mp4box.js/}} for demuxing mp4 files, but provides a simple interface for accessing the video frames. The library is used to get the video frames and then the frames are processed as described in sections \ref{marker_based_tracking} and \ref{pose_estimation}.
-
+\begin{lstlisting}[style=htmlcssjs, caption={Example usage of the getVideoFrames.js library. Taken from \url{https://github.com/josephrocca/getVideoFrames.js/}.}, label={getVideoFrames}]
+    <canvas id="canvasEl"></canvas>
+    <br>
+    <input type="file" accept="video/mp4" onchange="start(this.files[0])">
+    <script type="module">
+      import getVideoFrames from "https://deno.land/x/get_video_frames@v0.0.10/mod.js"
+      
+      let frameCount = 0;
+    
+      window.start = async function(file) {
+        let ctx = canvasEl.getContext("2d"); 
+    
+        // `getVideoFrames` requires a video URL as input.
+        // If you have a file/blob instead of a videoUrl, turn it into a URL like this:
+        let videoUrl = URL.createObjectURL(file);
+    
+        await getVideoFrames({
+          videoUrl,
+          onFrame(frame) {  // `frame` is a VideoFrame object: https://developer.mozilla.org/en-US/docs/Web/API/VideoFrame
+            ctx.drawImage(frame, 0, 0, canvasEl.width, canvasEl.height);
+            frame.close();
+            frameCount++;
+          },
+          onConfig(config) {
+            canvasEl.width = config.codedWidth;
+            canvasEl.height = config.codedHeight;
+          },
+          onFinish() {
+            console.log("finished!");
+            console.log("frameCount", frameCount);
+          },
+        });
+    
+        URL.revokeObjectURL(file); // revoke URL to prevent memory leak
+      }
+    </script> 
+\end{lstlisting}
 
 \section{Marker-based Tracking}
 \label{marker_based_tracking}
+
+\subsection{Detection}
+
+\subsection{Tracking}
 
 \section{Pose Estimation}
 \label{pose_estimation}
