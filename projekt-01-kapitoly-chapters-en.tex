@@ -405,7 +405,7 @@ Before shooting the videos, orange colored markers were placed on the camera-fac
     \label{fig:evaluation_markers}
 \end{figure}
 
-To annotate the videos, the markers were tracked using the first version of the bikefit application described in \textcolor{red}{TODO}. The application tracks the markers in a lower resolution. To get the ground truth annotations, the marker positions were then scaled to the original resolution of the video.
+To annotate the videos, the markers were tracked using the first version of the bikefit application described in section \ref{marker_based_tracking}. The application tracks the markers in a lower resolution. To get the ground truth annotations, the marker positions were then scaled to the original resolution of the video.
 
 \section{Evaluation Metrics}
 \label{evaluation_metrics}
@@ -596,7 +596,7 @@ At first, the user is asked to manually localize the markers by clicking on them
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/markers_localization.png}
-    \caption{Example of the manual localization of the markers. The user is asked to click on the markers in the first frame of the video. The contours are highlighted in white. The centroids of the contours are highlighted in green.}
+    \caption{Example of the manual localization of the markers. The user is asked to click on the markers in the first frame of the video. The single localized foot marker is highlighted in green. The contours are highlighted in white. The centroids of the contours are highlighted in green (hard to see).}
     \label{fig:marker_localization}
 \end{figure}
 
@@ -642,6 +642,24 @@ The detected markers are then tracked using a simple method similar to SORT \cit
 Experiments with using the Kalman filter were also performed. Unfortunately I was not able to get the Kalman filter to work properly. The Kalman filter was not able to predict the position of the markers and the tracking was not very robust. The simple method described above works better.
 
 \subsection{Limitations}
+The marker-based approach was mainly chosen due to its theoretically perfect accuracy. However, in practice there are several limitations to this approach:
+
+\begin{enumerate}
+    \item Accuracy of the system heavily depends on the placement of the markers. If the markers are not placed correctly, the results are not accurate. Since the placement is done by the user, this is a real issue. Correct placement of the markers is not trivial.
+    \item The user needs to have the markers available. They don't have to be special video markers, but they need to be of a different color than the background and the clothing of the user and need to be glued to the user.
+    \item The biggest limitation is the reduced robustness of the system. The system works well if the color of the markers is not present elsewhere in the image. However, in other cases, the markers are detected in the wrong places and the system does not work. Figure \ref{fig:failed_localization} shows an example of the failed localization of the markers. The markers are not localized correctly, because the leaves in the background have similar color to the markers.
+\end{enumerate}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/failed_localization.png}
+    \caption{Example of the failed localization of the markers. The leaves in the background have similar color to the markers and the markers are therefore not localized correctly.}
+    \label{fig:failed_localization}
+\end{figure}
+
+Due to these serious limitations, the marker-based approach was not used in the final version of the application. And instead, the RTMPose pose estimation model is used. The details of the implementation are described in section \ref{pose_estimation}.
+
+
 
 \section{Pose Estimation}
 \label{pose_estimation}
