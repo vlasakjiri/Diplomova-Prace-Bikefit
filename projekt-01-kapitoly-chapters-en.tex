@@ -526,7 +526,7 @@ The second approach uses the RTMPose pose estimation model and a person detector
 
 \section{Video Upload and Processing}
 \label{video_upload_and_processing}
-At first, the video needs to be uploaded to the application. The video is uploaded using the HTML5 file input. The file path is then converted to a URL using the \texttt{URL.createObjectURL()} method. This URL is then used as the source of the video element (more on that in section \ref{video_player}). The video element is then used to display the video.
+At first, the video needs to be uploaded to the application. The video is uploaded using the HTML5 file input. The file is then converted to a URL using the \texttt{URL.createObjectURL()} method, because the WebCodecs API requires a URL as input.
 
 \subsection{Accessing the Video Frames}
 
@@ -543,7 +543,8 @@ Because the API is relatively new, it is not yet supported by all browsers. Figu
     \caption{Browser support as of January 2024 for the WebCodecs API. Taken from \url{https://caniuse.com/webcodecs}.}
     \label{fig:caniuseWebcodecs}
 \end{figure}
-Due to the low-level design of the WebCodecs API, it is not easy to use. Moreover, the API is quite new and not very well documented so there is not a lot of examples. The developer also needs to take care of demuxing the media containers. This work uses the getVideoFrames.js library\footnote{\url{https://github.com/josephrocca/getVideoFrames.js}} from josephrocca. The library internally uses the WebCodecs API and MP4Box.js\footnote{\url{https://github.com/gpac/mp4box.js/}} for demuxing mp4 files, but provides a simple interface for accessing the video frames. The library is used to get the video frames and then the frames are processed as described in sections \ref{marker_based_tracking} and \ref{pose_estimation}. Listing \ref{getVideoFrames} shows an example usage of the getVideoFrames.js library.
+
+Due to the low-level design of the WebCodecs API, it is not easy to use. Moreover, the API is quite new and not very well documented so there is not a lot of examples. The developer also needs to take care of demuxing the media containers. This work uses the getVideoFrames.js library\footnote{\url{https://github.com/josephrocca/getVideoFrames.js}} from josephrocca. The library internally uses the WebCodecs API and MP4Box.js\footnote{\url{https://github.com/gpac/mp4box.js/}} for demuxing mp4 files, but provides a simple interface for accessing the video frames. The library is used to get the video frames and then the frames are processed as described in sections \ref{marker_based_tracking} and \ref{pose_estimation}. Listing \ref{getVideoFrames} shows an example usage of the getVideoFrames.js library. It defines three callback functions. The \texttt{onFrame} callback is called for each frame of the video. The \texttt{onConfig} callback is called when the video metadata is loaded. The \texttt{onFinish} callback is called when all of the frames are processed.
 
 \begin{lstlisting}[style=htmlcssjs, caption={Example usage of the getVideoFrames.js library. Taken from \url{https://github.com/josephrocca/getVideoFrames.js/}.}, label={getVideoFrames}]
     <canvas id="canvasEl"></canvas>
@@ -585,10 +586,62 @@ Due to the low-level design of the WebCodecs API, it is not easy to use. Moreove
 
 \section{Marker-based Tracking}
 \label{marker_based_tracking}
+To estimate the keypoints, the application uses colored markers, which are placed on the parts of the body, whose position needs to be estimated (foot, heel, ankle, knee, hip, shoulder, elbow, wrist). The markers are at first localized manually by the user and their color is then used to detect them in the video. The markers are then tracked using a method similar to SORT. The detection and tracking is implemented using the OpenCV.js library \cite{opencvjs}.
+
+
+\subsection{Manual Localization of the Markers}
+\label{manual_localization_of_the_markers}
+At first, the user is asked to manually localize the markers by clicking on them in the first frame of the video. Figure \ref{fig:marker_localization} shows an example of the manual localization of the markers. The colors of these markers are saved and used for thresholding and detection of the markers in the following frames. The user is asked to first localize the marker on the foot, then the marker on the heel, then the marker on the ankle, etc.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/markers_localization.png}
+    \caption{Example of the manual localization of the markers. The user is asked to click on the markers in the first frame of the video. The contours are highlighted in white. The centroids of the contours are highlighted in green.}
+    \label{fig:marker_localization}
+\end{figure}
+
+After clicking on a marker, multiple steps are performed:
+\begin{enumerate}
+    \item The x,y coordinates of the marker are saved.
+    \item If there is already some marker localized and therefore some color thresholds defined and markers detected, the detected markers are searched if there is some marker close to the clicked marker. If there is, the location of the clicked marker is updated to the location of the detected marker. This is done so that user does not have to precisely click on the marker. This is especially useful when the markers are small and the user is using a mobile device with a small screen.
+    \item Based on the x,y coordinates of the marker, the color of the marker is extracted from the image.
+    \item The color of the marker is used to update the color thresholds used to detect the markers. More on this in section \ref{detection}.
+\end{enumerate}
 
 \subsection{Detection}
+\label{detection}
+After obtaining the markers locations and colors, the markers are detected in the following frames. The detection is performed in the following steps:
+\begin{enumerate}
+    \item The frame is converted to the CIELAB color space.
+    \item The frame is thresholded using the minimum and maximum A and B channel values of the localized markers and some margin. The margin is used to account for the changes in the lighting conditions. Empirically, the margin of 15 works well. Figure \ref{fig:marker_detection} shows an example of the thresholded image.
+    \item Contours are found in the thresholded image. The \texttt{cv.findContours()} method is used for this.
+    \item The centroids of the contours are calculated using the \texttt{cv.moments()} method.
+    \item The centroids are used as noisy detections.
+\end{enumerate}
+
+The CIELAB color space is used because it is designed to approximate human vision. The A and B channels are used because they represent the color of the marker. The L channel is not used because it represents the lightness of the color and is not very useful for detecting the markers due to the changes in the lighting conditions. Experiments with using the H channel of the HSV color space were also performed, but there were some problems with the detection of the markers on the edges of the color spectrum (H=0 and H=255). The CIELAB color space does not have this problem, because it uses two channels for the color.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/thresholded.png}
+    \caption{Example of the image thresholded using the minimum and maximum A and B channel values of the localized markers and a margin of 15. The markers are then detected as the contours in the thresholded image.}
+    \label{fig:marker_detection}
+\end{figure}
 
 \subsection{Tracking}
+\label{tracking}
+The detected markers are then tracked using a simple method similar to SORT \cite{sort}. The tracking algorithm works as follows:
+
+\begin{enumerate}
+    \item Every possible assignment of the detected markers and the markers in the previous frame is created. To limit the number of possible assignments, the assignments are created only if the distance between the markers is less than 50 pixels.
+    \item For every found assignment, the cost of the assignment is calculated as the sum of the distances between the markers in the assignment.
+    \item To make tracking more robust, the cost of the assignment is increased by the difference of the angles between the markers in the assignment. This is done to prevent the markers from switching places.
+    \item Assignment with the most markers assigned and the lowest cost is selected.
+\end{enumerate}
+
+Experiments with using the Kalman filter were also performed. Unfortunately I was not able to get the Kalman filter to work properly. The Kalman filter was not able to predict the position of the markers and the tracking was not very robust. The simple method described above works better.
+
+\subsection{Limitations}
 
 \section{Pose Estimation}
 \label{pose_estimation}
