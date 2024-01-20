@@ -96,17 +96,8 @@ The fitting process starts with the rider filling out questionaire about their m
 After creating the user profile, user can create a fit session for one specific bike. In the process, the user selects their fit goal (performance, comfort, or balanced) and the type of bike they are using (road, gravel, mtb, triathlon, hybrid, or stationary). This also changes the recommended angle ranges.
 
 \subsubsection{Predicted keypoints}
-MyVeloFit predicts 6 joint locations for the camera facing side of the body. Most common pose estimation models predict similar keypoints. However, keypoints commonly used to adjust the position of the saddle, such as the heel and the fifth metatarsal of the foot, are missing.
+MyVeloFit predicts 6 joint locations for the camera facing side of the body. Most common pose estimation models predict similar keypoints. However, keypoints commonly used to adjust the position of the saddle, such as the heel and the fifth metatarsal of the foot, are missing. The keypoints used by MyVeloFit are: ankle, knee, hip, shoulder, elbow and wrist.
 
-
-\begin{itemize}
-    \item Ankle
-    \item Knee
-    \item Hip
-    \item Shoulder
-    \item Elbow
-    \item Wrist
-\end{itemize}
 
 \begin{figure}[htbp]
     \centering
@@ -146,18 +137,8 @@ Overall, MyVeloFit is relatively easy to use and its joint predictions are fairl
 \subsection{Retül}
 \href{https://www.retul.com/}{Retül} is a bike fitting system employing 3D motion capture technologys. It utilizes infrared LED markers placed on specific body points to track the rider's movements dynamically while cycling. The led markers are tracked by multiple infrared cameras placed around the rider. The cameras surprisingly capture only 18 frames per second. Despite this research \cite{retulReliability} shows that the system is relatively reliable compared to 3d motion capture systems with higher frame rates.
 
-Retül uses 8 markers placed on both sides of the rider's body. These markers are placed on the following locations:
+Retül uses 8 markers placed on both sides of the rider's body. These markers are placed on the following locations: fifth metatarsal of the foot, heel, ankle, knee, hip, shoulder, elbow and wrist.
 
-\begin{itemize}
-    \item Fifth metatarsal of the foot
-    \item Heel
-    \item Ankle
-    \item Knee
-    \item Hip
-    \item Shoulder
-    \item Elbow
-    \item Wrist
-\end{itemize}
 
 The markers are placed by the fitter on the rider's body. Accurate placement of the markers is crucial for the system to work properly. Even small deviations can lead to inaccurate results.
 
@@ -391,18 +372,7 @@ Since no models predict the fifth metatarsal of the foot, the small toe landmark
 \label{evaluation_dataset}
 To accurately measure the performance of a pose estimation model, it is necessary to have a dataset with ground truth annotations. Since there is no such dataset for side view pose estimation of cyclists, new small evaluation dataset was created. It consists of 12 videos in 3 different enviroments with various camera angles and riding positions (riding on hoods, drops, tops and aero position on the drops). The videos were shot in FullHD resolution at 30 FPS.
 
-Before shooting the videos, orange colored markers were placed on the camera-facing side of the rider's body. These markers were placed on the following locations:
-
-\begin{itemize}
-    \item Fifth metatarsal of the foot
-    \item Heel
-    \item Ankle
-    \item Knee
-    \item Hip
-    \item Shoulder
-    \item Elbow
-    \item Wrist
-\end{itemize}
+Before shooting the videos, orange colored markers were placed on the camera-facing side of the rider's body. These markers were placed on the following locations: fifth metatarsal of the foot, heel, ankle, knee, hip, shoulder, elbow and wrist. 
 
 \begin{figure}[htbp]
 
