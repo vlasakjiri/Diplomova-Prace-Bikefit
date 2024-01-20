@@ -7,12 +7,23 @@
 % \begin{document}
 
 \chapter{Introduction}
-Zadar
+Cycling is a massively popular activity world-wide. It is enjoyed by people of all ages and skill levels, from commuters to professional athletes. To enjoy cycling, it is important to have a bike that fits the rider. Having a bike that does not fit the rider can lead to unnecessary pain or over time even injuries. Having a bike that does not fit the can also have detrimental effect on performance. Therefore, a well fitted bike is important for professional athletes and amateurs alike.
+
+Unfortunately, the setup of one's bike is not a trivial task. The information on how to set up the bike is often comprised of rule of thumbs and general guidelines. These guidelines are often contradictory and can lead to confusion. The setup of the bike is also highly individual and depends on the rider's flexibility, riding style, goals, etc. Similarly, each bike is different and requires different setup.
+
+This led to creation of a new profession called bikefitting. Bikefitters are experts that help cyclists with the setup of their bikes. This was traditionally done in person and relied solely on the bikefitter's experience and rudimentary tools such as plumb bobs, goniometers, etc. However, in recent years, to make it more accessible, bikefitting has been increasingly relying on technology, mainly motion capture systems. This means the bikefitters don't have to rely solely on their experience and can use data to make more informed decisions. These in-person bikefitting sessions are however often not available in all areas and can be too costly for amateur cyclists.
+
+To make bikefitting even more accessible, there has been a rise of bikefitting applications that aim automate some of the bikefitting process. Despite the success of these applications, they are often limited to a single platform, only provide very basic information to the user or are too costly.
+
+This work aims to create a bikefitting application that does not suffer from these limitations. The application is available in the browser, provides the user with detailed information, while being easy to use and uses lightweight SOTA pose estimation models, that run directly in the browser to keep the cost of the application low.
+
+Chapter \ref{bikefit} explains the measurements used in bikefitting and compares several commonly used software systems for bikefitting. Chapter \ref{ch:pose_estimation} describes the pose estimation models used in this work. Chapter \ref{evaluation} evaluates the pose estimation models on videos of cyclists, filmed from the side, as this is the most common view used in bikefitting. Chapter \ref{training_pose_estimation_model_for_bikefitting} uses the best performing pose estimation model to create a new pose estimation model trained specifically for bikefitting. Chapter \ref{ch:bikefit_application} describes the bikefit application and chapter \ref{experiments} evaluates the application on real world data. Chapter \ref{conclusion} concludes the work and proposes future work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Bikefit}
-This chapter explains the standard process of bikefitting, the motivation behind it and compares several commonly used software systems used for bikefitting all over the world.
+\label{bikefit}
+This chapter explains the standard process of bikefitting, the motivation behind it and compares several commonly used software systems for bikefitting.
 
 \section{An Introduction to Bikefitting}
 Cycling is massively popular activity world-wide. However, having incorrectly set position on the bike can lead to unnecessary pain and injuries. Having a position that does not suit the rider can also have a drastic effect on performance.
@@ -207,6 +218,7 @@ The app costs 19.99 US dollars and does not require a subscription. However, it 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Pose Estimation Models}
+\label{ch:pose_estimation}
 
 This chapter describes some of the good performing pose estimation algorithms and compares their performance on the task of side view pose estimation of cyclists.
 
@@ -508,6 +520,7 @@ The models which also output heel and top of the foot keypoints are evaluated in
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Architechture and Implementation of the Bikefit Application}
+\label{ch:bikefit_application}
 
 This chapter describes the web application for bike fitting. Implementing the application as a web application has several advantages over implementing it as a mobile or desktop application. The web application can be used on any device with a web browser. This allows the application to be used on mobile devices, tablets, laptops and desktop computers. The user also does not need to download and install anything.
 
@@ -676,11 +689,12 @@ Due to these serious limitations, the marker-based approach was not used in the 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Experiments}
+\label{experiments}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Conclusion}
-\label{zaver}
+\label{conclusion}
 
 
 
