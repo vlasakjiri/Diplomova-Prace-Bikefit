@@ -372,7 +372,7 @@ Since no models predict the fifth metatarsal of the foot, the small toe landmark
 \label{evaluation_dataset}
 To accurately measure the performance of a pose estimation model, it is necessary to have a dataset with ground truth annotations. Since there is no such dataset for side view pose estimation of cyclists, new small evaluation dataset was created. It consists of 12 videos in 3 different enviroments with various camera angles and riding positions (riding on hoods, drops, tops and aero position on the drops). The videos were shot in FullHD resolution at 30 FPS.
 
-Before shooting the videos, orange colored markers were placed on the camera-facing side of the rider's body. These markers were placed on the following locations: fifth metatarsal of the foot, heel, ankle, knee, hip, shoulder, elbow and wrist. 
+Before shooting the videos, orange colored markers were placed on the camera-facing side of the rider's body. These markers were placed on the following locations: fifth metatarsal of the foot, heel, ankle, knee, hip, shoulder, elbow and wrist.
 
 \begin{figure}[htbp]
 
@@ -523,7 +523,7 @@ Because the API is relatively new, it is not yet supported by all browsers. Figu
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/caniuseWebcodecs.png}
-    \caption{Browser support as of January 2024 for the WebCodecs API. Taken from \url{https://caniuse.com/webcodecs}.}
+    \caption{Browser support as of January 2024 for the WebCodecs API. Green color indicates full support, yellow color indicates partial support and red color indicates no support. Taken from \url{https://caniuse.com/webcodecs}.}
     \label{fig:caniuseWebcodecs}
 \end{figure}
 
@@ -579,9 +579,17 @@ At first, the user is asked to manually localize the markers by clicking on them
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/markers_localization.png}
-    \caption{Example of the manual localization of the markers. The user is asked to click on the markers in the first frame of the video. The single localized foot marker is highlighted in green. The contours are highlighted in white. The centroids of the contours are highlighted in green (hard to see).}
+    \caption{Example of the manual localization of the markers. The user is asked to click on the markers in the first frame of the video. The single localized foot marker is highlighted in green.}
     \label{fig:marker_localization}
 \end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/markers_crop.png}
+    \caption{Closeup of the localization of the markers. The single localized foot marker is highlighted in green. The contours of the thresholded regions are highlighted in white. The centroids of the contours are highlighted by small green cross.}
+    \label{fig:marker_crop}
+\end{figure}
+
 
 After clicking on a marker, multiple steps are performed:
 \begin{enumerate}
