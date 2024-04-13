@@ -194,6 +194,90 @@ The app costs 19.99 US dollars and does not require a subscription. However, it 
 
 \subsection{Posiclist}
 
+\chapter{Marker-based Tracking}
+\label{marker_based_tracking}
+To estimate the keypoints, the application uses colored markers, which are placed on the parts of the body, whose position needs to be estimated (foot, heel, ankle, knee, hip, shoulder, elbow, wrist). The markers are at first localized manually by the user and their color is then used to detect them in the video. The markers are then tracked using a method similar to SORT. The detection and tracking is implemented using the OpenCV.js library \cite{opencvjs}.
+
+\section{Localization and Tracking Pipeline}
+
+\subsection{Manual Localization of the Markers}
+\label{manual_localization_of_the_markers}
+At first, the user is asked to manually localize the markers by clicking on them in the first frame of the video. Figure \ref{fig:marker_localization} shows an example of the manual localization of the markers. The colors of these markers are saved and used for thresholding and detection of the markers in the following frames. The user is asked to first localize the marker on the foot, then the marker on the heel, then the marker on the ankle, etc.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/markers_localization.png}
+    \caption{Example of the manual localization of the markers. The user is asked to click on the markers in the first frame of the video. The single localized foot marker is highlighted in green.}
+    \label{fig:marker_localization}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/markers_crop.png}
+    \caption{Closeup of the localization of the markers. The single localized foot marker is highlighted in green. The contours of the thresholded regions are highlighted in white. The centroids of the contours are highlighted by small green cross.}
+    \label{fig:marker_crop}
+\end{figure}
+
+
+After clicking on a marker, multiple steps are performed:
+\begin{enumerate}
+    \item The x,y coordinates of the marker are saved.
+    \item If there is already some marker localized and therefore some color thresholds defined and markers detected, the detected markers are searched if there is some marker close to the clicked marker. If there is, the location of the clicked marker is updated to the location of the detected marker. This is done so that user does not have to precisely click on the marker. This is especially useful when the markers are small and the user is using a mobile device with a small screen.
+    \item Based on the x,y coordinates of the marker, the color of the marker is extracted from the image.
+    \item The color of the marker is used to update the color thresholds used to detect the markers. More on this in section \ref{detection}.
+\end{enumerate}
+
+\subsection{Detection}
+\label{detection}
+After obtaining the markers locations and colors, the markers are detected in the following frames. The detection is performed in the following steps:
+\begin{enumerate}
+    \item The frame is converted to the CIELAB color space.
+    \item The frame is thresholded using the minimum and maximum A and B channel values of the localized markers and some margin. The margin is used to account for the changes in the lighting conditions. Empirically, the margin of 15 works well. Figure \ref{fig:marker_detection} shows an example of the thresholded image.
+    \item Contours are found in the thresholded image. The \texttt{cv.findContours()} method is used for this.
+    \item The centroids of the contours are calculated using the \texttt{cv.moments()} method.
+    \item The centroids are used as noisy detections.
+\end{enumerate}
+
+The CIELAB color space is used because it is designed to approximate human vision. The A and B channels are used because they represent the color of the marker. The L channel is not used because it represents the lightness of the color and is not very useful for detecting the markers due to the changes in the lighting conditions. Experiments with using the H channel of the HSV color space were also performed, but there were some problems with the detection of the markers on the edges of the color spectrum (H=0 and H=255). The CIELAB color space does not have this problem, because it uses two channels for the color.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/thresholded.png}
+    \caption{Example of the image thresholded using the minimum and maximum A and B channel values of the localized markers and a margin of 15. The markers are then detected as the contours in the thresholded image.}
+    \label{fig:marker_detection}
+\end{figure}
+
+\subsection{Tracking}
+\label{tracking}
+The detected markers are then tracked using a simple method similar to SORT \cite{sort}. The tracking algorithm works as follows:
+
+\begin{enumerate}
+    \item Every possible assignment of the detected markers and the markers in the previous frame is created. To limit the number of possible assignments, the assignments are created only if the distance between the markers is less than 50 pixels.
+    \item For every found assignment, the cost of the assignment is calculated as the sum of the distances between the markers in the assignment.
+    \item To make tracking more robust, the cost of the assignment is increased by the difference of the angles between the markers in the assignment. This is done to prevent the markers from switching places.
+    \item Assignment with the most markers assigned and the lowest cost is selected.
+\end{enumerate}
+
+Experiments with using the Kalman filter were also performed. Unfortunately I was not able to get the Kalman filter to work properly. The Kalman filter was not able to predict the position of the markers and the tracking was not very robust. The simple method described above works better.
+
+\section{Limitations}
+The marker-based approach was mainly chosen due to its theoretically perfect accuracy. However, in practice there are several limitations to this approach:
+
+\begin{enumerate}
+    \item Accuracy of the system heavily depends on the placement of the markers. If the markers are not placed correctly, the results are not accurate. Since the placement is done by the user, this is a real issue. Correct placement of the markers is not trivial.
+    \item The user needs to have the markers available. They don't have to be special video markers, but they need to be of a different color than the background and the clothing of the user and need to be glued to the user.
+    \item The biggest limitation is the reduced robustness of the system. The system works well if the color of the markers is not present elsewhere in the image. However, in other cases, the markers are detected in the wrong places and the system does not work. Figure \ref{fig:failed_localization} shows an example of the failed localization of the markers. The markers are not localized correctly, because the leaves in the background have similar color to the markers.
+\end{enumerate}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/failed_localization.png}
+    \caption{Example of a failed localization of the markers. The leaves in the background have similar color to the markers and the markers are therefore not localized correctly. The markers are localized as the green dots.}
+    \label{fig:failed_localization}
+\end{figure}
+
+Due to these serious limitations, the marker-based approach was not used in the final version of the application. And instead, the RTMPose pose estimation model is used. The details of the implementation are described in section \ref{pose_estimation}.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -325,7 +409,7 @@ To find the optimal architectures for the S-ViPNet and T-ViPNet networks, the au
 
 This work evaluates the modified S-ViPNet model with the MobileNetV3 \cite{mobilenetv3} backbone and SimCC \cite{simcc} algorithm instead of predicting heatmaps. The model is trained on the COCO dataset and predicts 17 keypoints, as defined in the COCO dataset.
 
-\section{Results on COCO}
+\section{Results On The COCO Keypoint Dataset}
 To compare the potential of the methods, the results of the models on the COCO dataset are shown in table \ref{tab:evaluation_results_coco}. All of the methods were trained only on the COCO dataset and predict the same keypoints. The results are taken from MMPose documentation \cite{mmpose2020}.
 
 The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achieving the best results. The HRNet-W32 model also performs well but it is a much larger and slower model. However, the other lightweight models such as YOLOX-Pose and ViPNAS-MobileNetV3 perform significantly worse than even the medium and small RTMPose models. Overall the RTMPose models show very promising results compared to the other models.
@@ -353,22 +437,12 @@ The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achi
 
 \end{table}
 
-
-
-\chapter{Evaluation on Pose Estimation of Cyclists}
-\label{evaluation}
-
-The goal of this section is to evaluate the performance of pose estimation models on the task of side view pose estimation of cyclists and find the best model for use in the bikefit application.
-
-The models are evaluated on a custom dataset, which is described in section \ref{evaluation_dataset}. The evaluation metrics are described in section \ref{evaluation_metrics}. The results are shown in section \ref{evaluation_results}.
-
-The models are ran using the MMPose framework \cite{mmpose2020}, with the Inferencer API and the PyTorch backend. Topdown models (models that require inputs cropped to the bounding box of the person) use the RTMDet-nano model \cite{rtmdet} from the MMDetetection framework \cite{mmdetection} for person detection.
-
-Since no models predict the fifth metatarsal of the foot, the small toe landmark is used instead for the models that predict it.
+\chapter{Pose Estimation Dataset for Bikefitting}
 
 
 
-\section{Evaluation Dataset}
+\section{Obtaining Ground Truth Annotations}
+\section{Training and Validation Split}
 \label{evaluation_dataset}
 To accurately measure the performance of a pose estimation model, it is necessary to have a dataset with ground truth annotations. Since there is no such dataset for side view pose estimation of cyclists, new small evaluation dataset was created. It consists of 12 videos in 3 different enviroments with various camera angles and riding positions (riding on hoods, drops, tops and aero position on the drops). The videos were shot in FullHD resolution at 30 FPS.
 
@@ -389,6 +463,32 @@ Before shooting the videos, orange colored markers were placed on the camera-fac
 
 To annotate the videos, the markers were tracked using the first version of the bikefit application described in section \ref{marker_based_tracking}. The application tracks the markers in a lower resolution. To get the ground truth annotations, the marker positions were then scaled to the original resolution of the video.
 
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Fine-Tuning and Evaluation of Pose Estimation Models for Bikefitting}
+\label{training_pose_estimation_model_for_bikefitting}
+
+
+The goal of this section is to evaluate the performance of pose estimation models on the task of side view pose estimation of cyclists and find the best model for use in the bikefit application.
+
+The models are evaluated on a custom dataset, which is described in section \ref{evaluation_dataset}. The evaluation metrics are described in section \ref{evaluation_metrics}. The results are shown in section \ref{evaluation_results}.
+
+The models are ran using the MMPose framework \cite{mmpose2020}, with the Inferencer API and the PyTorch backend. Topdown models (models that require inputs cropped to the bounding box of the person) use the RTMDet-nano model \cite{rtmdet} from the MMDetetection framework \cite{mmdetection} for person detection.
+
+Since no models predict the fifth metatarsal of the foot, the small toe landmark is used instead for the models that predict it.
+
 \section{Evaluation Metrics}
 \label{evaluation_metrics}
 
@@ -408,7 +508,7 @@ Here, in the BBND formula:
 
 This adjustment allows for a scaled representation of the distance metric, effectively normalizing it with respect to the average bounding box dimension. BBND offers easy to interpret results, with a lower value indicating a more accurate prediction. It also allows for a more direct comparison of the performance of different models, as the metric is not affected by the scale of the video.
 
-\section{Results}
+\section{Initial Evaluation of Pre-Trained Models}
 \label{evaluation_results}
 At first the models are evaluated using only the keypoints that all models predict. These keypoints are the ankle, knee, hip, shoulder, elbow and wrist. The results are shown in table \ref{tab:evaluation_results_all}. The best results are achieved by the rtmpose-l-256x192 model, but most of the bigger RTMPose models outperform the other models. This is in contrast to the results on the COCO dataset, where HRNet-W32 model performed similarly to the RTMPose-l model. The decrease in performance of the HRNet-W32 model is probably caused by the fact that it was trained only on the COCO dataset, while the RTMPose models were trained on multiple datasets and are therefore better used to pose estimation for cycling.
 
@@ -472,24 +572,13 @@ The models which also output heel and top of the foot keypoints are evaluated in
 \end{table}
 
 
+\section{Fine-Tuning On Custom Bikefit Dataset}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\chapter{Training Pose Estimation Model for Bikefitting}
-\label{training_pose_estimation_model_for_bikefitting}
-
-\section{Dataset}
-\section{Training Setup}
-\section{Model Compression}
-
-\subsection{Pruning}
-
-\subsection{Quantization}
-\section{Results}
+\section{Evaluation Of Fine-Tuned Models}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Architechture and Implementation of the Bikefit Application}
+\chapter{Implementation of the Bikefit Web Application}
 \label{ch:bikefit_application}
 
 This chapter describes the web application for bike fitting. Implementing the application as a web application has several advantages over implementing it as a mobile or desktop application. The web application can be used on any device with a web browser. This allows the application to be used on mobile devices, tablets, laptops and desktop computers. The user also does not need to download and install anything.
@@ -567,93 +656,16 @@ Due to the low-level design of the WebCodecs API, it is not easy to use. Moreove
     </script> 
 \end{lstlisting}
 
-\section{Marker-based Tracking}
-\label{marker_based_tracking}
-To estimate the keypoints, the application uses colored markers, which are placed on the parts of the body, whose position needs to be estimated (foot, heel, ankle, knee, hip, shoulder, elbow, wrist). The markers are at first localized manually by the user and their color is then used to detect them in the video. The markers are then tracked using a method similar to SORT. The detection and tracking is implemented using the OpenCV.js library \cite{opencvjs}.
-
-
-\subsection{Manual Localization of the Markers}
-\label{manual_localization_of_the_markers}
-At first, the user is asked to manually localize the markers by clicking on them in the first frame of the video. Figure \ref{fig:marker_localization} shows an example of the manual localization of the markers. The colors of these markers are saved and used for thresholding and detection of the markers in the following frames. The user is asked to first localize the marker on the foot, then the marker on the heel, then the marker on the ankle, etc.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/markers_localization.png}
-    \caption{Example of the manual localization of the markers. The user is asked to click on the markers in the first frame of the video. The single localized foot marker is highlighted in green.}
-    \label{fig:marker_localization}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/markers_crop.png}
-    \caption{Closeup of the localization of the markers. The single localized foot marker is highlighted in green. The contours of the thresholded regions are highlighted in white. The centroids of the contours are highlighted by small green cross.}
-    \label{fig:marker_crop}
-\end{figure}
-
-
-After clicking on a marker, multiple steps are performed:
-\begin{enumerate}
-    \item The x,y coordinates of the marker are saved.
-    \item If there is already some marker localized and therefore some color thresholds defined and markers detected, the detected markers are searched if there is some marker close to the clicked marker. If there is, the location of the clicked marker is updated to the location of the detected marker. This is done so that user does not have to precisely click on the marker. This is especially useful when the markers are small and the user is using a mobile device with a small screen.
-    \item Based on the x,y coordinates of the marker, the color of the marker is extracted from the image.
-    \item The color of the marker is used to update the color thresholds used to detect the markers. More on this in section \ref{detection}.
-\end{enumerate}
-
-\subsection{Detection}
-\label{detection}
-After obtaining the markers locations and colors, the markers are detected in the following frames. The detection is performed in the following steps:
-\begin{enumerate}
-    \item The frame is converted to the CIELAB color space.
-    \item The frame is thresholded using the minimum and maximum A and B channel values of the localized markers and some margin. The margin is used to account for the changes in the lighting conditions. Empirically, the margin of 15 works well. Figure \ref{fig:marker_detection} shows an example of the thresholded image.
-    \item Contours are found in the thresholded image. The \texttt{cv.findContours()} method is used for this.
-    \item The centroids of the contours are calculated using the \texttt{cv.moments()} method.
-    \item The centroids are used as noisy detections.
-\end{enumerate}
-
-The CIELAB color space is used because it is designed to approximate human vision. The A and B channels are used because they represent the color of the marker. The L channel is not used because it represents the lightness of the color and is not very useful for detecting the markers due to the changes in the lighting conditions. Experiments with using the H channel of the HSV color space were also performed, but there were some problems with the detection of the markers on the edges of the color spectrum (H=0 and H=255). The CIELAB color space does not have this problem, because it uses two channels for the color.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/thresholded.png}
-    \caption{Example of the image thresholded using the minimum and maximum A and B channel values of the localized markers and a margin of 15. The markers are then detected as the contours in the thresholded image.}
-    \label{fig:marker_detection}
-\end{figure}
-
-\subsection{Tracking}
-\label{tracking}
-The detected markers are then tracked using a simple method similar to SORT \cite{sort}. The tracking algorithm works as follows:
-
-\begin{enumerate}
-    \item Every possible assignment of the detected markers and the markers in the previous frame is created. To limit the number of possible assignments, the assignments are created only if the distance between the markers is less than 50 pixels.
-    \item For every found assignment, the cost of the assignment is calculated as the sum of the distances between the markers in the assignment.
-    \item To make tracking more robust, the cost of the assignment is increased by the difference of the angles between the markers in the assignment. This is done to prevent the markers from switching places.
-    \item Assignment with the most markers assigned and the lowest cost is selected.
-\end{enumerate}
-
-Experiments with using the Kalman filter were also performed. Unfortunately I was not able to get the Kalman filter to work properly. The Kalman filter was not able to predict the position of the markers and the tracking was not very robust. The simple method described above works better.
-
-\subsection{Limitations}
-The marker-based approach was mainly chosen due to its theoretically perfect accuracy. However, in practice there are several limitations to this approach:
-
-\begin{enumerate}
-    \item Accuracy of the system heavily depends on the placement of the markers. If the markers are not placed correctly, the results are not accurate. Since the placement is done by the user, this is a real issue. Correct placement of the markers is not trivial.
-    \item The user needs to have the markers available. They don't have to be special video markers, but they need to be of a different color than the background and the clothing of the user and need to be glued to the user.
-    \item The biggest limitation is the reduced robustness of the system. The system works well if the color of the markers is not present elsewhere in the image. However, in other cases, the markers are detected in the wrong places and the system does not work. Figure \ref{fig:failed_localization} shows an example of the failed localization of the markers. The markers are not localized correctly, because the leaves in the background have similar color to the markers.
-\end{enumerate}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/failed_localization.png}
-    \caption{Example of a failed localization of the markers. The leaves in the background have similar color to the markers and the markers are therefore not localized correctly. The markers are localized as the green dots.}
-    \label{fig:failed_localization}
-\end{figure}
-
-Due to these serious limitations, the marker-based approach was not used in the final version of the application. And instead, the RTMPose pose estimation model is used. The details of the implementation are described in section \ref{pose_estimation}.
-
 
 
 \section{Pose Estimation}
 \label{pose_estimation}
+
+\subsection{Model Conversion and Deployment}
+
+\subsection{Preprocessing and Postprocessing}
+
+
 
 \section{Video Player}
 \label{video_player}
