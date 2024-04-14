@@ -319,7 +319,7 @@ Not all of the models predict the same keypoints. The models predict either 17 k
         \label{fig:image3}
     \end{subfigure}
 
-    \caption{Sets of keypoints used by the MS-COCO dataset (image taken from \cite{coco}), the Halpe26 dataset (image taken from \cite{halpe}) and the COCO-WholeBody dataset (image taken from \cite{halpe}).}
+    \caption{Sets of keypoints used by (from left to right) MS-COCO dataset, Halpe26 dataset and COCO-WholeBody dataset (images taken from \cite{coco} and \cite{halpe}).}
     \label{fig:subfigures}
 \end{figure}
 
@@ -438,58 +438,148 @@ The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achi
 \end{table}
 
 \chapter{Pose Estimation Dataset for Bikefitting}
-To accurately measure the performance of a pose estimation models in the setting of bikefitting, it is necessary to have a dataset that most closely resembles the real-world use case (videos of cyclists pedaling on an indoor trainer, usually in a side view). Since there is no such dataset, a new small dataset was created.
+To evaluate and improve the performance of a pose estimation models in the setting of bikefitting, it is necessary to have a dataset that most closely resembles the real-world use case (videos of cyclists pedaling on an indoor trainer, usually in a side view). Since there is no such dataset, a new small dataset was created.
 
-\section{Dataset Creation}
+% TODO: hodne obrazku
+% TODO: schema
+\section{Video Acquisition}
 
-To construct the dataset, at first, the author shot 23 videos of himself pedaling on an indoor trainer or leaning on a wall and pedaling a bike. The videos feature both a road bike and a mountain bike. To ensure variety, they were shot on multiple days in different lighting conditions and enviroments, with various camera angles, clothes and riding positions. The videos were shot in FullHD resolution at 30 or 60 FPS using a Redmi Note 10 Pro smartphone. Both the standard and ultra-wide camera lens were used. The videos are 8-35 seconds long.
+To construct the dataset, at first, the author shot 23 videos of himself pedaling on an indoor trainer or leaning on a wall and pedaling a bike. The videos feature both a road bike and a mountain bike. To ensure variety, they were shot on multiple days in different lighting conditions and enviroments, with various camera angles, clothes and riding positions. The videos were shot in FullHD resolution at 30 or 60 FPS using a Redmi Note 10 Pro smartphone. Both the standard and ultra-wide camera lens were used. The videos are 8-35 seconds long. Figure \ref{fig:examples} shows examples of some of the videos present in the dataset.
+
+\def\imgwidth{0.325\textwidth}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=1\linewidth]{obrazky-figures/1.png}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=1\linewidth]{obrazky-figures/2.png}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=1\linewidth]{obrazky-figures/3.png}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=1\linewidth]{obrazky-figures/4.png}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=1\linewidth]{obrazky-figures/5.png}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=1\linewidth]{obrazky-figures/6.png}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+    \end{subfigure}
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=1\linewidth]{obrazky-figures/7.png}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=1\linewidth]{obrazky-figures/8.png}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=1\linewidth]{obrazky-figures/9.png}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+    \end{subfigure}
+
+
+    \caption{Examples of some the videos present in the dataset. The videos feature both a road bike and a mountain bike. The videos were shot on multiple days in different lighting conditions and enviroments, with various camera angles, clothes and riding positions.}
+    \label{fig:examples}
+\end{figure}
+
 
 
 
 \section{Obtaining Ground Truth Annotations}
 Before shooting the videos, orange colored markers were placed on the camera-facing side of the rider's body. These markers were placed on the following locations: fifth metatarsal of the foot, heel, ankle, knee, hip, shoulder, elbow and wrist. Manually placing markers should be more accurate than annotating the keypoints in the video. The marker placement was guided by the instructions from the Retül bike fitting system \footnote{\url{https://youtu.be/kF0ZjtpO4FE?si=JRLX7lDNZ72oTaiC}}. These markers were the tracked using the methodology described in chapter \ref{marker_based_tracking}. The application tracks the markers in a lower resolution. To get the ground truth annotations, the marker positions were then scaled to the original resolution of the video.
 
+% \begin{figure}[htbp]
+
+%     \centering
+%     \includegraphics[width=1\linewidth]{obrazky-figures/eval_dataset_in_hoods.png}
+
+%     \includegraphics[width=1\linewidth]{obrazky-figures/eval_dataset_out_aero.png}
+
+%     \caption{Examples of the evaluation dataset. The first video shows the rider pedaling indoors on the hoods. The second video shows the rider pedaling outdoors in the aero position on the hoods. The orange stickers are used as ground truth annotations.}
+
+
+%     \label{fig:evaluation_markers}
+% \end{figure}
+
+% TODO: ukazka s anotacema
+
+After obtaining annotations for the 8 markers facing the camera, the annotations for the remaining keypoints need to be obtained. To do this, the RTMPose-l-256x192 model was used to predict the keypoints for the videos. The model was trained on the Body8 dataset and predicts 26 keypoints. These keypoints are not needed for evaluation of the models for bikefitting, but are needed for the fine-tuning of the models. If the models are fine-tuned only on the 8 keypoints, the model will unlearn how to localize the other keypoints. Another reason for predicting the keypoints is to get the bounding box of the person. The bounding box is needed to crop the frames to the bounding box of the person. The bounding box is predicted by the RTMDet-nano model \cite{rtmdet} from the MMDetection framework \cite{mmdetection}. Figure \ref{fig:dataset_annotations} shows an example frame from the dataset with the annotations.
+
 \begin{figure}[htbp]
-
     \centering
-    \includegraphics[width=1\linewidth]{obrazky-figures/eval_dataset_in_hoods.png}
+    \includegraphics[width=1\linewidth]{obrazky-figures/annotations_1.jpg}
 
-    \includegraphics[width=1\linewidth]{obrazky-figures/eval_dataset_out_aero.png}
-
-    \caption{Examples of the evaluation dataset. The first video shows the rider pedaling indoors on the hoods. The second video shows the rider pedaling outdoors in the aero position on the hoods. The orange stickers are used as ground truth annotations.}
-
-
-    \label{fig:evaluation_markers}
+    \caption{Example frame from the dataset with the annotations. Ground truth locations of the 8 camera facing keypoints are obtained by tracking colored markers. The remaining keypoints are predicted by the RTMPose-l-256x192 model. The bounding box of the person is obtained by the RTMDet-nano model.}
+    \label{fig:dataset_annotations}
 \end{figure}
 
-After obtaining annotations for the 8 markers facing the camera, the annotations for the remaining keypoints need to be obtained. To do this, the RTMPose-l-256x192 model was used to predict the keypoints for the videos. The model was trained on the Body8 dataset and predicts 26 keypoints. These keypoints are not needed for evaluation of the models for bikefitting, but are needed for the fine-tuning of the models. If the models are fine-tuned only on the 8 keypoints, the model will unlearn how to localize the other keypoints. Another reason for predicting the keypoints is to get the bounding box of the person. The bounding box is needed to crop the frames to the bounding box of the person. The bounding box is predicted by the RTMDet-nano model \cite{rtmdet} from the MMDetection framework \cite{mmdetection}.
+
 
 \section{Extracting Individual Frames}
 After obtaining the annotations, the individual frames are extracted from the videos. This is done since the pose estimation models are trained on individual frames and not on videos.
 
 To reduce the size of the dataset and remove duplicate frames, not all of the frames are extracted. The frames to extract are selected using the k-means clustering algorithm \cite{kmeans}. Then only the centroids of the clusters are used as the frames for the dataset. The clustering is ran on the locations of the 8 markers. The number of clusters is set to 1/3 of the number of frames.
 
+%TODO: ubrazky
 \section{Removing Colored Markers From the Frames}
-To not bias the training and evaluation of the models, the colored markers are removed from the frames. This is done using an inpainting algorithm. The inpainting algorithm takes the frames with the colored markers and a mask of the colored markers and outputs the frames with the colored markers removed. 
+To not bias the training and evaluation of the models, the colored markers are removed from the frames. This is done using an inpainting algorithm. The inpainting algorithm takes the frames with the colored markers and a mask of the colored markers and outputs the frames with the colored markers removed.
 
 The mask of the colored markers is created the same way as in the marker-based tracking method, described in chapter \ref{marker_based_tracking}. It works by converting the frames to the CIELAB color space and thresholding the A and B channels using the minimum and maximum A and B channel values of the colored markers.
 
-The inpainting was done using the opencv library \cite{opencv}. The library contains implementations of the Navier-Stokes inpainting algorithm \cite{ns-inpainting}, which is based on fluid dynamics, and the Fast Marching Method \cite{fast-marching-inpainting}, which works by propagating the information from the known parts of the image to the unknown parts. After testing both algorithms, the Navier-Stokes inpainting algorithm was chosen, as it produced better results.
+The inpainting was done using the opencv library \cite{opencv}. The library contains implementations of the Navier-Stokes inpainting algorithm \cite{ns-inpainting}, which is based on fluid dynamics, and the Fast Marching Method \cite{fast-marching-inpainting}, which works by propagating the information from the known parts of the image to the unknown parts. After testing both algorithms, the Navier-Stokes inpainting algorithm was chosen, as it produced better results. Figure \ref{fig:inpainting} shows an example of the inpainting algorithm. It works well in most cases, but struggles with non-uniform backgrounds and can inpain unwanted parts of the image if the mask is not accurate.
+
+\begin{figure}
+    \includegraphics[width=1\linewidth]{obrazky-figures/inpainting_original.png}
+    \includegraphics[width=1\linewidth]{obrazky-figures/inpainting.jpg}
+    \caption{Example of the removal of the colored markers. The red colored markers are removed from the original image (top) using the Navier-Stokes inpainting algorithm. Most of the markers are removed well, but the algorithm produces blurry results on non-uniform backgrounds (pants with logo) and sometimes inpaints unwanted parts of the image (face), if the mask is not accurate.}
+    \label{fig:inpainting}
+\end{figure}
 
 
 \section{Training and Validation Split}
 \label{evaluation_dataset}
-
-
-
-
-
-
-
-
-
-
-
+The extracted frames are split into training and validation sets. Frames from the same video are not split between the training and validation sets. The training set \textbf{1833} frames extracted from \textbf{19} videos and the validation set contains \textbf{476} frames extracted from \textbf{4} videos.
 
 
 
