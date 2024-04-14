@@ -41,7 +41,7 @@ This section describes the most common measurements used in bikefitting. These m
 \subsection{Saddle Height}
 The saddle height is a fundamental measurement that significantly impacts a rider's comfort and pedaling efficiency. It is argued to be the most important measurement in bikefitting and should be the first measurement to be adjusted \cite{burtbikefit}. Bad saddle height can even cause problems commonly associted with other measurements such as knee pain, lower back pain, neck pain, saddle sores, etc.
 
-It is determined by considering the rider's knee angle at the bottom of the pedal stroke. Knee angle is the angle between the hip and the ankle measured at the knee joint. Burt recommends a knee angle of 35-40 degrees for average riders and even up to 30 degrees for professional cyclists \cite{burtbikefit}.
+It is determined by considering the rider's knee angle at the bottom of the pedal stroke. Knee angle is the angle between the hip and the ankle measured at the knee joint. Burt recommends a knee angle of 35-40 degrees for average riders and even up to 30 degrees for professional cyclists \cite{burtbikefit}. Figure \ref{fig:saddle_height} shows the knee angle at the bottom of the pedal stroke.
 
 \begin{figure}[htbp]
     \centering
@@ -96,7 +96,7 @@ The fitting process starts with the rider filling out questionaire about their m
 After creating the user profile, user can create a fit session for one specific bike. In the process, the user selects their fit goal (performance, comfort, or balanced) and the type of bike they are using (road, gravel, mtb, triathlon, hybrid, or stationary). This also changes the recommended angle ranges.
 
 \subsubsection{Predicted keypoints}
-MyVeloFit predicts 6 joint locations for the camera facing side of the body. Most common pose estimation models predict similar keypoints. However, keypoints commonly used to adjust the position of the saddle, such as the heel and the fifth metatarsal of the foot, are missing. The keypoints used by MyVeloFit are: ankle, knee, hip, shoulder, elbow and wrist.
+MyVeloFit predicts 6 joint locations for the camera facing side of the body. Most common pose estimation models predict similar keypoints. However, keypoints commonly used to adjust the position of the saddle, such as the heel and the fifth metatarsal of the foot, are missing. The keypoints used by MyVeloFit are: ankle, knee, hip, shoulder, elbow and wrist. Figure \ref{fig:myvelofit_keypoints} shows the predicted keypoints.
 
 
 \begin{figure}[htbp]
@@ -106,7 +106,7 @@ MyVeloFit predicts 6 joint locations for the camera facing side of the body. Mos
     \label{fig:myvelofit_keypoints}
 \end{figure}
 
-From the joint angles for every frame, some are selected for computing the joint angles at the top of the pedal stroke, front of the pedal stroke and bottom. Every position uses different angle ranges and even which angles are taken into account.
+From the joint angles for every frame, some are selected for computing the joint angles at the top of the pedal stroke, front of the pedal stroke and bottom. Every position uses different angle ranges and even which angles are taken into account. Figure \ref{fig:myvelofit_top} shows the predicted joint angles at the top of the pedal stroke.
 
 \begin{figure}[htbp]
     \centering
@@ -115,7 +115,7 @@ From the joint angles for every frame, some are selected for computing the joint
     \label{fig:myvelofit_top}
 \end{figure}
 
-Based on the angles computed for parts of the pedal stroke, MyVeloFit then makes suggestions for saddle height, saddle fore and aft, handlebar height and handlebar reach.
+Based on the angles computed for parts of the pedal stroke, MyVeloFit then makes suggestions for saddle height, saddle fore and aft, handlebar height and handlebar reach. Figure \ref{fig:myvelofit_suggestions} shows the recommended changes to the bike position.
 
 \begin{figure}[htbp]
     \centering
@@ -140,7 +140,7 @@ Overall, MyVeloFit is relatively easy to use and its joint predictions are fairl
 Retül uses 8 markers placed on both sides of the rider's body. These markers are placed on the following locations: fifth metatarsal of the foot, heel, ankle, knee, hip, shoulder, elbow and wrist.
 
 
-The markers are placed by the fitter on the rider's body. Accurate placement of the markers is crucial for the system to work properly. Even small deviations can lead to inaccurate results.
+The markers are placed by the fitter on the rider's body. Accurate placement of the markers is crucial for the system to work properly. Even small deviations can lead to inaccurate results. Figure \ref{fig:retul_markers} shows the placement of the markers.
 
 \begin{figure}[htbp]
     \centering
@@ -151,11 +151,11 @@ The markers are placed by the fitter on the rider's body. Accurate placement of 
 
 Retül's fitting process involves setting up the bike on a trainer equipped with the system. During the session, the rider performs various motions and pedal strokes while the Retül system captures real-time data on joint angles and movements.
 
-Data Captured by Retül includes a wide range of joint angles and movements such as knee angles at top of the pedal stroke and bottom of the pedal stroke, hip angles throughout the pedal stroke, shoulder, elbow, and wrist positions in relation to handlebar reach and drop, as well as ankle and foot movement concerning cleat positioning and alignment.
+Data Captured by Retül includes a wide range of joint angles and movements such as knee angles at top of the pedal stroke and bottom of the pedal stroke, hip angles throughout the pedal stroke, shoulder, elbow, and wrist positions in relation to handlebar reach and drop, as well as ankle and foot movement concerning cleat positioning and alignment. Figure \ref{fig:retul_app} shows the captured data in Retül's software.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/retul_app.png}
+    \includegraphics[width=\textwidth]{obrazky-figures/retul_app_crop.png}
     \caption{Retül's software showing the captured data. (Screenshot from  instructional video by Retül \cite{retulScreenYoutube}.)}
     \label{fig:retul_app}
 \end{figure}
@@ -173,7 +173,7 @@ Despite the fact that Retül is a very popular bike fitting system, it has some 
 
 
 \subsection{BikeFast Fit Elite}
-\href{https://www.bikefastfit.com/}{BikeFast Fit Elite} is an iOS and Mac OS application that uses pose estimation model to predict the joint locations for a side view video of the user pedaling their bike on an indoor trainer. Compared to MyVeloFit, it uses additional keypoints for the fifth metatarsal of the foot and the heel.
+\href{https://www.bikefastfit.com/}{BikeFast Fit Elite} is an iOS and Mac OS application that uses pose estimation model to predict the joint locations for a side view video of the user pedaling their bike on an indoor trainer. Compared to MyVeloFit, it uses additional keypoints for the fifth metatarsal of the foot and the heel. Figure \ref{fig:bikefastfit_keypoints} shows the predicted keypoints.
 
 \begin{figure}[htbp]
     \centering
@@ -202,7 +202,7 @@ To estimate the keypoints, the application uses colored markers, which are place
 
 \subsection{Manual Localization of the Markers}
 \label{manual_localization_of_the_markers}
-At first, the user is asked to manually localize the markers by clicking on them in the first frame of the video. Figure \ref{fig:marker_localization} shows an example of the manual localization of the markers. The colors of these markers are saved and used for thresholding and detection of the markers in the following frames. The user is asked to first localize the marker on the foot, then the marker on the heel, then the marker on the ankle, etc.
+At first, the user is asked to manually localize the markers by clicking on them in the first frame of the video. Figure \ref{fig:marker_localization} shows an example of the manual localization of the markers. The colors of these markers are saved and used for thresholding and detection of the markers in the following frames. The user is asked to first localize the marker on the foot, then the marker on the heel, then the marker on the ankle, etc. Figure \ref{fig:marker_localization} shows the manual localization process of the markers.
 
 \begin{figure}[htbp]
     \centering
@@ -211,12 +211,7 @@ At first, the user is asked to manually localize the markers by clicking on them
     \label{fig:marker_localization}
 \end{figure}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/markers_crop.png}
-    \caption{Closeup of the localization of the markers. The single localized foot marker is highlighted in green. The contours of the thresholded regions are highlighted in white. The centroids of the contours are highlighted by small green cross.}
-    \label{fig:marker_crop}
-\end{figure}
+
 
 
 After clicking on a marker, multiple steps are performed:
@@ -226,6 +221,14 @@ After clicking on a marker, multiple steps are performed:
     \item Based on the x,y coordinates of the marker, the color of the marker is extracted from the image.
     \item The color of the marker is used to update the color thresholds used to detect the markers. More on this in section \ref{detection}.
 \end{enumerate}
+
+Figure \ref{fig:marker_crop} shows a closeup of the localization of the markers. The single localized foot marker is highlighted in green. The contours of the thresholded regions are highlighted in white. The centroids of the contours are highlighted by small green cross.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/markers_crop.png}
+    \caption{Closeup of the localization of the markers. The single localized foot marker is highlighted in green. The contours of the thresholded regions are highlighted in white. The centroids of the contours are highlighted by small green cross.}
+    \label{fig:marker_crop}
+\end{figure}
 
 \subsection{Detection}
 \label{detection}
@@ -238,12 +241,12 @@ After obtaining the markers locations and colors, the markers are detected in th
     \item The centroids are used as noisy detections.
 \end{enumerate}
 
-The CIELAB color space is used because it is designed to approximate human vision. The A and B channels are used because they represent the color of the marker. The L channel is not used because it represents the lightness of the color and is not very useful for detecting the markers due to the changes in the lighting conditions. Experiments with using the H channel of the HSV color space were also performed, but there were some problems with the detection of the markers on the edges of the color spectrum (H=0 and H=255). The CIELAB color space does not have this problem, because it uses two channels for the color.
+The CIELAB color space is used because it is designed to approximate human vision. The A and B channels are used because they represent the color of the marker. The L channel is not used because it represents the lightness of the color and is not very useful for detecting the markers due to the changes in the lighting conditions. Experiments with using the H channel of the HSV color space were also performed, but there were some problems with the detection of the markers on the edges of the color spectrum (H=0 and H=255). The CIELAB color space does not have this problem, because it uses two channels for the color. Figure \ref{fig:marker_detection} shows an example of the thresholded image.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/thresholded.png}
-    \caption{Example of the image thresholded using the minimum and maximum A and B channel values of the localized markers and a margin of 15. The markers are then detected as the contours in the thresholded image.}
+    \caption{Example of the image thresholded using the minimum and maximum A and B channel values of the localized markers and a margin of 15. The markers are then detected as the centroids of the contours in the thresholded image.}
     \label{fig:marker_detection}
 \end{figure}
 
@@ -271,7 +274,7 @@ The marker-based approach was mainly chosen due to its theoretically perfect acc
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/failed_localization.png}
+    \includegraphics[width=\textwidth]{obrazky-figures/failed_localization_crop.png}
     \caption{Example of a failed localization of the markers. The leaves in the background have similar color to the markers and the markers are therefore not localized correctly. The markers are localized as the green dots.}
     \label{fig:failed_localization}
 \end{figure}
@@ -291,7 +294,7 @@ Pose estimation is a computer vision task that involves predicting the locations
 
 There are multiple approaches to pose estimation. The most common approaches are the top-down approach and the bottom-up approach. The top-down approach first detects people in the image and then predicts the keypoints for each person. The bottom-up approach first predicts the keypoints and then groups them into poses using hand writte post processing algorithms. Another approach is the one-stage approach, which predicts the keypoints directly from the image without the need for post processing. This work evaluates three pose estimation models using the top-down approach (RTMPose, HRNet and ViPNAS), described in sections \ref{rtmpose}, \ref{hrnet} and \ref{vipnas} and one pose estimation model using the one-stage approach (YOLOX-Pose), described in section \ref{yolox-pose}.
 
-Not all of the models predict the same keypoints. The models predict either 17 keypoints, as defined in the COCO dataset \cite{coco}, 26 keypoints, as defined in the Halpe26 dataset \cite{halpe}, or 133 keypoints, as defined in the COCO-WholeBody dataset \cite{coco-wholebody}.
+Not all of the models predict the same keypoints. The models predict either 17 keypoints, as defined in the COCO dataset \cite{coco}, 26 keypoints, as defined in the Halpe26 dataset \cite{halpe}, or 133 keypoints, as defined in the COCO-WholeBody dataset \cite{coco-wholebody}. Figure \ref{fig:subfigures} shows the sets of keypoints used by the MS-COCO dataset, the Halpe26 dataset and the COCO-WholeBody dataset.
 
 \begin{figure}[htbp]
     \centering
@@ -337,6 +340,7 @@ The RTMPose models are designed to be lightweight and fast. The authors claim, t
 The RTMPose models are based on the top-down pose estimation approach. They use a two-stage prediction, where the first stage is a person detector and the second stage is a pose estimator. The person detector is used to crop the image to the bounding box of the person. The pose estimator then predicts the keypoints for the cropped image. The authors claim that this approach is more accurate than the bottom-up approach, while still being faster in cases where the number of people in the image is lower than 6.
 
 The CSPNeXt backbone is used in the RTMPose models. This backbone is primarly designed for object detection. Authors claim that backbones designed for image classification, are not optimal for dense tasks such as pose estimation, object detection, semantic segmentation, etc. Some backbones using high-resolution feature maps or advanced transformer architectures achieve good results, but suffer from high computional cost, high latency or difficulties in deployment. The CSPNeXt backbone is designed to have a good balance of speed and accuracy.
+Figure \ref{fig:rtmpose_architecture} shows the architecture of the RTMPose models.
 
 \begin{figure}[htbp]
     \centering
@@ -366,7 +370,7 @@ This work evaluates the following RTMPose models:
 
 The HRNet (High-Resolution Network) \cite{hrnet} pose estimation architecture is characterized by its emphasis on maintaining high-resolution representations throughout the network. Unlike conventional methods that downsample the input image early in the network, HRNet adopts a multi-resolution approach, preserving detailed information essential for accurate pose estimation.
 
-A notable feature of the HRNet pose estimation architecture is its ability to capture both local and global context effectively. The network consists of parallel branches, each processing different resolutions of the input image, and these branches are interconnected, facilitating the exchange of information between different scales. This design allows HRNet to address challenges associated with scale variations in human poses, ensuring robust performance in capturing both fine details and overall pose structure.
+A notable feature of the HRNet pose estimation architecture is its ability to capture both local and global context effectively. The network consists of parallel branches, each processing different resolutions of the input image, and these branches are interconnected, facilitating the exchange of information between different scales. This design allows HRNet to address challenges associated with scale variations in human poses, ensuring robust performance in capturing both fine details and overall pose structure. Figure \ref{fig:hrnet_architecture} shows the architecture of the HRNet models.
 
 \begin{figure}[htbp]
     \centering
@@ -387,14 +391,16 @@ The one-stage approach has some advantages over bottom-up and top-down approache
 
 Top-down approaches first detect people and then predict keypoints for each person. This approach is favored by SOTA models, but the processing time grows linearly with the number of people in the image. This can lead to slow processing times in cases where there are many people in the image. SOTA methods also often use heavy detectors, which further increases the processing time.
 
+
+
+The original YOLO-pose \cite{yoloPose} model uses the anchor-based YOLOv5 detector \cite{yolov5}. The YOLOX-Pose model, which is evaluated in this work, uses the YOLOX detector \cite{yolox}. The YOLOX detector is based on the YOLOv5 detector, but uses anchor-free approach, which does not require the anchor boxes to be predefined. This allows the YOLOX detector to be more flexible. The YOLOX detector generally outperforms the YOLOv5 detector on the COCO dataset. Figure \ref{fig:yolox-pose_architecture} shows the architecture of the YOLOX-Pose model.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/yolopose_architecture.png}
     \caption{Architecture of the original YOLO-Pose model, which was based on the anchor-based YOLOv5 detector. The YOLOX-Pose model, which is evaluated in this work, is based on the anchorless YOLOX detector. Taken from \cite{yoloPose}.}
     \label{fig:yolopose_architecture}
 \end{figure}
-
-The original YOLO-pose \cite{yoloPose} model uses the anchor-based YOLOv5 detector \cite{yolov5}. The YOLOX-Pose model, which is evaluated in this work, uses the YOLOX detector \cite{yolox}. The YOLOX detector is based on the YOLOv5 detector, but uses anchor-free approach, which does not require the anchor boxes to be predefined. This allows the YOLOX detector to be more flexible. The YOLOX detector generally outperforms the YOLOv5 detector on the COCO dataset.
 
 The YOLOX-Pose model is trained on the COCO dataset and predicts 17 keypoints, as defined in the COCO dataset.
 
@@ -550,7 +556,7 @@ After obtaining annotations for the 8 markers facing the camera, the annotations
     \centering
     \includegraphics[width=1\linewidth]{obrazky-figures/annotations_1.jpg}
 
-    \caption{Example frame from the dataset with the annotations. Ground truth locations of the 8 camera facing keypoints are obtained by tracking colored markers. The remaining keypoints are predicted by the RTMPose-l-256x192 model. The bounding box of the person is obtained by the RTMDet-nano model.}
+    \caption{Example frame with annotations from the dataset. Ground truth locations of the 8 camera facing keypoints are obtained by tracking colored markers. The remaining keypoints are predicted by the RTMPose-l-256x192 model. The bounding box of the person is obtained by the RTMDet-nano model.}
     \label{fig:dataset_annotations}
 \end{figure}
 
@@ -716,7 +722,7 @@ To accurately estimate the keypoints, the application needs to access all of the
 
 To process the video frame by frame, the application uses the WebCodecs API\footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API}}. The WebCodecs API is a low-level API for encoding and decoding audio and video. It gives developers access to the invididual frames of the video. It is the only way to access the frames of the video in the browser. Simple and commonly used method is to simultaneously play the video and draw the video  frames to a canvas element and then access the pixels of the canvas. However, this method only does not work well if the processing is computationally expensive, since the video is played in real time. This leads to skipping of the frames and not all of the frames are processed. The WebCodecs API allows the application to process the video at its own pace.
 
-Because the API is relatively new, it is not yet supported by all browsers. Figure \ref{fig:caniuseWebcodecs} shows the browser support for the WebCodecs API as of January 2024. The API is supported by all browsers based on Chromium (Google Chrome, Microsoft Edge, Opera, Brave, etc.). It is Partially supported by Safari and Safari on iOS (video only) and not supported by Firefox. Overall based on CanIUse data\footnote{\url{https://caniuse.com/webcodecs}}, the API is supported by 87.6\% of the users, where 74.5\% of the users have full support and 13.1\% of the users have partial support.
+Because the API is relatively new, it is not yet supported by all browsers. Figure \ref{fig:caniuseWebcodecs} shows the browser support for the WebCodecs API as of January 2024. The API is supported by all browsers based on Chromium (Google Chrome, Microsoft Edge, Opera, Brave, etc.). It is Partially supported by Safari and Safari on iOS (video only) and not supported by Firefox. Overall based on CanIUse data\footnote{\url{https://caniuse.com/webcodecs}}, the API is supported by 87.6\% of the users, where 74.5\% of the users have full support and 13.1\% of the users have partial support. Figure \ref{fig:caniuseWebcodecs} shows the support diagram for the WebCodecs API as of January 2024.
 
 
 \begin{figure}[htbp]
