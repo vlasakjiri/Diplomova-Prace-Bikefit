@@ -438,15 +438,16 @@ The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achi
 \end{table}
 
 \chapter{Pose Estimation Dataset for Bikefitting}
+To accurately measure the performance of a pose estimation models in the setting of bikefitting, it is necessary to have a dataset that most closely resembles the real-world use case (videos of cyclists pedaling on an indoor trainer, usually in a side view). Since there is no such dataset, a new small dataset was created.
+
+\section{Dataset Creation}
+
+To construct the dataset, at first, the author shot 23 videos of himself pedaling on an indoor trainer or leaning on a wall and pedaling a bike. The videos feature both a road bike and a mountain bike. To ensure variety, they were shot on multiple days in different lighting conditions and enviroments, with various camera angles, clothes and riding positions. The videos were shot in FullHD resolution at 30 or 60 FPS using a Redmi Note 10 Pro smartphone. Both the standard and ultra-wide camera lens were used. The videos are 8-35 seconds long.
 
 
 
 \section{Obtaining Ground Truth Annotations}
-\section{Training and Validation Split}
-\label{evaluation_dataset}
-To accurately measure the performance of a pose estimation model, it is necessary to have a dataset with ground truth annotations. Since there is no such dataset for side view pose estimation of cyclists, new small evaluation dataset was created. It consists of 12 videos in 3 different enviroments with various camera angles and riding positions (riding on hoods, drops, tops and aero position on the drops). The videos were shot in FullHD resolution at 30 FPS.
-
-Before shooting the videos, orange colored markers were placed on the camera-facing side of the rider's body. These markers were placed on the following locations: fifth metatarsal of the foot, heel, ankle, knee, hip, shoulder, elbow and wrist.
+Before shooting the videos, orange colored markers were placed on the camera-facing side of the rider's body. These markers were placed on the following locations: fifth metatarsal of the foot, heel, ankle, knee, hip, shoulder, elbow and wrist. Manually placing markers should be more accurate than annotating the keypoints in the video. The marker placement was guided by the instructions from the Retül bike fitting system \footnote{\url{https://youtu.be/kF0ZjtpO4FE?si=JRLX7lDNZ72oTaiC}}. These markers were the tracked using the methodology described in chapter \ref{marker_based_tracking}. The application tracks the markers in a lower resolution. To get the ground truth annotations, the marker positions were then scaled to the original resolution of the video.
 
 \begin{figure}[htbp]
 
@@ -461,7 +462,26 @@ Before shooting the videos, orange colored markers were placed on the camera-fac
     \label{fig:evaluation_markers}
 \end{figure}
 
-To annotate the videos, the markers were tracked using the first version of the bikefit application described in section \ref{marker_based_tracking}. The application tracks the markers in a lower resolution. To get the ground truth annotations, the marker positions were then scaled to the original resolution of the video.
+After obtaining annotations for the 8 markers facing the camera, the annotations for the remaining keypoints need to be obtained. To do this, the RTMPose-l-256x192 model was used to predict the keypoints for the videos. The model was trained on the Body8 dataset and predicts 26 keypoints. These keypoints are not needed for evaluation of the models for bikefitting, but are needed for the fine-tuning of the models. If the models are fine-tuned only on the 8 keypoints, the model will unlearn how to localize the other keypoints. Another reason for predicting the keypoints is to get the bounding box of the person. The bounding box is needed to crop the frames to the bounding box of the person. The bounding box is predicted by the RTMDet-nano model \cite{rtmdet} from the MMDetection framework \cite{mmdetection}.
+
+\section{Extracting Individual Frames}
+After obtaining the annotations, the individual frames are extracted from the videos. This is done since the pose estimation models are trained on individual frames and not on videos.
+
+To reduce the size of the dataset and remove duplicate frames, not all of the frames are extracted. The frames to extract are selected using the k-means clustering algorithm \cite{kmeans}. Then only the centroids of the clusters are used as the frames for the dataset. The clustering is ran on the locations of the 8 markers. The number of clusters is set to 1/3 of the number of frames.
+
+\section{Removing Colored Markers From the Frames}
+To not bias the training and evaluation of the models, the colored markers are removed from the frames. This is done using an inpainting algorithm. The inpainting algorithm takes the frames with the colored markers and a mask of the colored markers and outputs the frames with the colored markers removed. 
+
+The mask of the colored markers is created the same way as in the marker-based tracking method, described in chapter \ref{marker_based_tracking}. It works by converting the frames to the CIELAB color space and thresholding the A and B channels using the minimum and maximum A and B channel values of the colored markers.
+
+The inpainting was done using the opencv library \cite{opencv}. The library contains implementations of the Navier-Stokes inpainting algorithm \cite{ns-inpainting}, which is based on fluid dynamics, and the Fast Marching Method \cite{fast-marching-inpainting}, which works by propagating the information from the known parts of the image to the unknown parts. After testing both algorithms, the Navier-Stokes inpainting algorithm was chosen, as it produced better results.
+
+
+\section{Training and Validation Split}
+\label{evaluation_dataset}
+
+
+
 
 
 
