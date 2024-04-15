@@ -444,6 +444,7 @@ The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achi
 \end{table}
 
 \chapter{Pose Estimation Dataset for Bikefitting}
+\label{ch:dataset}
 To evaluate and improve the performance of a pose estimation models in the setting of bikefitting, it is necessary to have a dataset that most closely resembles the real-world use case (videos of cyclists pedaling on an indoor trainer, usually in a side view). Since there is no such dataset, a new small dataset was created.
 
 % TODO: hodne obrazku
@@ -596,18 +597,53 @@ The extracted frames are split into training and validation sets. Frames from th
 \chapter{Fine-Tuning and Evaluation of Pose Estimation Models for Bikefitting}
 \label{training_pose_estimation_model_for_bikefitting}
 
+This chapter evaluates the performance of the pose estimation models on side view pose estimation of cyclists. Based on these results the best perfoming model is selected and fine-tuned on the bikefitting dataset. The fine-tuned model is then once again evaluated on the bikefitting dataset and compared with the pre-trained models. This model is then used in the bikefit application. Models are evaluated and fine-tuned on the dataset described in section \ref{ch:dataset}.
 
-The goal of this section is to evaluate the performance of pose estimation models on the task of side view pose estimation of cyclists and find the best model for use in the bikefit application.
-
-The models are evaluated on a custom dataset, which is described in section \ref{evaluation_dataset}. The evaluation metrics are described in section \ref{evaluation_metrics}. The results are shown in section \ref{evaluation_results}.
-
-The models are ran using the MMPose framework \cite{mmpose2020}, with the Inferencer API and the PyTorch backend. Topdown models (models that require inputs cropped to the bounding box of the person) use the RTMDet-nano model \cite{rtmdet} from the MMDetetection framework \cite{mmdetection} for person detection.
-
-Since no models predict the fifth metatarsal of the foot, the small toe landmark is used instead for the models that predict it.
+The evaluation metrics are described in section \ref{evaluation_metrics}. Initial evaluation of the standard, pre-trained models is done in section \ref{initial_evaluation}. The fine-tuning of the models is described in section \ref{fine_tuning}. The results of the fine-tuned models are shown in section \ref{fine_tuning_results}.
 
 \section{Evaluation Metrics}
 \label{evaluation_metrics}
+This section describes commonly used metrics for evaluating pose estimation models and their limitations. The Normalized Mean Error (NME) metric, described in section \ref{nme}, is used in the evaluation of the models on the bikefitting dataset.
 
+
+
+\subsection{Percentage of Correct Keypoints (PCK)}
+Percentage of Correct Keypoints (PCK) is a simple metric that calculates the percentage of keypoints that are within a certain distance from the ground truth keypoints. The distance is normalized by the size of the bounding box of the person. It provides a simple and intuitive measure of the accuracy of the model.
+
+However, for the bikefitting dataset, commonly used thresholds of 0.1 or 0.05 are too big and the models achieved close to 100\% PCK on the validation set. With a lower threshold, the models PCK would swing wildly if the distance between the keypoints and the ground truth keypoints is close to the threshold. This is why the PCK metric is not used in the evaluation of the models on the bikefitting dataset.
+
+\subsection{Object Keypoint Similarity (OKS)}
+The Object Keypoint Similarity (OKS) metric is a widely used metric for evaluating pose estimation models. It calculates the similarity between the predicted keypoints and the ground truth keypoints based on the distance between the keypoints and defined variance for each keypoint.
+
+The equation for keypoint similarity is:
+$$KS_i = \exp\left(\frac{-d^2_i}{2s^2\sigma^2_i}\right)$$
+
+\begin{description}
+    \item[$KS_i$] is the keypoint similarity for keypoint $i$
+    \item[$d_i$] is the Euclidean distance between the ground truth and predicted keypoint $i$
+    \item[$k_i$] is the variance for keypoint $i$
+    \item[$s$] is the scale of the object, $s^2$ is the area of the bounding box of the person
+\end{description}
+
+The final OKS is defined as sum of the keypoint similarities of visible keypoints divided by the number of visible keypoints.
+
+It calculates a score between 0 and 1, where 1 means that the predicted keypoints are in the same position as the ground truth keypoints and 0 means that the predicted keypoints are far from the ground truth keypoints. However, it relies on defining the variance for each keypoint, which defines how much can each keypoint vary from the ground truth keypoint. Figure \ref{fig:oks} shows the effect of the variance in the OKS metric for different keypoints. This setting of variance is dataset dependent and can be hard to define for a new dataset. This is why the OKS metric is not used in the evaluation of the models on the bikefitting dataset.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\linewidth]{obrazky-figures/oks.png}
+    \caption{Diffent variances in the OKS metric for different keypoints. The keypoint similarity for the eye and wrist keypoints are different, even though the Euclidean distance is the same. Taken from \cite{oks}.}
+    \label{fig:oks}
+\end{figure}
+
+\subsection{Mean Average Precision (mAP)}
+
+In assessing the performance of pose estimation models, the most widely used metric is the Mean Average Precision (mAP) which is calculated as the average of the precision-recall curve at different thresholds of Object Keypoint Similarity (OKS). This metric is often used in large scale datasets, such as COCO \cite{coco}, where the keypoints of interest are not always visible and therefore are hard to accurately predict. Moreover, these datasets are labeled by multiple annotators, which can lead to inconsistencies in the annotations.
+This metric intuitively tells us how many keypoints are in some proximity to the ground truth keypoints. However, in the case of the bikefitting dataset, where only few well visible keypoints are of interest, the mAP metric may not be the most suitable for evaluation, since all of the keypoints should be in close proximity to the ground truth keypoints and we are more interested in the exact error of the keypoints.
+
+
+\subsection{Normalized Mean Error (NME)}
+\label{nme}
 In assessing the performance of pose estimation models, widely used metrics, such as Mean Average Precision (mAP), or Object Keypoint Similarity (OKS) may not adequately gauge accuracy in scenarios involving video data where all keypoints of interest are consistently visible and accurately predicted. Similarly, relying solely on the L2 distance for evaluation proves inadequate due to the inherent variations in scale among different videos.
 
 As an alternative approach, a novel metric called \textbf{Bounding Box Normalized Distance (BBND)} has been employed. This metric involves calculating the ratio of the Euclidean distance to the average dimension of the bounding box, scaled by a factor of 100, so it can be expressed as a percentage:
@@ -625,7 +661,11 @@ Here, in the BBND formula:
 This adjustment allows for a scaled representation of the distance metric, effectively normalizing it with respect to the average bounding box dimension. BBND offers easy to interpret results, with a lower value indicating a more accurate prediction. It also allows for a more direct comparison of the performance of different models, as the metric is not affected by the scale of the video.
 
 \section{Initial Evaluation of Pre-Trained Models}
-\label{evaluation_results}
+\label{initial_evaluation}
+The models are ran using the MMPose framework \cite{mmpose2020}, with the Inferencer API and the PyTorch backend. Topdown models (models that require inputs cropped to the bounding box of the person) use the RTMDet-nano model \cite{rtmdet} from the MMDetetection framework \cite{mmdetection} for person detection.
+
+Since no models predict the fifth metatarsal of the foot, the small toe landmark is used instead for the models that predict it.
+
 At first the models are evaluated using only the keypoints that all models predict. These keypoints are the ankle, knee, hip, shoulder, elbow and wrist. The results are shown in table \ref{tab:evaluation_results_all}. The best results are achieved by the rtmpose-l-256x192 model, but most of the bigger RTMPose models outperform the other models. This is in contrast to the results on the COCO dataset, where HRNet-W32 model performed similarly to the RTMPose-l model. The decrease in performance of the HRNet-W32 model is probably caused by the fact that it was trained only on the COCO dataset, while the RTMPose models were trained on multiple datasets and are therefore better used to pose estimation for cycling.
 
 The best model achieves a mean BBND of 2.59\%. This means that the average distance between the predicted keypoints and the ground truth keypoints is 2.59\% of the average bounding box dimension.
@@ -689,8 +729,10 @@ The models which also output heel and top of the foot keypoints are evaluated in
 
 
 \section{Fine-Tuning On Custom Bikefit Dataset}
+\label{fine_tuning}
 
 \section{Evaluation Of Fine-Tuned Models}
+\label{fine_tuning_results}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
