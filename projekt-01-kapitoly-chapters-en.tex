@@ -601,6 +601,8 @@ This chapter evaluates the performance of the pose estimation models on side vie
 
 The evaluation metrics are described in section \ref{evaluation_metrics}. Initial evaluation of the standard, pre-trained models is done in section \ref{initial_evaluation}. The fine-tuning of the models is described in section \ref{fine_tuning}. The results of the fine-tuned models are shown in section \ref{fine_tuning_results}.
 
+All of the evaluations and training is done using the MMDetection framework \cite{mmdetection} and the MMPose framework \cite{mmpose2020}.
+
 \section{Evaluation Metrics}
 \label{evaluation_metrics}
 This section describes commonly used metrics for evaluating pose estimation models and their limitations. The Normalized Mean Error (NME) metric, described in section \ref{nme}, is used in the evaluation of the models on the bikefitting dataset.
@@ -644,29 +646,34 @@ This metric intuitively tells us how many keypoints are in some proximity to the
 
 \subsection{Normalized Mean Error (NME)}
 \label{nme}
-In assessing the performance of pose estimation models, widely used metrics, such as Mean Average Precision (mAP), or Object Keypoint Similarity (OKS) may not adequately gauge accuracy in scenarios involving video data where all keypoints of interest are consistently visible and accurately predicted. Similarly, relying solely on the L2 distance for evaluation proves inadequate due to the inherent variations in scale among different videos.
+As was discussed in the previous sections, the commonly used metrics for evaluating pose estimation models, such as PCK, OKS, and mAP, may not be suitable for the bikefitting dataset. This is why a simple Normalized Mean Error (NME) metric is used for evaluation of the models on the bikefitting dataset.
 
-As an alternative approach, a novel metric called \textbf{Bounding Box Normalized Distance (BBND)} has been employed. This metric involves calculating the ratio of the Euclidean distance to the average dimension of the bounding box, scaled by a factor of 100, so it can be expressed as a percentage:
 
-$$ \text{BBND} = \frac{\text{dist}}{\frac{\text{bbox.w} + \text{bbox.h}}{2}} \times 100 $$
+Normalized Mean Error (NME) is calculated by obtaining the Euclidean distance between the predicted keypoints and the ground truth keypoints, and then normalizing this distance with respect to the average bounding box dimension. The normalization is done to account for the scale of the video. It is then expressed as a percentage for better interpretability. The formula for NME is as follows:
 
-Here, in the BBND formula:
+$$ \text{NME}_i (\%)= \frac{d_i}{\frac{{s.w} + {s.h}}{2}} \cdot 100 $$
+
+Where:
 \begin{description}
-    \item[$\text{BBND}$:] Bounding Box Normalized Distance, which is the evaluation metric being proposed.
-    \item[$\text{dist}$:] Euclidean distance between the predicted keypoints and the ground truth keypoints.
-    \item[$\text{bbox.w}$:] Width of the bounding box encompassing the keypoints.
-    \item[$\text{bbox.h}$:] Height of the bounding box encompassing the keypoints.
+    \item[$\text{NME}_i$:] is the Normalized Mean Error for the $i$-th keypoint, expressed as a percentage of the average bounding box dimension
+    \item[$d_i$:] is the Euclidean distance between the ground truth and predicted keypoint $i$
+    \item[$s.w$:] is the width of the bounding box of the person
+    \item[$s.h$:] is the height of the bounding box of the person
 \end{description}
 
-This adjustment allows for a scaled representation of the distance metric, effectively normalizing it with respect to the average bounding box dimension. BBND offers easy to interpret results, with a lower value indicating a more accurate prediction. It also allows for a more direct comparison of the performance of different models, as the metric is not affected by the scale of the video.
+The NME for keypoint $i$ is then averaged over all keypoints to obtain the NME for a single frame. The final NME is then calculated over all frames in the dataset. NME offers easy to interpret results, with a lower value indicating a more accurate prediction.
 
 \section{Initial Evaluation of Pre-Trained Models}
 \label{initial_evaluation}
-The models are ran using the MMPose framework \cite{mmpose2020}, with the Inferencer API and the PyTorch backend. Topdown models (models that require inputs cropped to the bounding box of the person) use the RTMDet-nano model \cite{rtmdet} from the MMDetetection framework \cite{mmdetection} for person detection.
+This section evaluates the performance of the pre-trained pose estimation models on the bikefitting dataset. This is done, since there can be a significant difference in the performance of the models on COCO dataset and the bikefitting dataset. The models are evaluated using the NME metric, described in section \ref{evaluation_metrics}.
 
-Since no models predict the fifth metatarsal of the foot, the small toe landmark is used instead for the models that predict it.
+The models are evaluated using the MMPose framework \cite{mmpose2020}, with the Inferencer API and the PyTorch backend. Topdown models (models that require inputs cropped to the bounding box of the person) use the RTMDet-nano model \cite{rtmdet} from the MMDetetection framework \cite{mmdetection} for person detection.
 
-At first the models are evaluated using only the keypoints that all models predict. These keypoints are the ankle, knee, hip, shoulder, elbow and wrist. The results are shown in table \ref{tab:evaluation_results_all}. The best results are achieved by the rtmpose-l-256x192 model, but most of the bigger RTMPose models outperform the other models. This is in contrast to the results on the COCO dataset, where HRNet-W32 model performed similarly to the RTMPose-l model. The decrease in performance of the HRNet-W32 model is probably caused by the fact that it was trained only on the COCO dataset, while the RTMPose models were trained on multiple datasets and are therefore better used to pose estimation for cycling.
+As was described in chapter \ref{ch:pose_estimation}, some models predict more keypoints than others. Most of the models are trained to predict 17 keypoints, as defined in the COCO dataset. The RTMPose, which are also trained on other datasets, inlcuding Halpe26, predict 26 keypoints. The WholeBody models predict 133 keypoints. The keypoints that are not needed for the evaluation are ignored. Since no models predict the fifth metatarsal of the foot, which is a crucial point for bikefitting, the small toe landmark is used instead.
+
+\subsection{Common Keypoints Evaluation}
+
+At first the models are evaluated using only the common keypoints from the COCO dataset. The results are shown in table \ref{tab:evaluation_results_all}. The best results are achieved by the rtmpose-l-256x192 model, but most of the bigger RTMPose models outperform the other models. This is in contrast to the results on the COCO dataset, where HRNet-W32 model performed similarly to the RTMPose-l model. The decrease in performance of the HRNet-W32 model is probably caused by the fact that it was trained only on the COCO dataset, while the RTMPose models were trained on multiple datasets and are more robust to different poses and backgrounds.
 
 The best model achieves a mean BBND of 2.59\%. This means that the average distance between the predicted keypoints and the ground truth keypoints is 2.59\% of the average bounding box dimension.
 
@@ -702,6 +709,8 @@ The good results of the RTMPose models are not surprising, since they were train
     \label{tab:evaluation_results_all}
 
 \end{table}
+
+\subsection{Wholebody Keypoints Evaluation}
 
 The models which also output heel and top of the foot keypoints are evaluated in table \ref{tab:evaluation_results_wholebody}. These models have a slighty higher mean BBND than the models that only output the MS-COCO keypoints. This is probably because there are more datasets with MS-COCO keypoints than datasets with the heel and foot keypoints. The best model is rtmpose-l\_halpe26-256x192 with a mean BBND of 3.33\%. However, we can see that the heel and especially the fifth metatarsal of the foot are not predicted very well. This is probably because the heel and the fifth metatarsal of the foot are not visible in most of the training datasets. Another reason could be that the models do not output position of the fifth metatarsal of the foot, but only the position of the small toe and these two keypoints are not always in the same position.
 
