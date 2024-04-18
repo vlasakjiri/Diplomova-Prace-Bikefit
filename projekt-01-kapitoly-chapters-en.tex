@@ -732,39 +732,40 @@ At first the models are evaluated using only the 6 keypoints that are both in th
 
 \end{table}
 
-The best model achieves a mean NME of 2.12\%. This means that the average distance between the predicted keypoints and the ground truth keypoints is 2.12\% of the average bounding box dimension.
+The best model achieves a mean NME of \textbf{2.12\%}. This means that the average distance between the predicted keypoints and the ground truth keypoints is \textbf{2.12\%} of the average bounding box dimension.
 
 The good results of the RTMPose models are not surprising, since they were trained on multiple datasets, while the other models were trained only on the COCO dataset. The RTMPose models trained on the Body8 dataset perform slightly better than those trained on the Body8-Halpe26 dataset, which were trained to predict 26 keypoints. However, the models trained on COCO-WholeBody dataset perform significantly worse, this is probably because the WholeBody dataset is much smaller than the Body8 and standard COCO datasets.
 
-The other lightweight models (YOLOX-Pose and ViPNAS-MobileNetV3) perform significantly worse than the RTMPose models. The YOLOX-Pose model is the worst performing model, with a mean NME of 2.74\%. The ViPNAS-MobileNetV3 model performs slightly better, but still worse than even the tiny RTMPose model.
+The other lightweight models (YOLOX-Pose and ViPNAS-MobileNetV3) perform significantly worse than the RTMPose models. The YOLOX-Pose model is the worst performing model, with a mean NME of \textbf{2.74\%}. The ViPNAS-MobileNetV3 model performs slightly better, but still worse than even the tiny RTMPose model.
 
 Overall, we can see few unsurprising results. Models that are larger, or trained on multiple datasets, perform better than the smaller models trained only on the COCO dataset. It is interesting though, that there is not a huge difference between the large and medium RTMPose models, but there is a clear advantage to RTMPose models with larger input size. This is probably because the larger input size allows the model to capture more details in the image.
 
 \subsection{Wholebody Keypoints Evaluation}
-
-The models which also output heel and top of the foot keypoints are evaluated in table \ref{tab:evaluation_results_wholebody}. These models have a slighty higher mean BBND than the models that only output the MS-COCO keypoints. This is probably because there are more datasets with MS-COCO keypoints than datasets with the heel and foot keypoints. The best model is rtmpose-l\_halpe26-256x192 with a mean BBND of 3.33\%. However, we can see that the heel and especially the fifth metatarsal of the foot are not predicted very well. This is probably because the heel and the fifth metatarsal of the foot are not visible in most of the training datasets. Another reason could be that the models do not output position of the fifth metatarsal of the foot, but only the position of the small toe and these two keypoints are not always in the same position.
+The models which also output heel and foot fingers keypoints are evaluated on all of the 8 keypoints present in the bikefitting dataset. Meaning the camera facing fifth foot metatarsal and heel are also evaluated. The results are shown in table \ref{tab:evaluation_results_wholebody}. We can see, that the Normalized Mean Error (NME) for the foot and heel keypoints is much higher than for the other keypoints. This highlights the difficulty of predicting the foot and heel keypoints, as these keypoints are less represented in the training datasets. The models that output the WholeBody keypoints perform slightly worse than the models that only output Halpe26 keypoints, but the difference is smaller than when comparing only the 6 keypoints. What is surprising, is that the COCO-WholeBody models perform better than the Halpe26 on the foot and heel keypoints. This can be because the COCO-WholeBody dataset keypoints may match the foot and heel keypoints defined in the bikefitting better than the Halpe26 dataset. However, overall the best performing models are still the RTMPose models trained on the Body8 dataset, with the RTMPose-m 384x288 model achieving the best results with a mean NME of \textbf{2.49\%}. That is the same model that achieved the best results on the 6 keypoints evaluation.
 
 \begin{table}[htbp]
-    % \setlength{\tabcolsep}{4pt}
+    \setlength{\tabcolsep}{4pt}
     \centering
-    \begin{tabular}{lccc}
+    \begin{tabular}{l cccccc}
         \toprule
-        \textbf{Model}               & \textbf{Foot} & \textbf{Heel} & \textbf{Overall Mean} \\
-
+        Architecture & Input Size & Trained On     & Keypoints & Foot (\%)     & Heel (\%)     & Mean (\%)     \\
         \midrule
-        rtmpose-l\_halpe26-256x192   & \textbf{5.96} & 4.34          & \textbf{3.33}         \\
-        rtmpose-m\_halpe26-384x288   & 6.36          & \textbf{4.22} & 3.50                  \\
-        rtmpose-m\_halpe26-256x192   & 5.97          & 5.34          & 3.62                  \\
-        rtmpose-s\_halpe26-256x192   & 6.01          & 6.23          & 4.12                  \\
-        rtmpose-t\_halpe26-256x192   & 6.78          & 6.45          & 4.62                  \\
-        rtmpose-l\_wholebody-256x192 & 6.49          & 6.23          & 4.66                  \\
-        rtmpose-m\_wholebody-256x192 & 8.13          & 8.12          & 5.59                  \\
+        RTMPose-m    & 384x288    & Body8-Halpe26  & 26        & 3.45          & 3.40          & \textbf{2.49} \\
+        RTMPose-m    & 256x192    & Body8-Halpe26  & 26        & 3.29          & 3.62          & 2.54          \\
+        RTMPose-l    & 256x192    & Body8-Halpe26  & 26        & 3.56          & 3.21          & 2.64          \\
+        RTMPose-l    & 384x288    & Body8-Halpe26  & 26        & 3.48          & 3.58          & 2.67          \\
+        RTMPose-l    & 256x192    & COCO-WholeBody & 133       & \textbf{2.55} & 3.45          & 2.68          \\
+        RTMPose-s    & 256x192    & Body8-Halpe26  & 26        & 3.14          & 3.52          & 2.73          \\
+        RTMPose-m    & 256x192    & COCO-WholeBody & 133       & 3.25          & \textbf{3.15} & 2.74          \\
+        RTMPose-t    & 256x192    & Body8-Halpe26  & 26        & 4.21          & 3.20          & 2.91          \\
         \bottomrule
     \end{tabular}
-    \caption{Evaluation results on the custom bike fitting dataset, including the heel and fifth metatarsal of the foot. Results for the other keypoints can be found in table \ref{tab:evaluation_results_coco}. Each column represents the mean Bounding Box Normalized Distance for the given keypoint. The results are sorted by the overall mean Bounding Box Normalized Distance (spanning all keypoints), defined in section \ref{evaluation_metrics}. The best results are highlighted in bold. The model names are derived from their MMPose config files.}
+    \caption{Evaluation results for the models with extended keypoint set on the custom bike fitting dataset, including the heel and Foot landmarks. Results for the other keypoints can be found in table \ref{tab:evaluation_results_coco}. Foot column shows the Normalized Mean Error (NME) for the foot landmark, Heel column shows the NME for the heel landmark and Mean column shows the average NME for all of the 8 keypoints present in the bikefitting dataset. The values are represented as a percentage of the average bounding box dimension for a given frame. Details of the NME metric are described in section \ref{nme}.}
     \label{tab:evaluation_results_wholebody}
 
 \end{table}
+
+%TODO: examples 
 
 
 \section{Fine-Tuning On Custom Bikefit Dataset}
