@@ -423,19 +423,19 @@ The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achi
 Table \ref{tab:evaluation_params} compares the performance of the models with their computational costs. The RTMPose models are the most computationally efficient. Especially the m model, which achieves similaar results to the HRNet-W32 model, but is much faster and smaller. The YOLOX-Pose model computational costs are higher, because it is a one-stage model, which predicts the keypoints directly from the image. The ViPNAS-MobileNetV3 model is also very small and fast but it achieves significantly worse results than the RTMPose models.
 
 \begin{table}[htbp]
-    \setlength{\tabcolsep}{4pt}
+
     \centering
     \begin{tabular}{lcccccc}
         \toprule
-        \textbf{Model}        & \textbf{Input Size} & \textbf{AP}    & \textbf{AP-50} & \textbf{AP-75} & \textbf{AR}    & \textbf{AR-50} \\
+        Architecture          & Input Size & AP             & AP-50          & AP-75          & AR             & AR-50          \\
         \midrule
-        RTMPose-l             & 256x192             & \textbf{0.758} & \textbf{0.906} & \textbf{0.826} & \textbf{0.806} & 0.942          \\
-        HRNet\_w32            & 256x192             & 0.749          & 0.906          & 0.821          & 0.804          & \textbf{0.945} \\
-        RTMPose-m             & 256x192             & 0.746          & 0.899          & 0.817          & 0.795          & 0.935          \\
-        RTMPose-s             & 256x192             & 0.716          & 0.892          & 0.789          & 0.768          & 0.929          \\
-        SimCC\_ViPNAS-MBNetv3 & 256x192             & 0.695          & 0.883          & 0.772          & 0.755          & 0.927          \\
-        Yoloxpose\_m          & 640x640             & 0.695          & 0.899          & 0.766          & 0.733          & 0.926          \\
-        RTMPose-t             & 256x192             & 0.682          & 0.883          & 0.759          & 0.736          & 0.920          \\
+        RTMPose-l             & 256x192    & \textbf{0.758} & \textbf{0.906} & \textbf{0.826} & \textbf{0.806} & 0.942          \\
+        HRNet\_w32            & 256x192    & 0.749          & 0.906          & 0.821          & 0.804          & \textbf{0.945} \\
+        RTMPose-m             & 256x192    & 0.746          & 0.899          & 0.817          & 0.795          & 0.935          \\
+        RTMPose-s             & 256x192    & 0.716          & 0.892          & 0.789          & 0.768          & 0.929          \\
+        SimCC\_ViPNAS-MBNetv3 & 256x192    & 0.695          & 0.883          & 0.772          & 0.755          & 0.927          \\
+        Yoloxpose\_m          & 640x640    & 0.695          & 0.899          & 0.766          & 0.733          & 0.926          \\
+        RTMPose-t             & 256x192    & 0.682          & 0.883          & 0.759          & 0.736          & 0.920          \\
 
 
         \bottomrule
@@ -448,19 +448,19 @@ Table \ref{tab:evaluation_params} compares the performance of the models with th
 % TODO: POPIS
 
 \begin{table}[htbp]
-    \setlength{\tabcolsep}{4pt}
+
     \centering
     \begin{tabular}{lcccc}
         \toprule
-        \textbf{Model}        & \textbf{Input Size} & \textbf{AP}    & \textbf{FLOPS(G)} & \textbf{Params(M)} \\
+        Architecture          & Input Size & AP             & FLOPS(G) & Params(M) \\
         \midrule
-        RTMPose-l             & 256x192             & \textbf{0.758} & 4.2               & 28.1               \\
-        HRNet\_w32            & 256x192             & 0.749          & 7.7               & 28.5               \\
-        RTMPose-m             & 256x192             & 0.746          & 1.9               & 13.9               \\
-        RTMPose-s             & 256x192             & 0.716          & 0.7               & 5.7                \\
-        SimCC\_ViPNAS-MBNetv3 & 256x192             & 0.695          & 0.8               & 8.6                \\
-        Yoloxpose\_m          & 640x640             & 0.695          & 5.8               & 29.3               \\
-        RTMPose-t             & 256x192             & 0.682          & 0.4               & 3.5                \\
+        RTMPose-l             & 256x192    & \textbf{0.758} & 4.2      & 28.1      \\
+        HRNet\_w32            & 256x192    & 0.749          & 7.7      & 28.5      \\
+        RTMPose-m             & 256x192    & 0.746          & 1.9      & 13.9      \\
+        RTMPose-s             & 256x192    & 0.716          & 0.7      & 5.7       \\
+        SimCC\_ViPNAS-MBNetv3 & 256x192    & 0.695          & 0.8      & 8.6       \\
+        Yoloxpose\_m          & 640x640    & 0.695          & 5.8      & 29.3      \\
+        RTMPose-t             & 256x192    & 0.682          & 0.4      & 3.5       \\
 
 
         \bottomrule
@@ -696,7 +696,7 @@ The models are evaluated using the MMPose framework \cite{mmpose2020}, with the 
 
 As was described in chapter \ref{ch:pose_estimation}, some models predict more keypoints than others. Most of the models are trained to predict 17 keypoints, as defined in the COCO dataset. The RTMPose, which are also trained on other datasets, inlcuding Halpe26, predict 26 keypoints. The WholeBody models predict 133 keypoints. The keypoints that are not needed for the evaluation are ignored. Since no models predict the fifth metatarsal of the foot, which is a crucial point for bikefitting, the small toe landmark is used instead.
 
-\subsection{COCO Keypoints Evaluation}
+\subsection{6 Keypoint Evaluation}
 
 At first the models are evaluated using only the 6 keypoints that are both in the COCO dataset and the bikefitting dataset (camera facing ankle, knee, hip, shoulder, elbow and wrist). The results are shown in table \ref{tab:evaluation_results_all}. The best results are achieved by the RTMPose-m 384x288 model, but most of the bigger RTMPose models outperform the other models. This is in contrast to the results on the COCO dataset, where HRNet-W32 model performed similarly to the bigger RTMPose models. The relative decrease in performance of the HRNet-W32 model is probably caused by the fact that it was trained only on the COCO dataset, while the RTMPose models were trained on multiple datasets and are more robust to different poses and camera angles.
 
@@ -740,8 +740,8 @@ The other lightweight models (YOLOX-Pose and ViPNAS-MobileNetV3) perform signifi
 
 Overall, we can see few unsurprising results. Models that are larger, or trained on multiple datasets, perform better than the smaller models trained only on the COCO dataset. It is interesting though, that there is not a huge difference between the large and medium RTMPose models, but there is a clear advantage to RTMPose models with larger input size. This is probably because the larger input size allows the model to capture more details in the image.
 
-\subsection{Wholebody Keypoints Evaluation}
-The models which also output heel and foot fingers keypoints are evaluated on all of the 8 keypoints present in the bikefitting dataset. Meaning the camera facing fifth foot metatarsal and heel are also evaluated. The results are shown in table \ref{tab:evaluation_results_wholebody}. We can see, that the Normalized Mean Error (NME) for the foot and heel keypoints is much higher than for the other keypoints. This highlights the difficulty of predicting the foot and heel keypoints, as these keypoints are less represented in the training datasets. The models that output the WholeBody keypoints perform slightly worse than the models that only output Halpe26 keypoints, but the difference is smaller than when comparing only the 6 keypoints. What is surprising, is that the COCO-WholeBody models perform better than the Halpe26 on the foot and heel keypoints. This can be because the COCO-WholeBody dataset keypoints may match the foot and heel keypoints defined in the bikefitting better than the Halpe26 dataset. However, overall the best performing models are still the RTMPose models trained on the Body8 dataset, with the RTMPose-m 384x288 model achieving the best results with a mean NME of \textbf{2.49\%}. That is the same model that achieved the best results on the 6 keypoints evaluation.
+\subsection{8 Keypoint Evaluation}
+The models which also output heel and foot fingers keypoints are evaluated on all of the 8 keypoints present in the bikefitting dataset. Meaning the camera facing fifth foot metatarsal and heel are also evaluated. The results are shown in table \ref{tab:evaluation_results_wholebody}. We can see, that the Normalized Mean Error (NME) for the foot and heel keypoints is much higher than for the other keypoints. This highlights the difficulty of predicting the foot and heel keypoints, as these keypoints are less represented in the training datasets. The models that output the WholeBody keypoints perform slightly worse than the models that only output Halpe26 keypoints, but the difference is smaller than when comparing only the 6 keypoints. What is surprising, is that the COCO-WholeBody models perform better than the Halpe26 on the foot and heel keypoints. This can be because the COCO-WholeBody dataset keypoints may match the foot and heel keypoints defined in the bikefitting better than the Halpe26 dataset. However, overall the best performing models are still the RTMPose models trained on the Body8 dataset, with the RTMPose-m 384x288 model achieving the best results with a mean NME of \textbf{2.49\%}.
 
 \begin{table}[htbp]
     \setlength{\tabcolsep}{4pt}
@@ -764,6 +764,50 @@ The models which also output heel and foot fingers keypoints are evaluated on al
     \label{tab:evaluation_results_wholebody}
 
 \end{table}
+
+\def\imgwidth{0.45\textwidth}
+\def\smallimgwidth{0.9\textwidth}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=\smallimgwidth]{obrazky-figures/rtmpose-m_8xb256-420e_body8-384x288_zlute_196_crop.jpg}
+        \caption{RTMPose-m 384x288 Body8}
+
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=\smallimgwidth]{obrazky-figures/rtmpose-m_8xb512-700e_body8-halpe26-384x288_zlute_196_crop.jpg}
+        \caption{RTMPose-m 384x288 Body8-Halpe}
+    \end{subfigure}
+    \hfill
+    \par\bigskip
+
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=\smallimgwidth]{obrazky-figures/rtmpose-l_8xb64-270e_coco-wholebody-256x192_zlute_196_crop.jpg}
+        \caption{RTMPose-l 256x192 COCO-WholeBody}
+
+
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=\smallimgwidth]{obrazky-figures/simcc_vipnas-mbv3_8xb64-210e_coco-256x192_zlute_196_crop.jpg}
+        \caption{SimCC\_ViPNAS-MBNetv3}
+
+
+    \end{subfigure}
+    \caption{
+        Example predictions of the models on the bikefitting dataset. Models (a) and (d) predict standard 17 COCO keypoints, while model (b) predicts 26 Halpe keypoints and model (c) predicts 133 WholeBody keypoints. The RTMPose-m 384x288 Body8 model (a) achieves the best results.}
+
+\end{figure}
 
 %TODO: examples 
 
