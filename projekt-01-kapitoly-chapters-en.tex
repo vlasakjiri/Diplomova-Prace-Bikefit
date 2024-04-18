@@ -425,15 +425,15 @@ The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achi
     \centering
     \begin{tabular}{lcccccc}
         \toprule
-        \textbf{Model}              & \textbf{Input Size} & \textbf{AP}    & \textbf{AP-50} & \textbf{AP-75} & \textbf{AR}    & \textbf{AR-50} \\
+        \textbf{Model}        & \textbf{Input Size} & \textbf{AP}    & \textbf{AP-50} & \textbf{AP-75} & \textbf{AR}    & \textbf{AR-50} \\
         \midrule
-        \textbf{rtmpose-l}          & \textbf{256x192}    & \textbf{0.758} & \textbf{0.906} & \textbf{0.826} & \textbf{0.806} & 0.942          \\
-        pose\_hrnet\_w32            & 256x192             & 0.749          & 0.906          & 0.821          & 0.804          & \textbf{0.945} \\
-        rtmpose-m                   & 256x192             & 0.746          & 0.899          & 0.817          & 0.795          & 0.935          \\
-        rtmpose-s                   & 256x192             & 0.716          & 0.892          & 0.789          & 0.768          & 0.929          \\
-        simcc\_S-ViPNAS-MobileNetV3 & 256x192             & 0.695          & 0.883          & 0.772          & 0.755          & 0.927          \\
-        yoloxpose\_m                & 640x640             & 0.695          & 0.899          & 0.766          & 0.733          & 0.926          \\
-        rtmpose-t                   & 256x192             & 0.682          & 0.883          & 0.759          & 0.736          & 0.920          \\
+        RTMPose-l             & 256x192             & \textbf{0.758} & \textbf{0.906} & \textbf{0.826} & \textbf{0.806} & 0.942          \\
+        HRNet\_w32            & 256x192             & 0.749          & 0.906          & 0.821          & 0.804          & \textbf{0.945} \\
+        RTMPose-m             & 256x192             & 0.746          & 0.899          & 0.817          & 0.795          & 0.935          \\
+        RTMPose-s             & 256x192             & 0.716          & 0.892          & 0.789          & 0.768          & 0.929          \\
+        SimCC\_ViPNAS-MBNetv3 & 256x192             & 0.695          & 0.883          & 0.772          & 0.755          & 0.927          \\
+        Yoloxpose\_m          & 640x640             & 0.695          & 0.899          & 0.766          & 0.733          & 0.926          \\
+        RTMPose-t             & 256x192             & 0.682          & 0.883          & 0.759          & 0.736          & 0.920          \\
 
 
         \bottomrule
@@ -442,6 +442,30 @@ The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achi
     \label{tab:evaluation_results_coco}
 
 \end{table}
+
+\begin{table}[htbp]
+    \setlength{\tabcolsep}{4pt}
+    \centering
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Model}        & \textbf{Input Size} & \textbf{AP}    & \textbf{FLOPS(G)} & \textbf{Params(M)} \\
+        \midrule
+        RTMPose-l             & 256x192             & \textbf{0.758} & 4.2               & 28.1               \\
+        HRNet\_w32            & 256x192             & 0.749          & 7.7               & 28.5               \\
+        RTMPose-m             & 256x192             & 0.746          & 1.9               & 13.9               \\
+        RTMPose-s             & 256x192             & 0.716          & 0.7               & 5.7                \\
+        SimCC\_ViPNAS-MBNetv3 & 256x192             & 0.695          & 0.8               & 8.6                \\
+        Yoloxpose\_m          & 640x640             & 0.695          & 5.8               & 29.3               \\
+        RTMPose-t             & 256x192             & 0.682          & 0.4               & 3.5                \\
+
+
+        \bottomrule
+    \end{tabular}
+    \caption{Results of the models on the COCO dataset. The results are sorted by the Average precision (AP). The AP describes the average precision over Object Keypoint Similarity (OKS) thresholds from 0.5 to 0.95 with a step size of 0.05. The AR describes the average recall over OKS thresholds from 0.5 to 0.95 with a step size of 0.05. The AP-50 and AR-50 are the same as AP and AR, but only for OKS threshold of 0.5. Similarly AR-75 is average recall with OKS threshold of 0.75. The results are taken from MMPose documentation \cite{mmpose2020}.}
+    \label{tab:evaluation_params}
+
+\end{table}
+
 
 \chapter{Pose Estimation Dataset for Bikefitting}
 \label{ch:dataset}
@@ -681,27 +705,27 @@ At first the models are evaluated using only the 6 keypoints that are both in th
 \begin{table}[htbp]
     \begin{tabular}{l cccc}
         \toprule
-        Architecture & Input Size & Trained On & Keypoints &  NME (\%) \\
+        Architecture          & Input Size & Trained On     & Keypoints & NME (\%) \\
         \midrule
-        RTMPose-m & 384x288 & Body8 & 17 &  2.12 \\
-        RTMPose-l & 384x288 & Body8 & 17 &  2.13 \\
-        RTMPose-m & 256x192 & Body8 & 17 &  2.22 \\
-        RTMPose-m & 384x288 & Body8-Halpe26 & 26 &  2.23 \\
-        RTMPose-l & 256x192 & Body8 & 17 &   2.27 \\
-        RTMPose-m & 256x192 & Body8-Halpe26 & 26 & 2.28 \\
-        HRNet-w32 & 256x192 & COCO & 17 &  2.34 \\
-        RTMPose-l & 384x288 & Body8-Halpe26 & 26 &  2.42 \\
-RTMPose-l & 256x192 & Body8-Halpe26 & 26 &  2.43 \\
-        RTMPose-s & 256x192 & Body8 & 17 &  2.52 \\
-RTMPose-s & 256x192 & Body8-Halpe26 & 26 &  2.56 \\
-RTMPose-l & 256x192 & COCO-WholeBody & 133 &   2.59 \\
-RTMPose-m &  256x192 & COCO-WholeBody & 133 &  2.61 \\
-RTMPose-t & 256x192 & Body8-Halpe26 & 26 &  2.68 \\
-    SimCC\_ViPNAS-MBNetv3 & 256x192 & COCO & 17 &   2.70 \\
-        RTMPose-t & 256x192 & Body8 & 17 &  2.70 \\
-            Yoloxpose\_m  & 640x640 & COCO & 17 &  2.74 \\
+        RTMPose-m             & 384x288    & Body8          & 17        & 2.12     \\
+        RTMPose-l             & 384x288    & Body8          & 17        & 2.13     \\
+        RTMPose-m             & 256x192    & Body8          & 17        & 2.22     \\
+        RTMPose-m             & 384x288    & Body8-Halpe26  & 26        & 2.23     \\
+        RTMPose-l             & 256x192    & Body8          & 17        & 2.27     \\
+        RTMPose-m             & 256x192    & Body8-Halpe26  & 26        & 2.28     \\
+        HRNet-w32             & 256x192    & COCO           & 17        & 2.34     \\
+        RTMPose-l             & 384x288    & Body8-Halpe26  & 26        & 2.42     \\
+        RTMPose-l             & 256x192    & Body8-Halpe26  & 26        & 2.43     \\
+        RTMPose-s             & 256x192    & Body8          & 17        & 2.52     \\
+        RTMPose-s             & 256x192    & Body8-Halpe26  & 26        & 2.56     \\
+        RTMPose-l             & 256x192    & COCO-WholeBody & 133       & 2.59     \\
+        RTMPose-m             & 256x192    & COCO-WholeBody & 133       & 2.61     \\
+        RTMPose-t             & 256x192    & Body8-Halpe26  & 26        & 2.68     \\
+        SimCC\_ViPNAS-MBNetv3 & 256x192    & COCO           & 17        & 2.70     \\
+        RTMPose-t             & 256x192    & Body8          & 17        & 2.70     \\
+        Yoloxpose\_m          & 640x640    & COCO           & 17        & 2.74     \\
         \bottomrule
-        \end{tabular}
+    \end{tabular}
     \caption{Evaluation results on the custom bike fitting dataset, using only 6 keypoints most important to bikefitting (camera facing ankle, knee, hip, shoulder, elbow and wrist). The results are sorted by the Normalized Mean Error, defined in section \ref{nme}. It is an average distance between the predicted keypoints and the ground truth keypoints, normalized by the average bounding box dimension, expressed as a percentage. The larger RTMPose models trained on the Body8 datasets outperform the other models.}
     \label{tab:evaluation_results_all}
 
@@ -709,7 +733,7 @@ RTMPose-t & 256x192 & Body8-Halpe26 & 26 &  2.68 \\
 
 The best model achieves a mean NME of 2.12\%. This means that the average distance between the predicted keypoints and the ground truth keypoints is 2.12\% of the average bounding box dimension.
 
-The good results of the RTMPose models are not surprising, since they were trained on multiple datasets, while the other models were trained only on the COCO dataset. The RTMPose models trained on the Body8 dataset perform slightly better than those trained on the Body8-Halpe26 dataset, which were trained to predict 26 keypoints. However, the models trained on COCO-WholeBody dataset perform significantly worse, this is probably because the WholeBody dataset is much smaller than the Body8 and standard COCO datasets. 
+The good results of the RTMPose models are not surprising, since they were trained on multiple datasets, while the other models were trained only on the COCO dataset. The RTMPose models trained on the Body8 dataset perform slightly better than those trained on the Body8-Halpe26 dataset, which were trained to predict 26 keypoints. However, the models trained on COCO-WholeBody dataset perform significantly worse, this is probably because the WholeBody dataset is much smaller than the Body8 and standard COCO datasets.
 
 The other lightweight models (YOLOX-Pose and ViPNAS-MobileNetV3) perform significantly worse than the RTMPose models. The YOLOX-Pose model is the worst performing model, with a mean NME of 2.74\%. The ViPNAS-MobileNetV3 model performs slightly better, but still worse than even the tiny RTMPose model.
 
