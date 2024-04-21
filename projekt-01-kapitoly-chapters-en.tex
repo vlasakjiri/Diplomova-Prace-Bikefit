@@ -765,6 +765,8 @@ The models which also output heel and foot fingers keypoints are evaluated on al
 
 \end{table}
 
+Figure \ref{fig:evaluation_examples} shows example predictions of the models on the bikefitting dataset. The RTMPose-m 384x288 Body8 model achieves the best results. The RTMPose-m 384x288 Body8-Halpe model also achieves good results, and also predicts the heel and foot keypoints. The RTMPose-l 256x192 COCO-WholeBody model performs much worse on the foot and heel keypoints. The accuracy of the SimCC\_ViPNAS-MBNetv3 is also worse than the RTMPose models.
+
 \def\imgwidth{0.45\textwidth}
 \def\smallimgwidth{0.9\textwidth}
 
@@ -806,6 +808,7 @@ The models which also output heel and foot fingers keypoints are evaluated on al
     \end{subfigure}
     \caption{
         Example predictions of the models on the bikefitting dataset. Models (a) and (d) predict standard 17 COCO keypoints, while model (b) predicts 26 Halpe keypoints and model (c) predicts 133 WholeBody keypoints. The RTMPose-m 384x288 Body8 model (a) achieves the best results.}
+    \label{fig:evaluation_examples}
 
 \end{figure}
 
