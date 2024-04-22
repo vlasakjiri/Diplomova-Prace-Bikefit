@@ -7,13 +7,13 @@
 % \begin{document}
 
 \chapter{Introduction}
-Cycling is a massively popular activity world-wide. It is enjoyed by people of all ages and skill levels, from commuters to professional athletes. To enjoy cycling, it is important to have a bike that fits the rider. Having a bike that does not fit the rider can lead to unnecessary pain or over time even injuries. Having a bike that does not fit the can also have detrimental effect on performance. Therefore, a well fitted bike is important for professional athletes and amateurs alike.
+Cycling is a massively popular activity around the world. People of all ages and skill levels enjoy it, from commuters to professional athletes. To enjoy cycling, it is important to have a bike that fits the rider. Having a bike that does not fit the rider can lead to unnecessary pain or over time even injuries. Having a bike that does not fit the can also have detrimental effect on performance. Therefore, a well fitted bike is important for professional athletes and amateurs alike.
 
-Unfortunately, the setup of one's bike is not a trivial task. The information on how to set up the bike is often comprised of rule of thumbs and general guidelines. These guidelines are often contradictory and can lead to confusion. The setup of the bike is also highly individual and depends on the rider's flexibility, riding style, goals, etc. Similarly, each bike is different and requires different setup.
+Unfortunately, the setup of one's bike is not a trivial task. Information on how to setup the bike is often comprised of general guidelines and rules of thumb. These guidelines are often contradictory and can cause confusion. The setup of the bike is also highly individual and depends on the rider's flexibility, riding style, goals, etc. Similarly, each bike is different and requires different setup.
 
-This led to creation of a new profession called bikefitting. Bikefitters are experts that help cyclists with the setup of their bikes. This was traditionally done in person and relied solely on the bikefitter's experience and rudimentary tools such as plumb bobs, goniometers, etc. However, in recent years, to make it more accessible, bikefitting has been increasingly relying on technology, mainly motion capture systems. This means the bikefitters don't have to rely solely on their experience and can use data to make more informed decisions. These in-person bikefitting sessions are however often not available in all areas and can be too costly for amateur cyclists.
+This led to the creation of a new profession called bikefitting. Bikefitters are experts who help cyclists set up their bikes. This was traditionally done in person and relied solely on the bikefitter's experience and rudimentary tools such as plumb bobs, goniometers, etc. However, in recent years, to make it more accessible, bikefitting has been increasingly relying on technology, mainly motion capture systems. This means bikefitters do not have to rely solely on their experience and can use data to make more informed decisions. However, these in-person bikefitting sessions are often not available in all areas and can be too costly for amateur cyclists.
 
-To make bikefitting even more accessible, there has been a rise of bikefitting applications that aim automate some of the bikefitting process. Despite the success of these applications, they are often limited to a single platform, only provide very basic information to the user or are too costly.
+To make bikefitting even more accessible, there has been a rise in bikefitting applications that aim to automate some of the bikefitting process. Despite the success of these applications, they are often limited to a single platform, provide only very basic information to the user, or are too costly.
 
 This work aims to create a bikefitting application that does not suffer from these limitations. The application is available in the browser, provides the user with detailed information, while being easy to use and uses lightweight SOTA pose estimation models, that run directly in the browser to keep the cost of the application low.
 
@@ -760,7 +760,7 @@ The models which also output heel and foot fingers keypoints are evaluated on al
         RTMPose-t    & 256x192    & Body8-Halpe26  & 26        & 4.21          & 3.20          & 2.91          \\
         \bottomrule
     \end{tabular}
-    \caption{Evaluation results for the models with extended keypoint set on the custom bike fitting dataset, including the heel and Foot landmarks. Results for the other keypoints can be found in table \ref{tab:evaluation_results_coco}. Foot column shows the Normalized Mean Error (NME) for the foot landmark, Heel column shows the NME for the heel landmark and Mean column shows the average NME for all of the 8 keypoints present in the bikefitting dataset. The values are represented as a percentage of the average bounding box dimension for a given frame. Details of the NME metric are described in section \ref{nme}.}
+    \caption{Evaluation results for the models with extended keypoint set on the custom bike fitting dataset, including the heel and foot landmarks. Results for the other keypoints can be found in table \ref{tab:evaluation_results_coco}. Foot column shows the Normalized Mean Error (NME) for the foot landmark, Heel column shows the NME for the heel landmark and Mean column shows the average NME for all of the 8 keypoints present in the bikefitting dataset. The values are represented as a percentage of the average bounding box dimension for a given frame. Details of the NME metric are described in section \ref{nme}.}
     \label{tab:evaluation_results_wholebody}
 
 \end{table}
@@ -812,11 +812,30 @@ Figure \ref{fig:evaluation_examples} shows example predictions of the models on 
 
 \end{figure}
 
-%TODO: examples 
-
+The RTMPose models show good results on the bikefitting dataset. However, the accuracy on the foot and heel keypoints is still not satisfactory even for the largest models trained on the Body8-Halpe26 dataset. The results are even worse for the models trained on the COCO-WholeBody dataset. To improve the accuracy of the models on the foot and heel keypoints, the models need to be fine-tuned on the bikefitting dataset. The details of the fine-tuning are described in the next section.
 
 \section{Fine-Tuning On Custom Bikefit Dataset}
 \label{fine_tuning}
+For the fine-tuning, the RTMPose-m 256x192 Body8-Halpe26, RTMPose-l 256x192 Body8-Halpe26 and RTMPose-m 384x288 Body8-Halpe26 models are selected. These models are selected, because they achieved good results on the bikefitting dataset, predict the heel and foot keypoints and are still relatively fast. The models are fine-tuned on the bikefitting dataset using the MMPose framework \cite{mmpose2020}.
+
+To train a model using the MMPose framework, the model needs to have a custom config file for the dataset. The config file contains the paths to the dataset, the model architecture, the optimizer, the learning rate scheduler and other hyperparameters. The original config files for the RTMPose models were used as a starting point and modified to use the bikefitting dataset different hyperparameters and evaluation metrics.
+
+Custom datasets in MMPose are easiest to define using the COCO format. The dataset is defined in a JSON file, which contains the paths to the images, the annotations and the categories. The annotations contain the bounding box of the person and the keypoints. The keypoints are defined as a list of x and y coordinates and a visibility flag. The visibility flag is set to 2 if the keypoint is not visible, 1 if the keypoint is occluded and 0 if the keypoint is visible. MMPose internally uses only annotated keypoints (visibility flag 2 or 1) for training and evaluation and discards keypoints with visibility flag 0. The training set has all of the keypoints defined as annotated (visibility flags 1 or 2), so the models are trained on all of the keypoints. This ensures that the models do not unlearn the other keypoints. The validation set has only the 8 keypoints annotated by colored markers defined as annotated, so the models are evaluated only on these keypoints.
+
+\subsection{Training Procedure}
+The RTMPose models originally used the AdamW optimizer with base learning rate of 4e-3, linear warmup learning rate scheduler for first 1000 iterations and cosine annealing learning rate scheduler. The models were in total trained for 700 epochs with training batch size of 512. These are tuned for a large scale dataset like COCO. For the bikefitting dataset, smaller learning rate and batch size are used. The models are trained with the AdamW optimizer with base learning rate of 5e-4, no learning rate schedulerers were used as this slowed down the training. The batch size was reduced to 16, as this sped up the training significantly. The models were trained for 130 iterations, which corresponds to 1 epoch on the bikefitting dataset. Using larger batch sizes of 32 and 64 resulted in much slower training, where the models needed 5-10 epochs of training and still achieved worse results then when using batch size of 16. The models were fast enough to be trained on an single Intel i7-7500U CPU.
+
+
+% TODO: add more details about the training procedure
+\begin{figure}
+
+    \centering
+    \includegraphics[width=1\linewidth]{obrazky-figures/loss.pdf}
+
+    \caption{Loss of the RTMPose models during fine-tuning on the bikefitting dataset. The models were trained for 130 iterations, which corresponds to 1 epoch on the bikefitting dataset. The models were trained with the AdamW optimizer with base learning rate of 5e-4 and batch size of 16. The models were trained on an Intel i7-7500U CPU.}
+    \label{fig:fine_tuning_loss}
+\end{figure}
+
 
 \section{Evaluation Of Fine-Tuned Models}
 \label{fine_tuning_results}
