@@ -826,19 +826,66 @@ Custom datasets in MMPose are easiest to define using the COCO format. The datas
 The RTMPose models originally used the AdamW optimizer with base learning rate of 4e-3, linear warmup learning rate scheduler for first 1000 iterations and cosine annealing learning rate scheduler. The models were in total trained for 700 epochs with training batch size of 512. These are tuned for a large scale dataset like COCO. For the bikefitting dataset, smaller learning rate and batch size are used. The models are trained with the AdamW optimizer with base learning rate of 5e-4, no learning rate schedulerers were used as this slowed down the training. The batch size was reduced to 16, as this sped up the training significantly. The models were trained for 130 iterations, which corresponds to 1 epoch on the bikefitting dataset. Using larger batch sizes of 32 and 64 resulted in much slower training, where the models needed 5-10 epochs of training and still achieved worse results then when using batch size of 16. The models were fast enough to be trained on an single Intel i7-7500U CPU.
 
 
+Figure \ref{fig:fine_tuning_loss} shows the loss of the models during the fine-tuning. The RTMPose large and medium models with 256x192 input size achieve basically the same loss throughout the training. The RTMPose-m 384x288 model has significantly lower loss than the other models throughout the whole training. Since its validation results are on par with the 256x192 models (as discussed in the next section), it is probably because different parameters are used to construct the ground truth heatmaps for the 384x288 model, which results in lower loss. Overall the loss of the models is decreasing throughout the training, at first rapidl and then about step 60 more slowly. However, experiments showed that while the loss is not decreasing very fast, the results are still improving.
 % TODO: add more details about the training procedure
 \begin{figure}
 
     \centering
     \includegraphics[width=1\linewidth]{obrazky-figures/loss.pdf}
 
-    \caption{Loss of the RTMPose models during fine-tuning on the bikefitting dataset. The models were trained for 130 iterations, which corresponds to 1 epoch on the bikefitting dataset. The models were trained with the AdamW optimizer with base learning rate of 5e-4 and batch size of 16. The models were trained on an Intel i7-7500U CPU.}
+    \caption{Loss of the RTMPose models during fine-tuning on the bikefitting dataset. The models were trained for 130 iterations, which corresponds to 1 epoch on the bikefitting dataset. For optimization, AdamW optimizer with base learning rate of 5e-4 and batch size of 16.}
     \label{fig:fine_tuning_loss}
 \end{figure}
 
 
 \section{Evaluation Of Fine-Tuned Models}
 \label{fine_tuning_results}
+Table \ref{tab:finetune_results} shows the results of the fine-tuned models on the bikefitting dataset. The models are evaluated using the NME metric, described in section \ref{evaluation_metrics}. All of the fine-tuned models achieve significantly better results than the pre-trained models. Despite the differences in the performance of medium and large pre-trained models, the fine-tuned models achieve similar results. The best results are achieved by the RTMPose-m 384x288 model, which achieves a mean NME of \textbf{1.50\%}, but the other fine-tuned models achieve very similar results. The fine-tuned models achieve a significant improvement in the accuracy of the foot and heel keypoints. The foot and heel keypoints are still the most difficult to predict, but the fine-tuned models achieve much better results than the pre-trained models. Because there is not a significant difference in the performance of the fine-tuned models, the RTMPose-m 256x192 model is selected for the bikefit application, as it is the smallest and fastest model that achieves good results.
+
+\def\imgwidth{0.48\textwidth}
+\def\smallimgwidth{1.0\textwidth}
+
+\begin{table}[htbp]
+    \setlength{\tabcolsep}{4pt}
+    \centering
+    \begin{tabular}{l cccccc}
+        \toprule
+        Architecture & Input Size & Trained On      & Keypoints & Foot (\%)     & Heel (\%)     & Mean (\%)     \\
+        \midrule
+        RTMPose-m    & 384x288    & Bikefit dataset & 26        & \textbf{1.25} & 2.11          & \textbf{1.50} \\
+        RTMPose-m    & 256x192    & Bikefit dataset & 26        & 1.45          & 1.99          & 1.51          \\
+        RTMPose-l    & 256x192    & Bikefit dataset & 26        & 1.26          & \textbf{1.94} & 1.52          \\
+        RTMPose-m    & 384x288    & Body8-Halpe26   & 26        & 3.45          & 3.40          & 2.49          \\
+        RTMPose-m    & 256x192    & Body8-Halpe26   & 26        & 3.29          & 3.62          & 2.54          \\
+        RTMPose-l    & 256x192    & Body8-Halpe26   & 26        & 3.56          & 3.21          & 2.64          \\
+        \bottomrule
+    \end{tabular}
+    \caption{Evaluation results for the fine-tuned models on the custom bike fitting dataset. The models are fine-tuned on the bikefitting dataset for 130 iterations. The results are sorted by the Normalized Mean Error, defined in section \ref{nme}. It is an average distance between the predicted keypoints and the ground truth keypoints, normalized by the average bounding box dimension, expressed as a percentage. All of the fine-tuned models achieve significantly better results than the pre-trained models.}
+    \label{tab:finetune_results}
+
+\end{table}
+
+Figure \ref{fig:trained_examples} shows example predictions of the RTMPose-m 256x192 model before and after fine-tuning. The fine-tuned model achieves much better results on the foot and heel keypoints. It also shifts the knee and shoulder keypoints more closely to the location which are used for example in the Retul bikefitting system. However, it also shifts the hip keypoint closer to the knee keypoint, which is not desirable. Similarly, the wrist keypoint is now no longer predicted on the center of rotation of the wrist joint, but more upwards. These changes are probably caused by misplacement of the colored markers, which is especially hard to avoid when muliple poses and camera angles are present in the dataset. Nevertheless, the fine-tuned model overall achieves better results than the pre-trained model and is used in the bikefit application.
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[t]{\imgwidth}
+        \centering
+
+        \includegraphics[width=\smallimgwidth]{obrazky-figures/rtmpose-m_8xb512-700e_body8-halpe26-256x192_zlute_196_crop.jpg}
+        \caption{RTMPose-m 256x192 Body8-Halpe26}
+
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{\imgwidth}
+        \centering
+
+        \includegraphics[width=\smallimgwidth]{obrazky-figures/rtmpose-m-256x192_trainedzlute_196_crop.jpg}
+        \caption{RTMPose-m 256x192 Body8-Halpe26 Fine-Tuned}
+    \end{subfigure}
+    \caption{
+        Example predictions of the RTMPose-m 256x192 model before and after fine-tuning on the bikefitting dataset. The fine-tuned model achieves much better results on the foot and heel keypoints, but also undesirably shifts the hip and wrist keypoints.}
+    \label{fig:trained_examples}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
