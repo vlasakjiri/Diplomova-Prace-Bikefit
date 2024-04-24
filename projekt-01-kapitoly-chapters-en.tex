@@ -706,25 +706,25 @@ At first the models are evaluated using only the 6 keypoints that are both in th
 \begin{table}[htbp]
     \begin{tabular}{l cccc}
         \toprule
-        Architecture          & Input Size & Trained On     & Keypoints & NME (\%) \\
+        Architecture          & Input Size & Trained On     & Keypoints & NME (\%)      \\
         \midrule
-        RTMPose-m             & 384x288    & Body8          & 17        & 2.12     \\
-        RTMPose-l             & 384x288    & Body8          & 17        & 2.13     \\
-        RTMPose-m             & 256x192    & Body8          & 17        & 2.22     \\
-        RTMPose-m             & 384x288    & Body8-Halpe26  & 26        & 2.23     \\
-        RTMPose-l             & 256x192    & Body8          & 17        & 2.27     \\
-        RTMPose-m             & 256x192    & Body8-Halpe26  & 26        & 2.28     \\
-        HRNet-w32             & 256x192    & COCO           & 17        & 2.34     \\
-        RTMPose-l             & 384x288    & Body8-Halpe26  & 26        & 2.42     \\
-        RTMPose-l             & 256x192    & Body8-Halpe26  & 26        & 2.43     \\
-        RTMPose-s             & 256x192    & Body8          & 17        & 2.52     \\
-        RTMPose-s             & 256x192    & Body8-Halpe26  & 26        & 2.56     \\
-        RTMPose-l             & 256x192    & COCO-WholeBody & 133       & 2.59     \\
-        RTMPose-m             & 256x192    & COCO-WholeBody & 133       & 2.61     \\
-        RTMPose-t             & 256x192    & Body8-Halpe26  & 26        & 2.68     \\
-        SimCC\_ViPNAS-MBNetv3 & 256x192    & COCO           & 17        & 2.70     \\
-        RTMPose-t             & 256x192    & Body8          & 17        & 2.70     \\
-        Yoloxpose\_m          & 640x640    & COCO           & 17        & 2.74     \\
+        RTMPose-m             & 384x288    & Body8          & 17        & \textbf{2.12} \\
+        RTMPose-l             & 384x288    & Body8          & 17        & 2.13          \\
+        RTMPose-m             & 256x192    & Body8          & 17        & 2.22          \\
+        RTMPose-m             & 384x288    & Body8-Halpe26  & 26        & 2.23          \\
+        RTMPose-l             & 256x192    & Body8          & 17        & 2.27          \\
+        RTMPose-m             & 256x192    & Body8-Halpe26  & 26        & 2.28          \\
+        HRNet-w32             & 256x192    & COCO           & 17        & 2.34          \\
+        RTMPose-l             & 384x288    & Body8-Halpe26  & 26        & 2.42          \\
+        RTMPose-l             & 256x192    & Body8-Halpe26  & 26        & 2.43          \\
+        RTMPose-s             & 256x192    & Body8          & 17        & 2.52          \\
+        RTMPose-s             & 256x192    & Body8-Halpe26  & 26        & 2.56          \\
+        RTMPose-l             & 256x192    & COCO-WholeBody & 133       & 2.59          \\
+        RTMPose-m             & 256x192    & COCO-WholeBody & 133       & 2.61          \\
+        RTMPose-t             & 256x192    & Body8-Halpe26  & 26        & 2.68          \\
+        SimCC\_ViPNAS-MBNetv3 & 256x192    & COCO           & 17        & 2.70          \\
+        RTMPose-t             & 256x192    & Body8          & 17        & 2.70          \\
+        Yoloxpose\_m          & 640x640    & COCO           & 17        & 2.74          \\
         \bottomrule
     \end{tabular}
     \caption{Evaluation results on the custom bike fitting dataset, using only 6 keypoints most important to bikefitting (camera facing ankle, knee, hip, shoulder, elbow and wrist). The results are sorted by the Normalized Mean Error, defined in section \ref{nme}. It is an average distance between the predicted keypoints and the ground truth keypoints, normalized by the average bounding box dimension, expressed as a percentage. The larger RTMPose models trained on the Body8 datasets outperform the other models.}
@@ -823,7 +823,7 @@ To train a model using the MMPose framework, the model needs to have a custom co
 Custom datasets in MMPose are easiest to define using the COCO format. The dataset is defined in a JSON file, which contains the paths to the images, the annotations and the categories. The annotations contain the bounding box of the person and the keypoints. The keypoints are defined as a list of x and y coordinates and a visibility flag. The visibility flag is set to 2 if the keypoint is not visible, 1 if the keypoint is occluded and 0 if the keypoint is visible. MMPose internally uses only annotated keypoints (visibility flag 2 or 1) for training and evaluation and discards keypoints with visibility flag 0. The training set has all of the keypoints defined as annotated (visibility flags 1 or 2), so the models are trained on all of the keypoints. This ensures that the models do not unlearn the other keypoints. The validation set has only the 8 keypoints annotated by colored markers defined as annotated, so the models are evaluated only on these keypoints.
 
 \subsection{Training Procedure}
-The RTMPose models originally used the AdamW optimizer with base learning rate of 4e-3, linear warmup learning rate scheduler for first 1000 iterations and cosine annealing learning rate scheduler. The models were in total trained for 700 epochs with training batch size of 512. These are tuned for a large scale dataset like COCO. For the bikefitting dataset, smaller learning rate and batch size are used. The models are trained with the AdamW optimizer with base learning rate of 5e-4, no learning rate schedulerers were used as this slowed down the training. The batch size was reduced to 16, as this sped up the training significantly. The models were trained for 130 iterations, which corresponds to 1 epoch on the bikefitting dataset. Using larger batch sizes of 32 and 64 resulted in much slower training, where the models needed 5-10 epochs of training and still achieved worse results then when using batch size of 16. The models were fast enough to be trained on an single Intel i7-7500U CPU.
+The RTMPose models originally used the AdamW \cite{adamw} optimizer with base learning rate of 4e-3, linear warmup learning rate scheduler for first 1000 iterations and cosine annealing learning rate scheduler. The models were in total trained for 700 epochs with training batch size of 512. These are tuned for a large scale dataset like COCO. For the bikefitting dataset, smaller learning rate and batch size are used. The models are trained with the AdamW optimizer with base learning rate of 5e-4, no learning rate schedulerers were used as this slowed down the training. The batch size was reduced to 16, as this sped up the training significantly. The models were trained for 130 iterations, which corresponds to 1 epoch on the bikefitting dataset. Using larger batch sizes of 32 and 64 resulted in much slower training, where the models needed 5-10 epochs of training and still achieved worse results then when using batch size of 16. The models were fast enough to be trained on an single Intel i7-7500U CPU.
 
 
 Figure \ref{fig:fine_tuning_loss} shows the loss of the models during the fine-tuning. The RTMPose large and medium models with 256x192 input size achieve basically the same loss throughout the training. The RTMPose-m 384x288 model has significantly lower loss than the other models throughout the whole training. Since its validation results are on par with the 256x192 models (as discussed in the next section), it is probably because different parameters are used to construct the ground truth heatmaps for the 384x288 model, which results in lower loss. Overall the loss of the models is decreasing throughout the training, at first rapidl and then about step 60 more slowly. However, experiments showed that while the loss is not decreasing very fast, the results are still improving.
@@ -883,13 +883,13 @@ Figure \ref{fig:trained_examples} shows example predictions of the RTMPose-m 256
         \caption{RTMPose-m 256x192 Body8-Halpe26 Fine-Tuned}
     \end{subfigure}
     \caption{
-        Example predictions of the RTMPose-m 256x192 model before and after fine-tuning on the bikefitting dataset. The fine-tuned model achieves much better results on the foot and heel keypoints, but also undesirably shifts the hip and wrist keypoints.}
+        Example predictions of the RTMPose-m 256x192 model before and after fine-tuning on the bikefitting dataset. The fine-tuned model achieves much better results on the foot and heel keypoints, but also undesirably shifts the hip and wrist keypoints, probably due to misplacement of the colored markers.}
     \label{fig:trained_examples}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Implementation of the Bikefit Web Application}
+\chapter{Bikefit Web Application}
 \label{ch:bikefit_application}
 
 This chapter describes the web application for bike fitting. Implementing the application as a web application has several advantages over implementing it as a mobile or desktop application. The web application can be used on any device with a web browser. This allows the application to be used on mobile devices, tablets, laptops and desktop computers. The user also does not need to download and install anything.
@@ -983,7 +983,6 @@ Due to the low-level design of the WebCodecs API, it is not easy to use. Moreove
 
 \section{Presentation of the Results and Recommendations}
 
-\section{User Authentication and Data Storage}
 
 
 
