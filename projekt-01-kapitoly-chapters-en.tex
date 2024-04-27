@@ -906,6 +906,55 @@ To estimate the keypoints, multiple approaches were tested. First approach uses 
 
 The second approach uses the RTMPose pose estimation model and a person detector. The models run in the browser using the Tensorflow.js library\footnote{\url{https://www.tensorflow.org/js}}. The models are described in section \ref{rtmpose} and evaluated in chapter \ref{evaluation}. To improve the performance of the pose estimation models on the task of side view pose estimation of cyclists, the models are trained on a custom dataset. The details of the training are described in section \ref{training_pose_estimation_model_for_bikefitting}. The details of the implementation are described in section \ref{pose_estimation}.
 
+\section{Application Structure}
+From the user's perspective, the application consists of three main steps.
+
+\begin{enumerate}
+    \item \textbf{Video Upload} The first step is the video upload. The user is prompted to upload a video of the cyclist from the side view. The user can also choose to use a demo video for testing the application. After the video is uploaded, the user can proceed to the next step. Figure \ref{fig:step1} shows the first step of the application.
+
+    \item \textbf{Select Fit Goals}  On the second step, the user can review and play the uploaded video and is asked to select the type of the bike (road, gravel and mountain bike) and the fit goals (comfort, performance, balanced). These fit goals and the type of the bike are used to adjust the suggestions for the bike fit. After the fit goals are selected, the user can process the video by the pose estimation model. Figure \ref{fig:step2} shows the second step of the application. While the video is processing the user can see the progress of the processing by the progress circle in the middle of the screen. Figure \ref{fig:processing} shows the processing of the video.
+
+    \item \textbf{Examine Suggestions} On the last step, after the video is processed, the user can examine the keypoint predictions from the pose estimation model, computed joint angles, suggested angle ranges and the suggestions for the bike fit. The user can also play the video with the keypoint predictions overlaid on the video. Figure \ref{fig:step3-top} shows the first part of the last step of the application and figure \ref{fig:step3-bottom} shows the second part of the last step of the application.
+\end{enumerate}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/step1.png}
+    \caption{The first step of the bikefit application. The user is prompted to upload a video of the cyclist from the side view. The user can also choose to use a demo video for testing the application. After the video is uploaded, the user can proceed to the next step.}
+    \label{fig:step1}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/step2.png}
+    \caption{The second step of the bikefit application. The user can review and play the uploaded video and is asked to select the type of the bike (road, gravel and mountain bike) and the fit goals (comfort, performance, balanced). After the fit goals are selected, the user can process the video by the pose estimation model.}
+    \label{fig:step2}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{obrazky-figures/processing-crop.jpeg}
+    \caption{After the user selects the fit goals, the video is processed by the pose estimation model. The user can see the progress of the processing by the progress circle in the middle of the screen.}
+    \label{fig:processing}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/step3-top.png}
+    \caption{The first part of the last step of the bikefit application. The user can play the video with the keypoint predictions and measured angles overlaid on the video. The video speed can be adjusted by the slider on the right. The user can also seek forward and backward 1 frame by clicking the buttons on the left and right of the middle play button. The buttons on the side can be used to seek to the next or previous pedal position and next or previous pedal stroke.}
+    \label{fig:step3-top}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{obrazky-figures/step3-bot.png}
+    \caption{The second part of the last step of the bikefit application. In the "Recommendations" section, the user can see the suggested changes to their saddle height, saddle setback, handlebar height and handlebar reach. In the "Results" section, the user can see the recommended ranges and measured values for the angles and measurements in each of the pedal positions (bottom, top and front (not shown)). After clicking on a measurement, the user can see a chart with the angle values for each pedal stroke, with sections of the chart colored according to the recommended ranges.}
+    \label{fig:step3-bottom}
+\end{figure}
+
+
+
+
 
 \section{Video Upload and Processing}
 \label{video_upload_and_processing}
@@ -917,7 +966,7 @@ To accurately estimate the keypoints, the application needs to access all of the
 
 To process the video frame by frame, the application uses the WebCodecs API\footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API}}. The WebCodecs API is a low-level API for encoding and decoding audio and video. It gives developers access to the invididual frames of the video. It is the only way to access the frames of the video in the browser. Simple and commonly used method is to simultaneously play the video and draw the video  frames to a canvas element and then access the pixels of the canvas. However, this method only does not work well if the processing is computationally expensive, since the video is played in real time. This leads to skipping of the frames and not all of the frames are processed. The WebCodecs API allows the application to process the video at its own pace.
 
-Because the API is relatively new, it is not yet supported by all browsers. Figure \ref{fig:caniuseWebcodecs} shows the browser support for the WebCodecs API as of January 2024. The API is supported by all browsers based on Chromium (Google Chrome, Microsoft Edge, Opera, Brave, etc.). It is Partially supported by Safari and Safari on iOS (video only) and not supported by Firefox. Overall based on CanIUse data\footnote{\url{https://caniuse.com/webcodecs}}, the API is supported by 87.6\% of the users, where 74.5\% of the users have full support and 13.1\% of the users have partial support. Figure \ref{fig:caniuseWebcodecs} shows the support diagram for the WebCodecs API as of January 2024.
+Because the API is relatively new, it is not yet supported by all browsers. Figure \ref{fig:caniuseWebcodecs} shows the browser support for the WebCodecs API as of January 2024. The API is supported by all browsers based on Chromium (Google Chrome, Microsoft Edge, Opera, Brave, etc.). It is Partially supported by Safari and Safari on iOS (video only) and not supported by Firefox. Overall based on CanIUse data\footnote{\url{https://caniuse.com/webcodecs}}, the API is supported by 87.6\% of the users, where 74.5\% of the users have full support and 13.1\% of the users have partial support.
 
 
 \begin{figure}[htbp]
@@ -927,45 +976,45 @@ Because the API is relatively new, it is not yet supported by all browsers. Figu
     \label{fig:caniuseWebcodecs}
 \end{figure}
 
-Due to the low-level design of the WebCodecs API, it is not easy to use. Moreover, the API is quite new and not very well documented so there is not a lot of examples. The developer also needs to take care of demuxing the media containers. This work uses the getVideoFrames.js library\footnote{\url{https://github.com/josephrocca/getVideoFrames.js}} from josephrocca. The library internally uses the WebCodecs API and MP4Box.js\footnote{\url{https://github.com/gpac/mp4box.js/}} for demuxing mp4 files, but provides a simple interface for accessing the video frames. The library is used to get the video frames and then the frames are processed as described in sections \ref{marker_based_tracking} and \ref{pose_estimation}. Listing \ref{getVideoFrames} shows an example usage of the getVideoFrames.js library. It defines three callback functions. The \texttt{onFrame} callback is called for each frame of the video. The \texttt{onConfig} callback is called when the video metadata is loaded. The \texttt{onFinish} callback is called when all of the frames are processed.
+Due to the low-level design of the WebCodecs API, it is not easy to use. Moreover, the API is quite new and not very well documented so there is not a lot of examples. The developer also needs to take care of demuxing the media containers. This work uses the getVideoFrames.js library\footnote{\url{https://github.com/josephrocca/getVideoFrames.js}} from josephrocca. The library internally uses the WebCodecs API and MP4Box.js\footnote{\url{https://github.com/gpac/mp4box.js/}} for demuxing mp4 files, but provides a simple interface for accessing the video frames. The library is used to get the video frames and then the frames are processed as described in sections \ref{marker_based_tracking} and \ref{pose_estimation}. It defines three callback functions. The \texttt{onFrame} callback is called for each frame of the video. The \texttt{onConfig} callback is called when the video metadata is loaded. The \texttt{onFinish} callback is called when all of the frames are processed.
 
-\begin{lstlisting}[style=htmlcssjs, caption={Example usage of the getVideoFrames.js library. Taken from \url{https://github.com/josephrocca/getVideoFrames.js/}.}, label={getVideoFrames}]
-    <canvas id="canvasEl"></canvas>
-    <br>
-    <input type="file" accept="video/mp4" onchange="start(this.files[0])">
-    <script type="module">
-      import getVideoFrames from "https://deno.land/x/get_video_frames@v0.0.10/mod.js"
-      
-      let frameCount = 0;
-    
-      window.start = async function(file) {
-        let ctx = canvasEl.getContext("2d"); 
-    
-        // `getVideoFrames` requires a video URL as input.
-        // If you have a file/blob instead of a videoUrl, turn it into a URL like this:
-        let videoUrl = URL.createObjectURL(file);
-    
-        await getVideoFrames({
-          videoUrl,
-          onFrame(frame) {  // `frame` is a VideoFrame object: https://developer.mozilla.org/en-US/docs/Web/API/VideoFrame
-            ctx.drawImage(frame, 0, 0, canvasEl.width, canvasEl.height);
-            frame.close();
-            frameCount++;
-          },
-          onConfig(config) {
-            canvasEl.width = config.codedWidth;
-            canvasEl.height = config.codedHeight;
-          },
-          onFinish() {
-            console.log("finished!");
-            console.log("frameCount", frameCount);
-          },
-        });
-    
-        URL.revokeObjectURL(file); // revoke URL to prevent memory leak
-      }
-    </script> 
-\end{lstlisting}
+% \begin{lstlisting}[style=htmlcssjs, caption={Example usage of the getVideoFrames.js library. Taken from \url{https://github.com/josephrocca/getVideoFrames.js/}.}, label={getVideoFrames}]
+%     <canvas id="canvasEl"></canvas>
+%     <br>
+%     <input type="file" accept="video/mp4" onchange="start(this.files[0])">
+%     <script type="module">
+%       import getVideoFrames from "https://deno.land/x/get_video_frames@v0.0.10/mod.js"
+
+%       let frameCount = 0;
+
+%       window.start = async function(file) {
+%         let ctx = canvasEl.getContext("2d"); 
+
+%         // `getVideoFrames` requires a video URL as input.
+%         // If you have a file/blob instead of a videoUrl, turn it into a URL like this:
+%         let videoUrl = URL.createObjectURL(file);
+
+%         await getVideoFrames({
+%           videoUrl,
+%           onFrame(frame) {  // `frame` is a VideoFrame object: https://developer.mozilla.org/en-US/docs/Web/API/VideoFrame
+%             ctx.drawImage(frame, 0, 0, canvasEl.width, canvasEl.height);
+%             frame.close();
+%             frameCount++;
+%           },
+%           onConfig(config) {
+%             canvasEl.width = config.codedWidth;
+%             canvasEl.height = config.codedHeight;
+%           },
+%           onFinish() {
+%             console.log("finished!");
+%             console.log("frameCount", frameCount);
+%           },
+%         });
+
+%         URL.revokeObjectURL(file); // revoke URL to prevent memory leak
+%       }
+%     </script> 
+% \end{lstlisting}
 
 
 
