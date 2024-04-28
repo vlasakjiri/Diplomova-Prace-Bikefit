@@ -927,7 +927,7 @@ From the user's perspective, the application consists of three main steps.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/step2.png}
-    \caption{The second step of the bikefit application. The user can review and play the uploaded video and is asked to select the type of the bike (road, gravel and mountain bike) and the fit goals (comfort, performance, balanced). After the fit goals are selected, the user can process the video by the pose estimation model.}
+    \caption{The second step of the bikefit application. The user can review and play the uploaded video and is asked to select the type of the bike (road, gravel and mountain bike) and the fit goals (comfort, performance, balanced). After the fit goals are selected, the user can process the video by the pose estimation model. The video speed can be adjusted by the slider on the right. The user can also seek forward and backward 1 frame by clicking the buttons on the left and right of the middle play button.}
     \label{fig:step2}
 \end{figure}
 
@@ -976,7 +976,7 @@ Because the API is relatively new, it is not yet supported by all browsers. Figu
     \label{fig:caniuseWebcodecs}
 \end{figure}
 
-Due to the low-level design of the WebCodecs API, it is not easy to use. Moreover, the API is quite new and not very well documented so there is not a lot of examples. The developer also needs to take care of demuxing the media containers. This work uses the getVideoFrames.js library\footnote{\url{https://github.com/josephrocca/getVideoFrames.js}} from josephrocca. The library internally uses the WebCodecs API and MP4Box.js\footnote{\url{https://github.com/gpac/mp4box.js/}} for demuxing mp4 files, but provides a simple interface for accessing the video frames. The library is used to get the video frames and then the frames are processed as described in sections \ref{marker_based_tracking} and \ref{pose_estimation}. It defines three callback functions. The \texttt{onFrame} callback is called for each frame of the video. The \texttt{onConfig} callback is called when the video metadata is loaded. The \texttt{onFinish} callback is called when all of the frames are processed.
+Due to the low-level design of the WebCodecs API, it is not easy to use. Moreover, the API is quite new and not very well documented so there is not a lot of examples. The developer also needs to take care of demuxing the media containers. This work uses the getVideoFrames.js library\footnote{\url{https://github.com/josephrocca/getVideoFrames.js}} from josephrocca. The library internally uses the WebCodecs API and MP4Box.js\footnote{\url{https://github.com/gpac/mp4box.js/}} for demuxing mp4 files, but provides a simple interface for accessing the video frames. The library is used to get the video frames and then the frames are processed as described in sections \ref{marker_based_tracking} and \ref{pose_estimation}. It defines three callback functions. The \texttt{onFrame} callback is called for each frame of the video. The \texttt{onConfig} callback is called when the video metadata is loaded. The \texttt{onFinish} callback is called when all of the frames are processed. Overall, WebCodecs API is a powerful tool for processing video in the browser, but it relies on third party demuxing libraries and is not yet supported by all browsers.
 
 % \begin{lstlisting}[style=htmlcssjs, caption={Example usage of the getVideoFrames.js library. Taken from \url{https://github.com/josephrocca/getVideoFrames.js/}.}, label={getVideoFrames}]
 %     <canvas id="canvasEl"></canvas>
@@ -1020,8 +1020,15 @@ Due to the low-level design of the WebCodecs API, it is not easy to use. Moreove
 
 \section{Pose Estimation}
 \label{pose_estimation}
-
+To get the locations of the 8 keypoints (foot, heel, ankle, knee, hip, shoulder, elbow, wrist) in the video, the RTMPose-m 256x192 Body8-Halpe26 model is used. The model is trained on the custom bike fitting dataset, as described in section \ref{training_pose_estimation_model_for_bikefitting}. The model is run on each frame of the video and the keypoints are extracted. The keypoints are then used to compute the joint angles and generate the suggestions for the bike fit.
 \subsection{Model Conversion and Deployment}
+The RTMPose models are originally trained in the PyTorch framework. To run the model in the browser, the model needs to be converted to either ONNX or TensorFlow.js format. ONNX model can be run in the browser using ONNX Runtime Web \footnote{\url{https://onnxruntime.ai/docs/tutorials/web/}}. However, the ONNX Runtime Web only provides API for running the model, but does not provide tensor operations needed for preprocessing the input and postprocessing the output. Due to these reasons, TensorFlow.js is used instead.
+
+To convert the model to TensorFlow.js format, the model is first converted to ONNX format using the MMDeploy \cite{mmdeploy} toolset. The MMDeploy toolset is a set of tools for converting models from the various OpenMMLab frameworks (MMPose, MMAction, MMDetection, etc.) to ONNX and other formats and provides an easy way to deploy the RTMPose models.
+
+The ONNX model is then first converted to the TensorFlow SavedModel format using the unofficial onnx2tf \cite{onnx2tf} tool. The SavedModel format is a universal format for storing TensorFlow models. The SavedModel format is then converted to the TensorFlow.js format using the official TensorFlow.js converter \footnote{\url{https://github.com/tensorflow/tfjs/tree/master/tfjs-converter}} provided by the TensorFlow.js team.
+
+Tge TensorFlow.js converter also quantizes the model to float16 to reduce the size of the model and speed up the inference. Quantization is a process of converting the weights and activations of the model from float32 to float16. This reduces the size of the model by half and can speed up the inference without significant loss of accuracy. The quantized model is then used in the application.
 
 \subsection{Preprocessing and Postprocessing}
 
