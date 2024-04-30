@@ -1043,13 +1043,21 @@ The bounding box of the person is then expanded by 2.5\% on the left and right a
 \subsection{Postprocessing}
 The RTMPose models output a SimCC \cite{simcc} heatmap, which is a heatmap of the keypoints where the x and y axis are separated. This significantly reduces the number of parameters of the model and speeds up the inference. For each keypoint, the model outputs a list of scores for x and y axis. To find the location of the keypoint, the argmax of x and y axis is taken. The x and y coordinates are then divided by 2 because the models output the coordinates multiplied by 2 to increase accuracy. The x and y coordinates are then adjusted for the resizing and added to the bounding box coordinates to get the coordinates in the original image. Only 8 body keypoints on the camera facing side (foot, heel, ankle, knee, hip, shoulder, elbow, wrist) are used further, the other keypoints are discarded. The keypoints over all of the frames are then smoothed usign a Savitzky-Golay filter \cite{savgol} to reduce the noise in the predictions.
 
-\section{Computing Joint Angles}
+\section{Computing Joint Angles and Measurements}
 After the location of the 8 keypoints is estimated, the joint angles and measurements for the current frame are computed. Joint angles are specified either by three keypoints if the angle is computed between two bones or by two keypoint if the angle is computed between one bone and the horizontal axis.
 
 Other than joint angles, application also computes the knee forward of foot measurement, which is the distance between the knee and the vertical line through the foot. Due to the absence of real world units in the video, the measurement is expressed as the percentage of the length from the fifth metatarsal to the heel. This measurement is used to determine saddle setback as its very similar to the widely used knee over pedal spindle (KOPS) measurement.
 
+\subsection{Determining the Pedal Position}
+
 For most of the measurments, the values for every frame are not in themselves very useful. For measurements that barely change over the pedal stroke (mainly upper body joint angles), the average value over all of the frames is used. For measurements that change over the pedal stroke (lower body measurements such as knee angle, knee forward of foot, ankle angle), are compared to the recommended ranges in a specific pedal position (bottom, top, front). Therefore the current pedal position needs to be determined.
+
+To determine the pedal position for each frame, invididual pedal strokes need to be detected. To do that, a circle is fitted to the foot keypoints over all of the frames using a least squares method. This circle is then used to determine the pedal position. For example, to determine the front pedal position, the angle of the foot keypoint on the circle is computed for each frame in a pedal stroke. The front pedal position is then determined as the frame with the angle closest to 90 degrees (horizontal forward). Similarly, the bottom pedal position is determined as the frame with the angle closest to 180 degrees (vertical down) and the top pedal position is determined as the frame with the angle closest to 0 degrees or 360 degrees (vertical up). After obtaining the list of frames for each pedal position, and list of frames for each pedal stroke, we can finally compute the measurements and joint angles for each pedal position. To do this, median value of the measurements for each pedal position is used. This is done to avoid the influence of the outliers in the measurements.
+
+
 \section{Generating Suggestions}
+
+
 \section{Video Player}
 \label{video_player}
 
