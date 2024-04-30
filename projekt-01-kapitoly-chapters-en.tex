@@ -1056,8 +1056,11 @@ To determine the pedal position for each frame, invididual pedal strokes need to
 
 
 \section{Generating Suggestions}
+After the joint angles and measurements are computed for each pedal position, the suggestions for the bike fit are generated. The suggestions are generated based on comparing some of the measurements in the pedal positions to the recommended ranges. The recommended ranges are based on the bike fit guidelines and are then adjusted based on the type of the bike and the fit goals selected by the user. For example, saddle height recommendations are based on knee angle at the bottom of the pedal stroke. If the knee angle is inside the recommended range, saddle height is considered correct. If the knee angle at the bottom of the pedal stroke is at the lower 10 percent of the recommended range, a suggestion to increase the saddle height slightly (by 1 cm) is generated. If the knee angle is lower than the recommended range, a suggestion to increase the saddle height significantly (by 2 cm) is generated. Suggestions are made similarly when the knee angle is at the upper 10 percent of the recommended range or higher than the recommended range.
 
+In total, suggestions are generated for the saddle height, saddle setback, handlebar height and handlebar reach. As was mentioned before, saddle height is determined by the median knee angle at the bottom of the pedal stroke. Saddle setback is determined by the median knee forward of foot measurement at the front of the pedal stroke. Handlebar height is determined by the median shoulder angle at all of the frames and handlebar reach is determined by the median shoulder angle at all of the frames.
 
+Basing suggestions only on a single measurement is not ideal, because in reality the bike fit is a complex process and the measurements are interdependent. For example, increasing the saddle height will also increase the saddle setback, handlebar reach also influences back angle not only shoulder angle and so on. In the future, the suggestions could be generated using a more complex model, which would take into account all of the measurements and their interdependencies.
 \section{Video Player}
 \label{video_player}
 
