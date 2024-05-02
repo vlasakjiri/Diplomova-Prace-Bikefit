@@ -196,6 +196,8 @@ The app costs 19.99 US dollars and does not require a subscription. However, it 
 
 \chapter{Marker-based Tracking}
 \label{marker_based_tracking}
+To estimate the keypoints, multiple approaches were tested. First approach uses colored markers, which are placed on the parts of the body, whose position needs to be estimated (foot, heel, ankle, knee, hip, shoulder, elbow, wrist). The markers are then detected using color thresholding and tracked using a method similar to SORT. This approach is implemented using the OpenCV.js library \cite{opencvjs}. The details of the implementation are described in section \ref{marker_based_tracking}.
+
 To estimate the keypoints, the application uses colored markers, which are placed on the parts of the body, whose position needs to be estimated (foot, heel, ankle, knee, hip, shoulder, elbow, wrist). The markers are at first localized manually by the user and their color is then used to detect them in the video. The markers are then tracked using a method similar to SORT. The detection and tracking is implemented using the OpenCV.js library \cite{opencvjs}.
 
 \section{Localization and Tracking Pipeline}
@@ -896,17 +898,15 @@ This chapter describes the web application for bike fitting. Implementing the ap
 
 Most web applications are implemented using the client-server architecture with the video processing and other more complicated tasks (such as pose estimation) being performed on the server. This has several disadvantages. The server needs to be powerful enough to handle the load of multiple users. This can be quite expensive for heavy models and a lot of users. The user data also needs to be sent to the server, which means the user needs to be online when using the application and the users can be concerned about their privacy.
 
-To avoid these disadvantages, most of the bussiness logic of the application (including video processing, keypoint estimation and generation of the suggestions) is implemented on the client side.
+To avoid these disadvantages, all of the logic of the application (including video processing, keypoint estimation and generation of the suggestions) is implemented on the client side.
 
 The application is implemented using the Svelte framework\footnote{\url{https://svelte.dev/}} . Svelte is a component framework similar to React\footnote{\url{https://react.dev/}} or Vue\footnote{\url{https://vuejs.org/}}. It is used to create reactive user interfaces. Svelte compiles the application to vanilla JavaScript, which means the application does not need to include a large framework library. This makes the application smaller and faster. Svelte also has a built-in state management system, which is used to store the application state.
 
-To process the video frame by frame, the application uses the WebCodecs API. The details of the implementation are described in section \ref{video_upload_and_processing}.
+User can upload a video of the cyclist from side view. The video is processed frame by frame by the pose estimation model. The keypoint predictions are then used to compute the joint angles. The joint angles are used to generate the suggestions for the bike fit. The suggestions are displayed to the user. The application from the user perspective is more thoroughly described in section \ref{application_structure}.
 
-To estimate the keypoints, multiple approaches were tested. First approach uses colored markers, which are placed on the parts of the body, whose position needs to be estimated (foot, heel, ankle, knee, hip, shoulder, elbow, wrist). The markers are then detected using color thresholding and tracked using a method similar to SORT. This approach is implemented using the OpenCV.js library \cite{opencvjs}. The details of the implementation are described in section \ref{marker_based_tracking}.
-
-The second approach uses the RTMPose pose estimation model and a person detector. The models run in the browser using the Tensorflow.js library\footnote{\url{https://www.tensorflow.org/js}}. The models are described in section \ref{rtmpose} and evaluated in chapter \ref{evaluation}. To improve the performance of the pose estimation models on the task of side view pose estimation of cyclists, the models are trained on a custom dataset. The details of the training are described in section \ref{training_pose_estimation_model_for_bikefitting}. The details of the implementation are described in section \ref{pose_estimation}.
-
+The following sections describe the implementation of the application in more detail. To process the video frame by frame, the application uses the WebCodecs API. The details of the implementation are described in section \ref{video_upload_and_processing}. To estimate the keypoint positions, the application uses the RTMPose-m Body8-Halpe26 pose estimation model, which was fine-tuned on the bikefitting dataset. The details of the deployment and implementation are described in section \ref{pose_estimation}. From the keypoint positions, the application computes various joint angles and measurements. The details of the implementation are described in section \ref{computing_joint_angles}. The application then uses the computed joint angles and measurements to generate the suggestions for the bike fit. The details of the implementation are described in section \ref{generating_suggestions}. Lastly, to play the video with the keypoint predictions overlaid on the video, a custom canvas based video player is implemented. The details of the implementation are described in section \ref{video_player}.
 \section{Application Structure}
+\label{application_structure}
 From the user's perspective, the application consists of three main steps.
 
 \begin{enumerate}
@@ -1044,6 +1044,8 @@ The bounding box of the person is then expanded by 2.5\% on the left and right a
 The RTMPose models output a SimCC \cite{simcc} heatmap, which is a heatmap of the keypoints where the x and y axis are separated. This significantly reduces the number of parameters of the model and speeds up the inference. For each keypoint, the model outputs a list of scores for x and y axis. To find the location of the keypoint, the argmax of x and y axis is taken. The x and y coordinates are then divided by 2 because the models output the coordinates multiplied by 2 to increase accuracy. The x and y coordinates are then adjusted for the resizing and added to the bounding box coordinates to get the coordinates in the original image. Only 8 body keypoints on the camera facing side (foot, heel, ankle, knee, hip, shoulder, elbow, wrist) are used further, the other keypoints are discarded. The keypoints over all of the frames are then smoothed usign a Savitzky-Golay filter \cite{savgol} to reduce the noise in the predictions.
 
 \section{Computing Joint Angles and Measurements}
+\label{computing_joint_angles}
+
 After the location of the 8 keypoints is estimated, the joint angles and measurements for the current frame are computed. Joint angles are specified either by three keypoints if the angle is computed between two bones or by two keypoint if the angle is computed between one bone and the horizontal axis.
 
 Other than joint angles, application also computes the knee forward of foot measurement, which is the distance between the knee and the vertical line through the foot. Due to the absence of real world units in the video, the measurement is expressed as the percentage of the length from the fifth metatarsal to the heel. This measurement is used to determine saddle setback as its very similar to the widely used knee over pedal spindle (KOPS) measurement.
@@ -1056,6 +1058,7 @@ To determine the pedal position for each frame, invididual pedal strokes need to
 
 
 \section{Generating Suggestions}
+\label{generating_suggestions}
 After the joint angles and measurements are computed for each pedal position, the suggestions for the bike fit are generated. The suggestions are generated based on comparing some of the measurements in the pedal positions to the recommended ranges. The recommended ranges are based on the bike fit guidelines and are then adjusted based on the type of the bike and the fit goals selected by the user. For example, saddle height recommendations are based on knee angle at the bottom of the pedal stroke. If the knee angle is inside the recommended range, saddle height is considered correct. If the knee angle at the bottom of the pedal stroke is at the lower 10 percent of the recommended range, a suggestion to increase the saddle height slightly (by 1 cm) is generated. If the knee angle is lower than the recommended range, a suggestion to increase the saddle height significantly (by 2 cm) is generated. Suggestions are made similarly when the knee angle is at the upper 10 percent of the recommended range or higher than the recommended range.
 
 In total, suggestions are generated for the saddle height, saddle setback, handlebar height and handlebar reach. As was mentioned before, saddle height is determined by the median knee angle at the bottom of the pedal stroke. Saddle setback is determined by the median knee forward of foot measurement at the front of the pedal stroke. Handlebar height is determined by the median shoulder angle at all of the frames and handlebar reach is determined by the median shoulder angle at all of the frames.
@@ -1068,7 +1071,6 @@ To play the video with the predicted keypoints and measurements overlaid on the 
 However, there does not exist a standard way to get the index of the current frame of the video. The video element has a \texttt{currentTime} property, which returns the current time of the video in seconds, but there is no property that returns the current frame index, or even the video frames per second. Another reason why relying on the \texttt{currentTime} property is not ideal is that the \texttt{currentTime} property returns the time of the video but the video can be longer than the video track, also the video track can have variable frame rate.
 
 This is why, to get the current frame index, the application saves the frame timestamps obtained when processing the video with the WebCodecs API. And then uses the requestVideoFrameCallback \footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement/requestVideoFrameCallback}} to get the current frame index. The requestVideoFrameCallback is a new API that allows the application to accurately get the current video track time using the \texttt{metadata.mediaTime} property. The \texttt{metadata.mediaTime} property returns the current time of the video track in seconds. The application then finds the closest frame timestamp to the current video track time and uses the index of the frame timestamp as the current frame index. This way the application can accurately get the current frame index of the video.
-\section{Presentation of the Results and Recommendations}
 
 
 
