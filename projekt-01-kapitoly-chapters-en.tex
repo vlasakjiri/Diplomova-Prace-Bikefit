@@ -907,15 +907,10 @@ User can upload a video of the cyclist from side view. The video is processed fr
 The following sections describe the implementation of the application in more detail. To process the video frame by frame, the application uses the WebCodecs API. The details of the implementation are described in section \ref{video_upload_and_processing}. To estimate the keypoint positions, the application uses the RTMPose-m Body8-Halpe26 pose estimation model, which was fine-tuned on the bikefitting dataset. The details of the deployment and implementation are described in section \ref{pose_estimation}. From the keypoint positions, the application computes various joint angles and measurements. The details of the implementation are described in section \ref{computing_joint_angles}. The application then uses the computed joint angles and measurements to generate the suggestions for the bike fit. The details of the implementation are described in section \ref{generating_suggestions}. Lastly, to play the video with the keypoint predictions overlaid on the video, a custom canvas based video player is implemented. The details of the implementation are described in section \ref{video_player}.
 \section{Application Structure}
 \label{application_structure}
-From the user's perspective, the application consists of three main steps.
+From the user's perspective, the application consists of three main steps: video upload, select fit goals and examine suggestions. The user is guided through these steps by a wizard-like interface. The following sections describe each of the steps in more detail.
 
-\begin{enumerate}
-    \item \textbf{Video Upload} The first step is the video upload. The user is prompted to upload a video of the cyclist from the side view. The user can also choose to use a demo video for testing the application. After the video is uploaded, the user can proceed to the next step. Figure \ref{fig:step1} shows the first step of the application.
 
-    \item \textbf{Select Fit Goals}  On the second step, the user can review and play the uploaded video and is asked to select the type of the bike (road, gravel and mountain bike) and the fit goals (comfort, performance, balanced). These fit goals and the type of the bike are used to adjust the suggestions for the bike fit. After the fit goals are selected, the user can process the video by the pose estimation model. Figure \ref{fig:step2} shows the second step of the application. While the video is processing the user can see the progress of the processing by the progress circle in the middle of the screen. Figure \ref{fig:processing} shows the processing of the video.
-
-    \item \textbf{Examine Suggestions} On the last step, after the video is processed, the user can examine the keypoint predictions from the pose estimation model, computed joint angles, suggested angle ranges and the suggestions for the bike fit. The user can also play the video with the keypoint predictions overlaid on the video. Figure \ref{fig:step3-top} shows the first part of the last step of the application and figure \ref{fig:step3-bottom} shows the second part of the last step of the application.
-\end{enumerate}
+\subsection{Video Upload} The first step is the video upload. The user is prompted to upload a video of the cyclist from the side view. The user can also choose to use a demo video for testing the application. After the video is uploaded, the user can proceed to the next step. Figure \ref{fig:step1} shows the first step of the application.
 
 \begin{figure}[htbp]
     \centering
@@ -923,6 +918,8 @@ From the user's perspective, the application consists of three main steps.
     \caption{The first step of the bikefit application. The user is prompted to upload a video of the cyclist from the side view. The user can also choose to use a demo video for testing the application. After the video is uploaded, the user can proceed to the next step.}
     \label{fig:step1}
 \end{figure}
+
+\subsection{Select Fit Goals}  On the second step, the user can review and play the uploaded video and is asked to select the type of the bike (road, gravel and mountain bike) and the fit goals (comfort, performance, balanced). These fit goals and the type of the bike are used to adjust the suggestions for the bike fit. After the fit goals are selected, the user can process the video by the pose estimation model. Figure \ref{fig:step2} shows the second step of the application. While the video is processing the user can see the progress of the processing by the progress circle in the middle of the screen. Figure \ref{fig:processing} shows the processing of the video.
 
 \begin{figure}[htbp]
     \centering
@@ -937,6 +934,11 @@ From the user's perspective, the application consists of three main steps.
     \caption{After the user selects the fit goals, the video is processed by the pose estimation model. The user can see the progress of the processing by the progress circle in the middle of the screen.}
     \label{fig:processing}
 \end{figure}
+
+
+\subsection{Examine Suggestions} On the last step, after the video is processed, the user can examine the keypoint predictions from the pose estimation model, computed joint angles, suggested angle ranges and the suggestions for the bike fit. The user can also play the video with the keypoint predictions overlaid on the video. Figure \ref{fig:step3-top} shows the first part of the last step of the application and figure \ref{fig:step3-bottom} shows the second part of the last step of the application.
+
+
 
 \begin{figure}[htbp]
     \centering
