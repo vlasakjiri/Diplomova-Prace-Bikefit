@@ -919,7 +919,9 @@ From the user's perspective, the application consists of three main steps: video
     \label{fig:step1}
 \end{figure}
 
-\subsection{Select Fit Goals}  On the second step, the user can review and play the uploaded video and is asked to select the type of the bike (road, gravel and mountain bike) and the fit goals (comfort, performance, balanced). These fit goals and the type of the bike are used to adjust the suggestions for the bike fit. After the fit goals are selected, the user can process the video by the pose estimation model. Figure \ref{fig:step2} shows the second step of the application. While the video is processing the user can see the progress of the processing by the progress circle in the middle of the screen. Figure \ref{fig:processing} shows the processing of the video.
+\subsection{Select Fit Goals}
+
+On the second step, shown in figure \ref{fig:step2}, the user can review and play the uploaded video and is asked to select the type of the bike (road, gravel and mountain bike) and the fit goals (comfort, performance, balanced). These fit goals and the type of the bike are used to adjust the suggestions for the bike fit. After the fit goals are selected, the user can process the video by the pose estimation model by clicking on the blue "Process Video" button on the right.
 
 \begin{figure}[htbp]
     \centering
@@ -928,7 +930,9 @@ From the user's perspective, the application consists of three main steps: video
     \label{fig:step2}
 \end{figure}
 
-\begin{figure}
+After the user clicks on the "Process Video" button, the video is processed by the pose estimation model and the user is shown a progress circle in the middle of the screen. Figure \ref{fig:processing} shows the progress circle shown to the user while the video is being processed.
+
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.5\textwidth]{obrazky-figures/processing-crop.jpeg}
     \caption{After the user selects the fit goals, the video is processed by the pose estimation model. The user can see the progress of the processing by the progress circle in the middle of the screen.}
@@ -936,16 +940,19 @@ From the user's perspective, the application consists of three main steps: video
 \end{figure}
 
 
-\subsection{Examine Suggestions} On the last step, after the video is processed, the user can examine the keypoint predictions from the pose estimation model, computed joint angles, suggested angle ranges and the suggestions for the bike fit. The user can also play the video with the keypoint predictions overlaid on the video. Figure \ref{fig:step3-top} shows the first part of the last step of the application and figure \ref{fig:step3-bottom} shows the second part of the last step of the application.
-
+\subsection{Examine Suggestions} On the last step, after the video is processed, the user can examine the keypoint predictions from the pose estimation model, computed joint angles, suggested angle ranges and the suggestions for the bike fit. The user can also play the video with the keypoint predictions overlaid on the video. Figure \ref{fig:step3-top} shows the first part of this step. The user is presented with a video player with the keypoint predictions and measured angles overlaid on the video.
 
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/step3-top.png}
-    \caption{The first part of the last step of the bikefit application. The user can play the video with the keypoint predictions and measured angles overlaid on the video. The video speed can be adjusted by the slider on the right. The user can also seek forward and backward 1 frame by clicking the buttons on the left and right of the middle play button. The buttons on the side can be used to seek to the next or previous pedal position and next or previous pedal stroke.}
+    \caption{The first part of the last step of the bikefit application. The user can play the video with the keypoint predictions and measured angles overlaid on the video. For each angle, the user sees the current value and a sector of a circle connecting angle points. The video speed can be adjusted by the slider on the right. The user can also seek forward and backward 1 frame by clicking the buttons on the left and right of the middle play button. The buttons on the side can be used to seek to the next or previous pedal position and next or previous pedal stroke.}
     \label{fig:step3-top}
 \end{figure}
+
+Figure \ref{fig:step3-bottom} shows the second part of the last step of the application. The "Recommendations" section shows the bike type and fit goal selected by the user. The user can also see the assessment and suggested changes to their saddle height, saddle setback, handlebar height and handlebar reach. For each measurement, the user sees a verbal assesment of a measurement (e.g. "Too high", "Too far back", "Withing range", etc.) a graphical representation of the measurement by a colored slider input and a verbal suggestion for the change (e.g. "Lower by 1 cm", "Move saddle forward by 1 cm", etc.).
+
+The "Results" section shows the recommended ranges and measured values for the angles and measurements in each of the pedal positions (bottom, top and front). The measurements are organized in a table-like structure, with columns for the measurement name, the measured value, a colored slider input indicating the measurement value and the recommended range. Additionally, the user can click on the visibility indicator on the left to hide or show the measurement in the video player. After clicking on a row in the table, the row expands to show more detailed information about the measurement. The user can see a chart with the angle values for each pedal stroke, with sections of the chart colored according to the recommended ranges (green for within range, yellow for close to the range and red for outside of the range). The user can also see the minimum, maximum, median and range of the measurement. In the future, additional information about the measurement and its effect on the bike fit could be added.
 
 \begin{figure}[htbp]
     \centering
@@ -958,7 +965,7 @@ From the user's perspective, the application consists of three main steps: video
 
 
 
-\section{Video Upload and Processing}
+\section{Video Upload and Frames Extraction}
 \label{video_upload_and_processing}
 At first, the video needs to be uploaded to the application. The video is uploaded using the HTML5 file input. The file is then converted to a URL using the \texttt{URL.createObjectURL()} method, because the WebCodecs API requires a URL as input.
 
