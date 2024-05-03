@@ -21,22 +21,23 @@ Chapter \ref{bikefit} explains the measurements used in bikefitting and compares
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Bikefit}
+\chapter{Bikefitting and Bikefitting Applications}
 \label{bikefit}
-This chapter explains the standard process of bikefitting, the motivation behind it and compares several commonly used software systems for bikefitting.
+Bikefitting is a process of adjusting the bike to the rider. The goal of bikefitting is to make the rider as comfortable as possible on the bike, while also maximizing the rider's performance. This is done by adjusting the bike parts position, such as the height of the saddle, the fore and aft position of the saddle, the height of the handlebars or changing some of the bike parts, such as the stem, saddle or the handlebars. Main motivation behind bikefitting is to prevent injuries and pain, which can be caused over time by incorrect bike setup.
 
-\section{An Introduction to Bikefitting}
-Cycling is massively popular activity world-wide. However, having incorrectly set position on the bike can lead to unnecessary pain and injuries. Having a position that does not suit the rider can also have a drastic effect on performance.
+While a rider can fit his bike himself, publicly available information on how to do it is often only general guidelines and rules of thumb. Such guidelines include setting saddle height based on inseam length or so that when the heel is on the pedal at the bottom of the pedal stroke, the leg is straight. While they can be used as a starting point, they don't work for everyone.
 
-Due to these reasons, experts, known as bikefitters help cyclists with the setup of saddle position, handlebar position and sometimes even choosing the right parts such as saddle, handlebars or cranks.
+Bikefitting is traditionally done in person by specialists, often with experience in physiotherapy, biomechanics, or sports science. These specialists are known as bikefitters. They can rely on their experience or use static measurements such as manually measuring angles at the knee at the bottom of the pedal stroke using a goniometer. However, measuring angles statically can be misleading, as the angles change dynamically during the pedal stroke and setting the leg in a static position can change the angles. This is in why recetly bikefitting has been increasingly relying on technology, which provides the bikefitter dynamic measurements which are more accurate.
 
-Bikefit sessions are done mostly in person and while most professional cycling teams have a bikefitting specialist that helps to set the bikes for their athletes, they are often too costly for amateur cyclists.
+Additionally to bikefitters, technology has also been used to automate the bikefitting process altogether. This has led to the creation of bikefitting applications, which aim to provide the user with the information needed to set up the bike themselves. These applications are often based on pose estimation models, which predict the keypoints of the rider's body from the video. The keypoints are then used to compute the measurements used in bikefitting.
+
+In recent years, bikefitting has been increasingly relying on technology, which either provides the bikefitter with more data to make more informed decisions or automates some of the bikefitting process.
+
+This chapter describes the most common ways a bike can be fitted to the rider and compares several commonly used software systems and user applications for bikefitting.
 
 
-This section draws from Phil Burt's Bike Fit 2nd Edition: Optimise Your Bike Position for High Performance and Injury Avoidance book \cite{burtbikefit}.
-
-\section{Bikefit Measurements}
-This section describes the most common measurements used in bikefitting. These measurements can be accessed from a video using automatic bike fitting software and are simple enough to adjust by the rider themselves.
+\section{Fitting a Bicycle to the Rider}
+This section describes the easiest and most impactful ways a bike can be fitted to the rider. These changes can be done by the rider themselves and can have a significant impact on the rider's comfort and performance. The adjustments mentioned can also be suggested by a bikefitting application as they are easily measurable from a video. More advanced adjustments, which are often done by a bikefitter, are not described here.
 
 \subsection{Saddle Height}
 The saddle height is a fundamental measurement that significantly impacts a rider's comfort and pedaling efficiency. It is argued to be the most important measurement in bikefitting and should be the first measurement to be adjusted \cite{burtbikefit}. Bad saddle height can even cause problems commonly associted with other measurements such as knee pain, lower back pain, neck pain, saddle sores, etc.
@@ -189,16 +190,13 @@ Additionally, it also provides front view knee tracking to address possible knee
 The app costs 19.99 US dollars and does not require a subscription. However, it is only available for iOS and Mac OS. Also it only captures 3.5 seconds of video.
 
 
-\subsection{Kinovea}
-
-
-\subsection{Posiclist}
-
 \chapter{Marker-based Tracking}
 \label{marker_based_tracking}
-To estimate the keypoints, multiple approaches were tested. First approach uses colored markers, which are placed on the parts of the body, whose position needs to be estimated (foot, heel, ankle, knee, hip, shoulder, elbow, wrist). The markers are then detected using color thresholding and tracked using a method similar to SORT. This approach is implemented using the OpenCV.js library \cite{opencvjs}. The details of the implementation are described in section \ref{marker_based_tracking}.
+To automatically fit a bike to a rider, a bikefitting system needs to estimate the rider's pose. One way to estimate the cyclist's pose is to use colored markers, which are placed on the parts of the body. These markers can then be accurately detected and tracked in the video. The position of the markers can then be used to estimate the keypoints of the rider's body.
 
-To estimate the keypoints, the application uses colored markers, which are placed on the parts of the body, whose position needs to be estimated (foot, heel, ankle, knee, hip, shoulder, elbow, wrist). The markers are at first localized manually by the user and their color is then used to detect them in the video. The markers are then tracked using a method similar to SORT. The detection and tracking is implemented using the OpenCV.js library \cite{opencvjs}.
+This chapter describes an approach to estimating the keypoints of the rider's body using colored markers and color thresholding. The markers are first manually localized by the user in the first frame of the video. The color of the markers is then used to detect them in the following frames. The markers are then tracked using a method similar to SORT \cite{sort}.
+
+Following sections describe the implementation of this approach in OpenCV.js \cite{opencvjs} and discusses its advantages and limitations.
 
 \section{Localization and Tracking Pipeline}
 
@@ -263,21 +261,22 @@ The detected markers are then tracked using a simple method similar to SORT \cit
     \item Assignment with the most markers assigned and the lowest cost is selected.
 \end{enumerate}
 
-Experiments with using the Kalman filter were also performed. Unfortunately I was not able to get the Kalman filter to work properly. The Kalman filter was not able to predict the position of the markers and the tracking was not very robust. The simple method described above works better.
+Experiments with using the Kalman filter were also performed, unfortunately the author was not able to get the Kalman filter to work properly.
 
-\section{Limitations}
-The marker-based approach was mainly chosen due to its theoretically perfect accuracy. However, in practice there are several limitations to this approach:
+\section{Advantages and Limitations}
+The marker-based approach was mainly chosen due to its theoretically perfect accuracy, which is
+its biggest advantage. However, in practice there are several limitations to this approach:
 
 \begin{enumerate}
     \item Accuracy of the system heavily depends on the placement of the markers. If the markers are not placed correctly, the results are not accurate. Since the placement is done by the user, this is a real issue. Correct placement of the markers is not trivial.
     \item The user needs to have the markers available. They don't have to be special video markers, but they need to be of a different color than the background and the clothing of the user and need to be glued to the user.
-    \item The biggest limitation is the reduced robustness of the system. The system works well if the color of the markers is not present elsewhere in the image. However, in other cases, the markers are detected in the wrong places and the system does not work. Figure \ref{fig:failed_localization} shows an example of the failed localization of the markers. The markers are not localized correctly, because the leaves in the background have similar color to the markers.
+    \item The biggest limitation is the reduced robustness of the system. The system works well if the color of the markers is not present elsewhere in the image. However, in other cases, the markers are detected in the wrong places and the system does not work. Figure \ref{fig:failed_localization} shows an example of the failed localization of the markers. The knee marker is not localized correctly, because the leaves in the background have similar color to the markers.
 \end{enumerate}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/failed_localization_crop.png}
-    \caption{Example of a failed localization of the markers. The leaves in the background have similar color to the markers and the markers are therefore not localized correctly. The markers are localized as the green dots.}
+    \caption{Example of a failed localization of the markers. The leaves in the background have similar color to the markers and the knee marker is therefore not localized correctly. The location of the markers is show as the green dots.}
     \label{fig:failed_localization}
 \end{figure}
 
@@ -905,7 +904,7 @@ The application is implemented using the Svelte framework\footnote{\url{https://
 User can upload a video of the cyclist from side view. The video is processed frame by frame by the pose estimation model. The keypoint predictions are then used to compute the joint angles. The joint angles are used to generate the suggestions for the bike fit. The suggestions are displayed to the user. The application from the user perspective is more thoroughly described in section \ref{application_structure}.
 
 The following sections describe the implementation of the application in more detail. To process the video frame by frame, the application uses the WebCodecs API. The details of the implementation are described in section \ref{video_upload_and_processing}. To estimate the keypoint positions, the application uses the RTMPose-m Body8-Halpe26 pose estimation model, which was fine-tuned on the bikefitting dataset. The details of the deployment and implementation are described in section \ref{pose_estimation}. From the keypoint positions, the application computes various joint angles and measurements. The details of the implementation are described in section \ref{computing_joint_angles}. The application then uses the computed joint angles and measurements to generate the suggestions for the bike fit. The details of the implementation are described in section \ref{generating_suggestions}. Lastly, to play the video with the keypoint predictions overlaid on the video, a custom canvas based video player is implemented. The details of the implementation are described in section \ref{video_player}.
-\section{Application Structure}
+\section{User Interface}
 \label{application_structure}
 From the user's perspective, the application consists of three main steps: video upload, select fit goals and examine suggestions. The user is guided through these steps by a wizard-like interface. The following sections describe each of the steps in more detail.
 
