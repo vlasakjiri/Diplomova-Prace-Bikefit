@@ -1091,7 +1091,7 @@ This is why, to get the current frame index, the application saves the frame tim
 \section{Assesment of Multiple Saddle Heights}
 To test the typical use case of the application, the application is used to set up the saddle height of a cyclist. The author filmed 6 videos of himself cycling on a road bike in a stationary trainer with various saddle heights. The saddle heights ranged from 3.5 cm lower than the usual saddle height to 2.5 cm higher than the usual saddle height. The goal of this test is to see if the measured knee angle at the bottom of the pedal stroke, which is the main measurement used to determine the saddle height, correctly increases with the saddle height and if the application recommended angles correspond to the feelings of the author about the saddle heights.
 
-The videos were filmed outside in daylight with a resolution of 1920x1080 pixels and a frame rate of 30 frames per second using a smartphone. The author has experience riding a road bike and is modereately fit, but is not a professional cyclist. Therefore the balanced fit goal is selected for the test. The type of the bike is set to road bike. This configuration corresponds to recommended knee angle at the bottom of the pedal stroke of 135° to 140°. 
+The videos were filmed outside in daylight with a resolution of 1920x1080 pixels and a frame rate of 30 frames per second using a smartphone. The author has experience riding a road bike and is modereately fit, but is not a professional cyclist. Therefore the balanced fit goal is selected for the test. The type of the bike is set to road bike. This configuration corresponds to recommended knee angle at the bottom of the pedal stroke of 135° to 140°.
 
 
 
@@ -1130,6 +1130,24 @@ Figure \ref{fig:saddle_height_setup} shows screenshots of the videos with saddle
 The test showed, that even small changes in the saddle height have effect on the knee angle at the bottom of the pedal stroke measured by the application. It also showed that the recommended knee angles correspond are well chosen and correspond to the feelings of the author about the saddle height. It also corresponds to bikefit literature, which states that having a slightly lower saddle height is better than having a slightly higher saddle height. The test also showed that the application can be used to set up the saddle height of a cyclist. In the future, similar tests could be done for other measurements and joint angles to further validate the application and adjust the recommended ranges.
 
 \section{Speed of the Video Processing}
+To test the speed of the pose estimation model inference and the overall processing pipeline, the time needed to process a video is measured. The benchmark is run on a desktop computer with an NVIDIA GeForce GTX 950 GPU, using Microsoft Edge browser and WebGPU backend and on a Xiaomi Redmi Note 10 Pro with Adreno 618 GPU, using Google Chrome browser and WebGL backend.
+
+Table \ref{tab:video_processing_time} shows the time needed to process a video frame by frame on both devices. The results show that the WebGPU backend on desktop is around 2 times faster than the WebGL backend on the smartphone. Another interesting observation is on WebGPU backend, the inference time of the model is only a small part of the total frame time, while on the WebGL backend, the inference time is the majority of the total frame time. This is probably due to the fact that the WebGPU backend is more optimized for deep learning models, but has slower transfer of the data between the CPU and GPU. Another reason for long frame time on the WebGPU compared to inference time is probably not optimal implementation of the application, which could be improved in the future.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{l l  c c c}
+        \toprule
+        Device     & Backend & Inference Time & Model Time & Frame Time \\
+        \midrule
+        Desktop    & WebGPU  & 45-70 ms       & 85-120 ms  & 160-200 ms \\
+        Smartphone & WebGL   & 220-300 ms     & 250-320ms  & 325-400 ms \\
+        \bottomrule
+    \end{tabular}
+    \caption{Time needed to process a video frame by frame on a desktop computer with an NVIDIA GeForce GTX 950 GPU and on a Xiaomi Redmi Note 10 Pro with Adreno 618 GPU. Inference time is the time needed to run the model inference on a single frame. Model time is the time needed to run the model on a single frame, including the preprocessing and postprocessing. Frame time is the time needed to process a single frame, including the model time and time needed to decode the frame.}
+    \label{tab:video_processing_time}
+\end{table}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
