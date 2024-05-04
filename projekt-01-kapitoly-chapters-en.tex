@@ -1081,12 +1081,55 @@ However, there does not exist a standard way to get the index of the current fra
 This is why, to get the current frame index, the application saves the frame timestamps obtained when processing the video with the WebCodecs API. And then uses the requestVideoFrameCallback \footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement/requestVideoFrameCallback}} to get the current frame index. The requestVideoFrameCallback is a new API that allows the application to accurately get the current video track time using the \texttt{metadata.mediaTime} property. The \texttt{metadata.mediaTime} property returns the current time of the video track in seconds. The application then finds the closest frame timestamp to the current video track time and uses the index of the frame timestamp as the current frame index. This way the application can accurately get the current frame index of the video.
 
 
-
+%TODO: all of the types of the bike and fit goals
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Experiments}
 \label{experiments}
+
+\section{Assesment of Multiple Saddle Heights}
+To test the typical use case of the application, the application is used to set up the saddle height of a cyclist. The author filmed 6 videos of himself cycling on a road bike in a stationary trainer with various saddle heights. The saddle heights ranged from 3.5 cm lower than the usual saddle height to 2.5 cm higher than the usual saddle height. The goal of this test is to see if the measured knee angle at the bottom of the pedal stroke, which is the main measurement used to determine the saddle height, correctly increases with the saddle height and if the application recommended angles correspond to the feelings of the author about the saddle heights.
+
+The videos were filmed outside in daylight with a resolution of 1920x1080 pixels and a frame rate of 30 frames per second using a smartphone. The author has experience riding a road bike and is modereately fit, but is not a professional cyclist. Therefore the balanced fit goal is selected for the test. The type of the bike is set to road bike. This configuration corresponds to recommended knee angle at the bottom of the pedal stroke of 135° to 140°. 
+
+
+
+
+Table \ref{tab:saddle_height_setup} shows the results of the test. The measured knee angle at the bottom of the pedal stroke, the recommended knee angle and the feelings of the author about the saddle height are shown for each video. The results show that the measured knee angle at the bottom of the pedal stroke increases with the saddle height, as expected. The measured knee angle is within the recommended range of 135° to 140° for the saddle heights of 0 cm -0.5 cm and -1.5 cm. This surprisingly well correspond to the feelings of the author about the saddle height. The extreme saddle heights of -3.5 cm and +2.5 cm are correctly assessed as too low and too high, respectively. The saddle height of -1.5cm felt low, but much better than the previous height of -3.5 cm, and could be used for begineers or for riders with some flexibility issues. The saddle height of -0.5 cm felt lower than the author is used to, but again, better than the previous height of -1.5 cm and could definetely be used long term. The saddle height of 0 cm felt ok and the saddle height of +0.5 cm felt distinctly too high, it was a small change, but very noticeable and the author had trouble to pedal smoothly with this saddle height.
+
+\begin{table}[htbp]
+
+    \centering
+    \begin{tabular}{c c l l}
+        \toprule
+        Saddle Height & Knee Angle & Rider Feelings              & App Assesment          \\
+        \midrule
+        -3.5 cm       & 128.5°     & Too low.                    & Too low.               \\
+        -1.5 cm       & 135.2°     & Low end of rideable window. & On lower end of range. \\
+        -0.5 cm       & 137.5°     & Lower than used to, but ok. & Within range.          \\
+        0 cm          & 138.8°     & Ok.                         & Within range.          \\
+        +0.5 cm       & 141.3°     & Too high. Not comfortable.  & Too high.              \\
+        +2.5 cm       & 152.3°     & Definetely too high.        & Too high.              \\
+        \bottomrule
+    \end{tabular}
+    \caption{Results of the saddle height setup test. The measured knee angle at the bottom of the pedal stroke, the recommended knee angle and the feelings of the author about the saddle height are shown for each video.}
+    \label{tab:saddle_height_setup}
+\end{table}
+
+Figure \ref{fig:saddle_height_setup} shows screenshots of the videos with saddle heights of -3.5 cm and +2.5 cm. We can see how the knee angle at the bottom of the pedal stroke changes with the saddle height. The keypoint predictions and angles are overlaid on the video.
+
+\begin{figure}[htbp]
+    \subfloat{\includegraphics[width=0.49\textwidth]{obrazky-figures/-3.5_screen_crop.png}}\hfill
+    \subfloat{\includegraphics[width=0.49\textwidth]{obrazky-figures/+2,5_screen_crop.png}}
+    \caption{Screenshots of the videos with saddle heights of -3.5 cm (left) and +2.5 cm (right) with the keypoint predictions and angles overlaid on the video. Both screenshots show the knee angle at the bottom of the pedal stroke.}
+    \label{fig:saddle_height_setup}
+
+\end{figure}
+
+The test showed, that even small changes in the saddle height have effect on the knee angle at the bottom of the pedal stroke measured by the application. It also showed that the recommended knee angles correspond are well chosen and correspond to the feelings of the author about the saddle height. It also corresponds to bikefit literature, which states that having a slightly lower saddle height is better than having a slightly higher saddle height. The test also showed that the application can be used to set up the saddle height of a cyclist. In the future, similar tests could be done for other measurements and joint angles to further validate the application and adjust the recommended ranges.
+
+\section{Speed of the Video Processing}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
