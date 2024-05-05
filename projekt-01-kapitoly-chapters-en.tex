@@ -9,15 +9,15 @@
 \chapter{Introduction}
 Cycling is a massively popular activity around the world. People of all ages and skill levels enjoy it, from commuters to professional athletes. To enjoy cycling, it is important to have a bike that fits the rider. Having a bike that does not fit the rider can lead to unnecessary pain or over time even injuries. Having a bike that does not fit the can also have detrimental effect on performance. Therefore, a well fitted bike is important for professional athletes and amateurs alike.
 
-Unfortunately, the setup of one's bike is not a trivial task. Information on how to setup the bike is often comprised of general guidelines and rules of thumb. These guidelines are often contradictory and can cause confusion. The setup of the bike is also highly individual and depends on the rider's flexibility, riding style, goals, etc. Similarly, each bike is different and requires different setup.
+Unfortunately, the setup of one's bike is not a trivial task. Information on how to setup the bike often fail to account for the individual differences between riders and the dynamic nature of pedaling.
 
 This led to the creation of a new profession called bikefitting. Bikefitters are experts who help cyclists set up their bikes. This was traditionally done in person and relied solely on the bikefitter's experience and rudimentary tools such as plumb bobs, goniometers, etc. However, in recent years, to make it more accessible, bikefitting has been increasingly relying on technology, mainly motion capture systems. This means bikefitters do not have to rely solely on their experience and can use data to make more informed decisions. However, these in-person bikefitting sessions are often not available in all areas and can be too costly for amateur cyclists.
 
 To make bikefitting even more accessible, there has been a rise in bikefitting applications that aim to automate some of the bikefitting process. Despite the success of these applications, they are often limited to a single platform, provide only very basic information to the user, or are too costly.
 
-This work aims to create a bikefitting application that does not suffer from these limitations. The application is available in the browser, provides the user with detailed information, while being easy to use and uses lightweight SOTA pose estimation models, that run directly in the browser to keep the cost of the application low.
+This work aims to create a bikefitting application that does not suffer from these limitations. The application provides the user with detailed information, while being easy to use. It can be used to fit road, gravel or mountain bikes and allows the user to select their fit goal (performance, comfort, or balanced). The application uses a fine-tuned pose estimation model to estimate the rider's pose from a side view video of the rider pedaling their bike. It then makes suggestions for adjusting the saddle height, saddle fore and aft position, handlebar height and handlebar reach. The application runs directly in the browser, which keeps the cost of the application low.
 
-Chapter \ref{bikefit} explains the measurements used in bikefitting and compares several commonly used software systems for bikefitting. Chapter \ref{ch:pose_estimation} describes the pose estimation models used in this work. Chapter \ref{evaluation} evaluates the pose estimation models on videos of cyclists, filmed from the side, as this is the most common view used in bikefitting. Chapter \ref{training_pose_estimation_model_for_bikefitting} uses the best performing pose estimation model to create a new pose estimation model trained specifically for bikefitting. Chapter \ref{ch:bikefit_application} describes the bikefit application and chapter \ref{experiments} evaluates the application on real world data. Chapter \ref{conclusion} concludes the work and proposes future work.
+Chapter \ref{bikefit} explains how can a rider's position on the bike be adjusted to make the rider more comfortable and perform better. It also compares several commonly used software systems for bikefitting. Chapter \ref{marker_based_tracking} describes how a marker-based tracking approach can be used to estimate the rider's pose. Chapter \ref{ch:pose_estimation} describes modern pose estimation models that can be used to estimate the rider's pose. Chapter \ref{ch:dataset} describes a custom bikefitting dataset that is used to train and evaluate the pose estimation models. Chapter \ref{ch:fine_tuning} describes how the pose estimation models are evaluated and fine-tuned on the custom dataset. Chapter \ref{ch:bikefit_application} describes the bikefit application and chapter \ref{experiments} tests how well does the application work in real use case and its speed. Chapter \ref{conclusion} concludes the work and proposes future work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -621,7 +621,7 @@ The extracted frames are split into training and validation sets. Frames from th
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Fine-Tuning and Evaluation of Pose Estimation Models for Bikefitting}
-\label{training_pose_estimation_model_for_bikefitting}
+\label{ch:fine_tuning}
 
 This chapter evaluates the performance of the pose estimation models on side view pose estimation of cyclists. Based on these results the best perfoming model is selected and fine-tuned on the bikefitting dataset. The fine-tuned model is then once again evaluated on the bikefitting dataset and compared with the pre-trained models. This model is then used in the bikefit application. Models are evaluated and fine-tuned on the dataset described in section \ref{ch:dataset}.
 
@@ -1106,19 +1106,19 @@ Table \ref{tab:saddle_height_setup} shows the results of the test. The measured 
     \centering
     \begin{tabular}{c c p{0.25\textwidth} p{0.3\textwidth}}
         \toprule
-        Saddle Height & Knee Angle & Rider Feelings              & App Assesment                                              \\
+        Saddle Height & Knee Angle & Rider Feelings              & App Assesment                                             \\
         \midrule
-        -3.5 cm       & 128.5°     & Too low.                    & Too low. Raise saddle by 1 cm and try again.               \\
+        -3.5 cm       & 128.5°     & Too low.                    & Too low. Raise saddle by 1 cm and try again.              \\
         \midrule
         -1.5 cm       & 135.2°     & Low end of rideable window. & On lower end of range. Try raising by 5 mm and try again. \\
         \midrule
-        -0.5 cm       & 137.5°     & Lower than used to, but ok. & Within range.                                              \\
+        -0.5 cm       & 137.5°     & Lower than used to, but ok. & Within range.                                             \\
         \midrule
-        0 cm          & 138.8°     & Ok.                         & Within range.                                              \\
+        0 cm          & 138.8°     & Ok.                         & Within range.                                             \\
         \midrule
-        +0.5 cm       & 141.3°     & Too high. Not comfortable.  & Too high. Lower saddle by 1 cm and try again.              \\
+        +0.5 cm       & 141.3°     & Too high. Not comfortable.  & Too high. Lower saddle by 1 cm and try again.             \\
         \midrule
-        +2.5 cm       & 152.3°     & Definetely too high.        & Too high. Lower saddle by 1 cm and try again.              \\
+        +2.5 cm       & 152.3°     & Definetely too high.        & Too high. Lower saddle by 1 cm and try again.             \\
         \bottomrule
     \end{tabular}
     \caption{Results of the saddle height setup test. The measured knee angle at the bottom of the pedal stroke, the recommended knee angle and the feelings of the author about the saddle height are shown for each video.}
@@ -1137,7 +1137,7 @@ Figure \ref{fig:saddle_height_setup} shows screenshots of the videos with saddle
 
 The test showed, that even small changes in the saddle height have effect on the knee angle at the bottom of the pedal stroke measured by the application. It also showed that the recommended knee angles correspond are well chosen and correspond to the feelings of the author about the saddle height. It also corresponds to bikefit literature, which states that having a slightly lower saddle height is better than having a slightly higher saddle height. The test also showed that the application can be used to set up the saddle height of a cyclist. In the future, similar tests could be done for other measurements and joint angles to further validate the application and adjust the recommended ranges.
 
-\section{Speed of the Video Processing}
+\section{Video Processing Benchmark}
 \label{speed_of_the_video_processing}
 To test the speed of the pose estimation model inference and the overall processing pipeline, the time needed to process a video is measured. The benchmark is run on a desktop computer with an NVIDIA GeForce GTX 950 GPU, using Microsoft Edge browser and WebGPU backend and on a Xiaomi Redmi Note 10 Pro with Adreno 618 GPU, using Google Chrome browser and WebGL backend.
 
