@@ -1163,7 +1163,13 @@ Table \ref{tab:video_processing_time} shows the time needed to process a video f
 \chapter{Conclusion}
 \label{conclusion}
 
+This work focused on the development of a web application for bike fitting using pose estimation. The application was successfully implemented and deployed \footnote{\url{https://vlasakjiri.github.io/bikefit/}}.
 
+The first chapter of the work described the needed bikefitting background and existing bikefitting applications and systems and their limitations. Then the following chapters describe a marker-based method for tracking the cyclist's body and marker-less pose estimation models. Next, a custom dataset for bikefitting featuring 2309 photos of the author pedaling on a stationary trainer was created. The dataset was used to evaluate the pose estimation models and fine-tune the RTMPose model, whose Normalized Mean Error was significantly reduced from 2.54 to 1.51. Next chapter describes the implementation of the web application and the deployment process of the pose estimation model. The last chapter describes the experiments done to evaluate the application.
+
+The resulting application, which runs fully in the browser, is able to accurately estimate the keypoint positions of the cyclist from the side view video and compute the joint angles and measurements. The application then generates suggestions for the bike fit based on the computed joint angles and recommended ranges. The application also allows more advanced users to examine the keypoint predictions and joint angles in the video player and see how the angles change over multiple pedal strokes. The experiments showed that that the application detects angle changes caused by the saddle height changes and that the application can be used to set up the saddle height. Benchmarks also showed that an older desktop computer can process a frame in 160-200 ms and a modern smartphone can process a frame in 325-400 ms.
+
+In the future, the model accuracy could be further improved by fine-tuning it on a larger dataset, perhaps obtained by annotating the videos uploaded by the users. Using a model which also predicts hand keypoints could be used to generate suggestions based on the wrist angle. The user experience could be further improved by creating a landing page for the application, and connecting it to a database of users to store the videos and the results of the bike fit.
 
 %=========================================================================
 
