@@ -1085,12 +1085,12 @@ This is why, to get the current frame index, the application saves the frame tim
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Experiments}
+\chapter{Web Application Experiments}
 \label{experiments}
 
-This chapter describes the experiments done to evaluate the application. The experiments are divided into two parts. Section \ref{assesment_of_multiple_saddle_heights} tests the application's ability to to asses and make suggestions for saddle height. Section \ref{speed_of_the_video_processing} measure how long the application takes to process one frame of the video on different devices.
+This chapter describes the experiments done to evaluate the bikefitting web application. The experiments are divided into two parts. Section \ref{assesment_of_multiple_saddle_heights} tests the application's ability to to asses and make suggestions for saddle height. Section \ref{speed_of_the_video_processing} measure how long the application takes to process one frame of the video on different devices.
 
-\section{Assesment of Multiple Saddle Heights}
+\section{Testing Multiple Saddle Heights}
 \label{assesment_of_multiple_saddle_heights}
 To test the typical use case of the application, the application is used to set up the saddle height of a cyclist. The author filmed 6 videos of himself cycling on a road bike in a stationary trainer with various saddle heights. The saddle heights ranged from 3.5 cm lower than the usual saddle height to 2.5 cm higher than the usual saddle height. The goal of this test is to see if the measured knee angle at the bottom of the pedal stroke, which is the main measurement used to determine the saddle height, correctly increases with the saddle height and if the application recommended angles correspond to the feelings of the author about the saddle heights.
 
@@ -1104,16 +1104,21 @@ Table \ref{tab:saddle_height_setup} shows the results of the test. The measured 
 \begin{table}[htbp]
 
     \centering
-    \begin{tabular}{c c l l}
+    \begin{tabular}{c c p{0.25\textwidth} p{0.3\textwidth}}
         \toprule
-        Saddle Height & Knee Angle & Rider Feelings              & App Assesment          \\
+        Saddle Height & Knee Angle & Rider Feelings              & App Assesment                                              \\
         \midrule
-        -3.5 cm       & 128.5°     & Too low.                    & Too low.               \\
-        -1.5 cm       & 135.2°     & Low end of rideable window. & On lower end of range. \\
-        -0.5 cm       & 137.5°     & Lower than used to, but ok. & Within range.          \\
-        0 cm          & 138.8°     & Ok.                         & Within range.          \\
-        +0.5 cm       & 141.3°     & Too high. Not comfortable.  & Too high.              \\
-        +2.5 cm       & 152.3°     & Definetely too high.        & Too high.              \\
+        -3.5 cm       & 128.5°     & Too low.                    & Too low. Raise saddle by 1 cm and try again.               \\
+        \midrule
+        -1.5 cm       & 135.2°     & Low end of rideable window. & On lower end of range. Try raising by 5 mm and try again. \\
+        \midrule
+        -0.5 cm       & 137.5°     & Lower than used to, but ok. & Within range.                                              \\
+        \midrule
+        0 cm          & 138.8°     & Ok.                         & Within range.                                              \\
+        \midrule
+        +0.5 cm       & 141.3°     & Too high. Not comfortable.  & Too high. Lower saddle by 1 cm and try again.              \\
+        \midrule
+        +2.5 cm       & 152.3°     & Definetely too high.        & Too high. Lower saddle by 1 cm and try again.              \\
         \bottomrule
     \end{tabular}
     \caption{Results of the saddle height setup test. The measured knee angle at the bottom of the pedal stroke, the recommended knee angle and the feelings of the author about the saddle height are shown for each video.}
