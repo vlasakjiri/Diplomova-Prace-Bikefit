@@ -102,7 +102,7 @@ MyVeloFit predicts 6 joint locations for the camera facing side of the body. Mos
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/myvelofit_keypoints.png}
+    \includegraphics[width=\textwidth]{obrazky-figures/myvelofit_keypoints.jpg}
     \caption{Side view image with predicted keypoints in MyVeloFit.}
     \label{fig:myvelofit_keypoints}
 \end{figure}
@@ -145,7 +145,7 @@ The markers are placed by the fitter on the rider's body. Accurate placement of 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/retul_markers.png}
+    \includegraphics[width=\textwidth]{obrazky-figures/retul_markers.jpg}
     \caption{Placement of the markers used by Retül. (Screenshot from instructional instructional video by Retül \cite{retulMarkersYoutube}.)}
     \label{fig:retul_markers}
 \end{figure}
@@ -320,7 +320,7 @@ Not all of the models predict the same keypoints. The models predict either 17 k
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
 
-        \includegraphics[height=8cm]{obrazky-figures/coco_wholebody_landmarks.png}
+        \includegraphics[height=8cm]{obrazky-figures/coco_wholebody_landmarks.jpg}
         % \caption{COCO-WholeBody keypoints. Taken from \cite{coco-wholebody}.}
         \label{fig:image3}
     \end{subfigure}
@@ -490,7 +490,7 @@ To construct the dataset, at first, the author shot 23 videos of himself pedalin
     \begin{subfigure}[b]{\imgwidth}
         \centering
 
-        \includegraphics[width=1\linewidth]{obrazky-figures/1.png}
+        \includegraphics[width=1\linewidth]{obrazky-figures/1.jpg}
         % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
 
     \end{subfigure}
@@ -498,7 +498,7 @@ To construct the dataset, at first, the author shot 23 videos of himself pedalin
     \begin{subfigure}[b]{\imgwidth}
         \centering
 
-        \includegraphics[width=1\linewidth]{obrazky-figures/2.png}
+        \includegraphics[width=1\linewidth]{obrazky-figures/2.jpg}
         % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
 
     \end{subfigure}
@@ -506,22 +506,14 @@ To construct the dataset, at first, the author shot 23 videos of himself pedalin
     \begin{subfigure}[b]{\imgwidth}
         \centering
 
-        \includegraphics[width=1\linewidth]{obrazky-figures/3.png}
+        \includegraphics[width=1\linewidth]{obrazky-figures/3.jpg}
         % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
     \end{subfigure}
 
     \begin{subfigure}[b]{\imgwidth}
         \centering
 
-        \includegraphics[width=1\linewidth]{obrazky-figures/4.png}
-        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
-
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{\imgwidth}
-        \centering
-
-        \includegraphics[width=1\linewidth]{obrazky-figures/5.png}
+        \includegraphics[width=1\linewidth]{obrazky-figures/4.jpg}
         % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
 
     \end{subfigure}
@@ -529,13 +521,7 @@ To construct the dataset, at first, the author shot 23 videos of himself pedalin
     \begin{subfigure}[b]{\imgwidth}
         \centering
 
-        \includegraphics[width=1\linewidth]{obrazky-figures/6.png}
-        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
-    \end{subfigure}
-    \begin{subfigure}[b]{\imgwidth}
-        \centering
-
-        \includegraphics[width=1\linewidth]{obrazky-figures/7.png}
+        \includegraphics[width=1\linewidth]{obrazky-figures/5.jpg}
         % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
 
     \end{subfigure}
@@ -543,7 +529,13 @@ To construct the dataset, at first, the author shot 23 videos of himself pedalin
     \begin{subfigure}[b]{\imgwidth}
         \centering
 
-        \includegraphics[width=1\linewidth]{obrazky-figures/8.png}
+        \includegraphics[width=1\linewidth]{obrazky-figures/6.jpg}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+    \end{subfigure}
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=1\linewidth]{obrazky-figures/7.jpg}
         % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
 
     \end{subfigure}
@@ -551,7 +543,15 @@ To construct the dataset, at first, the author shot 23 videos of himself pedalin
     \begin{subfigure}[b]{\imgwidth}
         \centering
 
-        \includegraphics[width=1\linewidth]{obrazky-figures/9.png}
+        \includegraphics[width=1\linewidth]{obrazky-figures/8.jpg}
+        % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
+
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\imgwidth}
+        \centering
+
+        \includegraphics[width=1\linewidth]{obrazky-figures/9.jpg}
         % \caption{MS-COCO keypoints. Taken from \cite{coco}.}
     \end{subfigure}
 
@@ -605,7 +605,7 @@ The mask of the colored markers is created the same way as in the marker-based t
 The inpainting was done using the opencv library \cite{opencv}. The library contains implementations of the Navier-Stokes inpainting algorithm \cite{ns-inpainting}, which is based on fluid dynamics, and the Fast Marching Method \cite{fast-marching-inpainting}, which works by propagating the information from the known parts of the image to the unknown parts. After testing both algorithms, the Navier-Stokes inpainting algorithm was chosen, as it produced better results. Figure \ref{fig:inpainting} shows an example of the inpainting algorithm. It works well in most cases, but struggles with non-uniform backgrounds and can inpain unwanted parts of the image if the mask is not accurate.
 
 \begin{figure}
-    \includegraphics[width=1\linewidth]{obrazky-figures/inpainting_original.png}
+    \includegraphics[width=1\linewidth]{obrazky-figures/inpainting_original.jpg}
     \includegraphics[width=1\linewidth]{obrazky-figures/inpainting.jpg}
     \caption{Example of the removal of the colored markers. The red colored markers are removed from the original image (top) using the Navier-Stokes inpainting algorithm. Most of the markers are removed well, but the algorithm produces blurry results on non-uniform backgrounds (pants with logo) and sometimes inpaints unwanted parts of the image (face), if the mask is not accurate.}
     \label{fig:inpainting}
