@@ -289,7 +289,20 @@ Webová aplikace pro nastavení ergonomického posedu na jízdním kole},  % ná
 }
 
 % Rozšířený abstrakt (cca 3 normostrany) - lze definovat zde nebo výše / Extended abstract (approximately 3 standard pages) - can be defined here or above
-%\extendedabstract{Do tohoto odstavce bude zapsán výtah (abstrakt) práce v českém (slovenském) jazyce.}
+\extendedabstract{Tato práce se zaměřuje na vývoj webové aplikace, která uživatelům pomáhá nastavit ergonomickou polohu na jízdním kole. Aplikace využívá model odhadu pózy RTMPose k analýze videa uživatele šlapajícího na kole z profilu, poté vypočítá rozličné úhly kloubů a tyto úhly porovná s doporučenými hodnotami. Na základě tohoto porovnání aplikace následně poskytne uživateli návrhy na změnu výšky sedla kola, předozadní polohu sedla, výšky řídítek a předozadní polohy řídítek pro dosažení ergonomičtějšího posedu. Aplikace umožňuje nastavení posedu pro 3 typy kol (silniční, gravel a horské) a umožňuje uživateli vybrat si ze 3 typů posedů (komfort, výkon a kompromis mezi komfortem a výkonem). 
+
+První část práce se zabývá pozadím nastavování posedu na jízdním kole, možnými nastaveními kola a existujícími aplikacemi a metodami pro nastavení posedu na kole a jejich limitacemi. Další části se zabývají popisem metod sledování klíčových bodů těla ve videu. Nejdříve je představena jednoduchá metoda pro sledování nálepek a jsou diskutovány její nedostatky. Následně jsou představeny rozličné metody pro odhad pózy, které nálepky nepotřebují.
+
+Pro vyhodnocení a zlepšení přesnosti modelů odhadu pózy byla vytvořena datová sada 2309 fotografií autora šlapajícího na kole. Anotace pro tuto datovou sadu byly získany pomocí sledování 8 barevných nálepek nalepených na straně těla otočené ke kameře. Nálepky byly sledovány pomocí jednoduchého algoritmu založeného na barevném prahování a trackování, který je v této práci také popsán. Zbylé anotace byly získány automaticky pomocí modelu odhadu pózy RTMPose.
+
+Evaluace na této datové sadě ukázala, že modely RTMPose dosahují dobrých výsledků v odhadu pózy, ale chyba modelu je výrazně vyšší u klíčových bodů na noze (špička nohy a pata). Pro zlepšení přesnosti modelu byl model RTMPose fine-tunován na této datové sadě. Po fine-tunování modelu na tomto datovém souboru se normovaná průměrná chyba modelu výrazně snížila z 2,54 na 1,51 (zlepšení o 40 \%). Fine-tunování proběhlo pomocí knihovny MMpose.
+
+Aplikace je implementována jako single page aplikace pomocí frameworku SvelteKit. Model pro odhad pózy běží na straně klienta pomocí knihovny TensorFlow.js. Zpracování videa je rovněž prováděno na straně klienta pomocí WebCodecs API. Výsledné predikce modelu a vypočítané úhly kloubů jsou po zpracování zobrazeny uživateli nad videem za využití HTML canvas elementu. Aplikace kromě prezentování doporučených změn pro posed uživatele také zobrazuje pokročilejší statistiky a grafy jak se mění úhly kloubů pro jednotlivé cykly šlapání.
+
+Experimenty ukázaly, že aplikace detekuje změny úhlu způsobené změnami výšky sedla a že ji lze použít k nastavení výšky sedla. Zároveň se ukázalo, že doporučení aplikace dobře korespondovaly s pocity autora při různých výškách sedla. Následné měření výkonu ukázaly, že aplikace zpracuje jeden snímek videa za asi 160-200 ms na starším stolním počítači s využitím WebGPU backendu a za asi 325-400 ms na mobilním telefonu s využitím WebGL backendu.
+
+}
+
 % Začít rozšířený abstrakt na liché stránce? / Should extended abstract start on the odd page?
 %\extabstractodd{true}
 
