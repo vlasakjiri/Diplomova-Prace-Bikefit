@@ -46,7 +46,7 @@ Optimal saddle height is nowadays determined by the rider's knee angle at the bo
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.5\textwidth]{obrazky-figures/burt_knee_angle.png}
+    \includegraphics[width=0.35\textwidth]{obrazky-figures/burt_knee_angle.png}
     \caption{Knee extension angle of 140-145 degrees, which is often referred to as 35-40 degrees (being the angle of deviation from straight leg). Is considered optimal for the average rider. Taken from \cite{burtbikefit}.}
     \label{fig:saddle_height}
 \end{figure}
@@ -102,7 +102,7 @@ MyVeloFit predicts 6 joint locations for the camera facing side of the body. Mos
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/myvelofit_keypoints.jpg}
+    \includegraphics[width=0.7\textwidth]{obrazky-figures/myvelofit_keypoints.jpg}
     \caption{Side view image with predicted keypoints in MyVeloFit.}
     \label{fig:myvelofit_keypoints}
 \end{figure}
@@ -145,7 +145,7 @@ The markers are placed by the fitter on the rider's body. Accurate placement of 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/retul_markers.jpg}
+    \includegraphics[width=0.6\textwidth]{obrazky-figures/retul_markers.jpg}
     \caption{Placement of the markers used by Retül. (Screenshot from instructional instructional video by Retül \cite{retulMarkersYoutube}.)}
     \label{fig:retul_markers}
 \end{figure}
@@ -227,7 +227,7 @@ After clicking on a marker, multiple steps are performed:
 Figure \ref{fig:marker_crop} shows a closeup of the localization of the markers. The single localized foot marker is highlighted in green. The contours of the thresholded regions are highlighted in white. The centroids of the contours are highlighted by small green cross.
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/markers_crop.png}
+    \includegraphics[width=0.7\textwidth]{obrazky-figures/markers_crop.png}
     \caption{Closeup of the localization of the markers. The single localized foot marker is highlighted in green. The contours of the thresholded regions are highlighted in white. The centroids of the contours are highlighted by small green cross.}
     \label{fig:marker_crop}
 \end{figure}
@@ -277,7 +277,7 @@ its biggest advantage. However, in practice there are several limitations to thi
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/failed_localization_crop.png}
+    \includegraphics[width=0.7\textwidth]{obrazky-figures/failed_localization_crop.png}
     \caption{Example of a failed localization of the markers. The leaves in the background have similar color to the markers and the knee marker is therefore not localized correctly. The location of the markers is show as the green dots.}
     \label{fig:failed_localization}
 \end{figure}
@@ -377,7 +377,7 @@ A notable feature of the HRNet pose estimation architecture is its ability to ca
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/hrnet_architecture.png}
+    \includegraphics[width=0.8\textwidth]{obrazky-figures/hrnet_architecture.png}
     \caption{Architecture of the HRNet models. The HRNet models consists of three parallel branches, each processing different resolutions of the input image. These branches are interconnected, facilitating the exchange of information between different scales. Taken from \cite{hrnet}.}
     \label{fig:hrnet_architecture}
 \end{figure}
@@ -605,6 +605,8 @@ The mask of the colored markers is created the same way as in the marker-based t
 The inpainting was done using the opencv library \cite{opencv}. The library contains implementations of the Navier-Stokes inpainting algorithm \cite{ns-inpainting}, which is based on fluid dynamics, and the Fast Marching Method \cite{fast-marching-inpainting}, which works by propagating the information from the known parts of the image to the unknown parts. After testing both algorithms, the Navier-Stokes inpainting algorithm was chosen, as it produced better results. Figure \ref{fig:inpainting} shows an example of the inpainting algorithm. It works well in most cases, but struggles with non-uniform backgrounds and can inpain unwanted parts of the image if the mask is not accurate.
 
 \begin{figure}
+
+    \centering
     \includegraphics[width=1\linewidth]{obrazky-figures/inpainting_original.jpg}
     \includegraphics[width=1\linewidth]{obrazky-figures/inpainting.jpg}
     \caption{Example of the removal of the colored markers. The red colored markers are removed from the original image (top) using the Navier-Stokes inpainting algorithm. Most of the markers are removed well, but the algorithm produces blurry results on non-uniform backgrounds (pants with logo) and sometimes inpaints unwanted parts of the image (face), if the mask is not accurate.}
@@ -646,13 +648,13 @@ However, for the bikefitting dataset, commonly used thresholds of 0.1 or 0.05 ar
 The Object Keypoint Similarity (OKS) metric is a widely used metric for evaluating pose estimation models. It calculates the similarity between the predicted keypoints and the ground truth keypoints based on the distance between the keypoints and defined variance for each keypoint.
 
 The equation for keypoint similarity is:
-$$KS_i = \exp\left(\frac{-d^2_i}{2s^2\sigma^2_i}\right)$$
+$$KS_i = \exp\left(\frac{-d^2_i}{2s^2\sigma^2_i}\right). $$
 
 \begin{description}
-    \item[$KS_i$] is the keypoint similarity for keypoint $i$
-    \item[$d_i$] is the Euclidean distance between the ground truth and predicted keypoint $i$
-    \item[$k_i$] is the variance for keypoint $i$
-    \item[$s$] is the scale of the object, $s^2$ is the area of the bounding box of the person
+    \item[$KS_i$] is the keypoint similarity for keypoint $i$.
+    \item[$d_i$] is the Euclidean distance between the ground truth and predicted keypoint $i$.
+    \item[$k_i$] is the variance for keypoint $i$.
+    \item[$s$] is the scale of the object, $s^2$ is the area of the bounding box of the person.
 \end{description}
 
 The final OKS is defined as sum of the keypoint similarities of visible keypoints divided by the number of visible keypoints.
@@ -679,9 +681,9 @@ As was discussed in the previous sections, the commonly used metrics for evaluat
 
 Normalized Mean Error (NME) is calculated by obtaining the Euclidean distance between the predicted keypoints and the ground truth keypoints, and then normalizing this distance with respect to the average bounding box dimension. The normalization is done to account for the scale of the video. It is then expressed as a percentage for better interpretability. The formula for NME is as follows:
 
-$$ \text{NME}_i (\%)= \frac{d_i}{\frac{{s.w} + {s.h}}{2}} \cdot 100 $$
-
-Where:
+$$ \text{NME}_i (\%)= \frac{d_i}{\frac{{s.w} + {s.h}}{2}} \cdot 100, $$
+%
+where:
 \begin{description}
     \item[$\text{NME}_i$:] is the Normalized Mean Error for the $i$-th keypoint, expressed as a percentage of the average bounding box dimension
     \item[$d_i$:] is the Euclidean distance between the ground truth and predicted keypoint $i$
@@ -1090,7 +1092,7 @@ This is why, to get the current frame index, the application saves the frame tim
 \chapter{Web Application Experiments}
 \label{experiments}
 
-This chapter describes the experiments done to evaluate the bikefitting web application. The experiments are divided into two parts. Section \ref{assesment_of_multiple_saddle_heights} tests the application's ability to to asses and make suggestions for saddle height. Section \ref{speed_of_the_video_processing} measure how long the application takes to process one frame of the video on different devices.
+This chapter describes the experiments done to evaluate the bikefitting web application. The experiments are divided into two parts. Section \ref{assesment_of_multiple_saddle_heights} tests the application's ability to to asses and make suggestions for saddle height. Section \ref{speed_of_the_video_processing} measures how long the application takes to process one frame of the video on different devices.
 
 \section{Testing Multiple Saddle Heights}
 \label{assesment_of_multiple_saddle_heights}
@@ -1101,7 +1103,7 @@ The videos were filmed outside in daylight with a resolution of 1920x1080 pixels
 
 
 
-Table \ref{tab:saddle_height_setup} shows the results of the test. The measured knee angle at the bottom of the pedal stroke, the recommended knee angle and the feelings of the author about the saddle height are shown for each video. The results show that the measured knee angle at the bottom of the pedal stroke increases with the saddle height, as expected. The measured knee angle is within the recommended range of 135° to 140° for the saddle heights of 0 cm -0.5 cm and -1.5 cm. This surprisingly well correspond to the feelings of the author about the saddle height. The extreme saddle heights of -3.5 cm and +2.5 cm are correctly assessed as too low and too high, respectively. The saddle height of -1.5cm felt low, but much better than the previous height of -3.5 cm, and could be used for begineers or for riders with some flexibility issues. The saddle height of -0.5 cm felt lower than the author is used to, but again, better than the previous height of -1.5 cm and could definetely be used long term. The saddle height of 0 cm felt ok and the saddle height of +0.5 cm felt distinctly too high, it was a small change, but very noticeable and the author had trouble to pedal smoothly with this saddle height.
+Table \ref{tab:saddle_height_setup} shows the results of the test. The measured knee angle at the bottom of the pedal stroke, the recommended knee angle and the feelings of the author about the saddle height are shown for each video. The results show that the measured knee angle at the bottom of the pedal stroke increases with the saddle height, as expected. The measured knee angle is within the recommended range of 135° to 140° for the saddle heights of 0 cm -0.5 cm and -1.5 cm. This surprisingly well correspond to the feelings of the author about the saddle height. The extreme saddle heights of -3.5 cm and +2.5 cm are correctly assessed as too low and too high, respectively. The saddle height of -1.5cm felt low, but much better than the previous height of -3.5 cm, and could be used for beginners or for riders with some flexibility issues. The saddle height of -0.5 cm felt lower than the author is used to, but again, better than the previous height of -1.5 cm and could definitely be used long term. The saddle height of 0 cm felt ok and the saddle height of +0.5 cm felt distinctly too high, it was a small change, but very noticeable and the author had trouble to pedal smoothly with this saddle height.
 
 \begin{table}[htbp]
 
@@ -1165,7 +1167,7 @@ Table \ref{tab:video_processing_time} shows the time needed to process a video f
 \chapter{Conclusion}
 \label{conclusion}
 
-This work focused on the development of a web application for bike fitting using pose estimation. The application was successfully implemented and deployed \footnote{\url{https://vlasakjiri.github.io/bikefit/}}.
+This work focused on the development of a web application for bike fitting using pose estimation. The application was successfully implemented and deployed\footnote{\url{https://vlasakjiri.github.io/bikefit/}}.
 
 The first chapter of the work described the needed bikefitting background and existing bikefitting applications and systems and their limitations. Then the following chapters describe a marker-based method for tracking the cyclist's body and marker-less pose estimation models. Next, a custom dataset for bikefitting featuring 2309 photos of the author pedaling on a stationary trainer was created. The dataset was used to evaluate the pose estimation models and fine-tune the RTMPose model, whose Normalized Mean Error was significantly reduced from 2.54 to 1.51. Next chapter describes the implementation of the web application and the deployment process of the pose estimation model. The last chapter describes the experiments done to evaluate the application.
 
