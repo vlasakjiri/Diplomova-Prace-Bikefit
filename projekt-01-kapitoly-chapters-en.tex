@@ -70,9 +70,10 @@ Handlebar height measures how high the handlebars are in relation to the saddle.
 
 \begin{figure}[htb]
     \centering
-    \subfloat{\includegraphics[width=0.49\textwidth]{obrazky-figures/handlebar_height_small.png}}\hfil
-    \subfloat{\includegraphics[width=0.49\textwidth]{obrazky-figures/handlebar_reach_small.png}}
-    \caption{Handlebar height (left) and reach (right) measure the vertical and horizontal distance to the handlebars from the bottom bracket.}
+    \subfloat[Handlebar height]{\includegraphics[width=0.49\textwidth]{obrazky-figures/handlebar_height_small.png}}
+    \hfill
+    \subfloat[Handlebar reach]{\includegraphics[width=0.49\textwidth]{obrazky-figures/handlebar_reach_small.png}}
+    \caption{Handlebar height and reach measure the vertical and horizontal distance to the handlebars from the bottom bracket.}
     \label{fig:handlebar_height_and_reach}
 \end{figure}
 
@@ -163,23 +164,22 @@ MyVeloFit predicts 6 joint locations for the camera facing side of the body. Mos
     \label{fig:myvelofit_keypoints}
 \end{figure}
 
-From the joint angles for every frame, some are selected for computing the joint angles at the top of the pedal stroke, front of the pedal stroke and bottom. Every position uses different angle ranges. Figure \ref{fig:myvelofit_top} shows the predicted joint angles at the top of the pedal stroke.
+From the joint angles for every frame, some are selected for computing the joint angles at the top of the pedal stroke, front of the pedal stroke and bottom. Every position uses different angle ranges. Based on the angles computed for parts of the pedal stroke, MyVeloFit then makes suggestions for saddle height, saddle fore and aft, handlebar height and handlebar reach. Figure \ref{fig:myvelofit} shows the predicted joint angles at the top of the pedal stroke and the recommended changes to the bike position.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.6\textwidth]{obrazky-figures/myvelofit_top.png}
-    \caption{Predicted joint angles at the top of the pedal stroke in MyVeloFit.}
-    \label{fig:myvelofit_top}
+    \subfloat[Predicted joint angles at the top of the pedal stroke in MyVeloFit.]{\includegraphics[width=0.48\textwidth]{obrazky-figures/myvelofit_top.png}}
+    \hfill
+    \subfloat[Recommended changes to the bike position based on the angles computed by MyVeloFit.]{
+        \includegraphics[width=0.48\textwidth]{obrazky-figures/myvelofit_suggestions.png}
+    }
+    \caption{Predicted joint angles at the top of the pedal stroke and recommended changes to the bike position in MyVeloFit.}
+    \label{fig:myvelofit}
+
 \end{figure}
 
-Based on the angles computed for parts of the pedal stroke, MyVeloFit then makes suggestions for saddle height, saddle fore and aft, handlebar height and handlebar reach. Figure \ref{fig:myvelofit_suggestions} shows the recommended changes to the bike position.
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.6\textwidth]{obrazky-figures/myvelofit_suggestions.png}
-    \caption{Recommended changes to the bike position based on the angles computed by MyVeloFit.}
-    \label{fig:myvelofit_suggestions}
-\end{figure}
+
 
 Overall, MyVeloFit is relatively easy to use and its joint predictions are fairly accurate. However, it has few disadvantages:
 
@@ -188,15 +188,15 @@ Overall, MyVeloFit is relatively easy to use and its joint predictions are fairl
     \item Every video is converted to 30 FPS and cut down to 10 seconds.
     \item Video processing and keypoint predictions are slow (3-5 minutes).
     \item It is not cheap to get joint angles and recommended changes. It requires either a one time payment of 35 US dollars for access for 1 person and 1 bike for 2 weeks or 75 US dollars annually for unlimited number of bikes and people.
-    \item More advanced features are missing.
+    \item More advanced features are missing, such as the ability to see how the angles change over time, visualizations of the angles, etc.
 \end{itemize}
 
 
 
 
 
-\subsection{BikeFast Fit Elite}
-BikeFast Fit Elite\footnote{\url{https://www.bikefastfit.com/}} is an iOS mobile application that uses pose estimation model to predict the joint locations for a side view video of the user pedaling their bike on an indoor trainer. Compared to MyVeloFit, it uses additional keypoints for the fifth metatarsal of the foot and the heel. Figure \ref{fig:bikefastfit_keypoints} shows the predicted keypoints.
+\subsection{Bike Fast Fit Elite}
+Bike Fast Fit Elite\footnote{\url{https://www.bikefastfit.com/}} is an iOS mobile application that uses pose estimation model to predict the joint locations for a side view video of the user pedaling their bike on an indoor trainer. Compared to MyVeloFit, it uses additional keypoints for the fifth metatarsal of the foot and the heel. Figure \ref{fig:bikefastfit_keypoints} shows the predicted keypoints.
 
 \begin{figure}[htb]
     \centering
