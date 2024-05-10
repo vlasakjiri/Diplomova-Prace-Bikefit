@@ -660,7 +660,7 @@ This section describes commonly used metrics for evaluating pose estimation mode
 \subsection{Percentage of Correct Keypoints (PCK)}
 Percentage of Correct Keypoints (PCK) is a simple metric that calculates the percentage of keypoints that are within a certain distance from the ground truth keypoints. The distance is normalized by the size of the bounding box of the person. It provides a simple and intuitive measure of the accuracy of the model.
 
-However, for the bikefitting dataset, commonly used thresholds of 0.1 or 0.05 are too big and the models achieved close to 100\% PCK on the validation set. With a lower threshold, the models PCK would swing wildly if the distance between the keypoints and the ground truth keypoints is close to the threshold. This is why the PCK metric is not used in the evaluation of the models on the bikefitting dataset.
+However, for the bikefitting dataset, commonly used thresholds of 0.1 or 0.05 are too big and the models achieved close to 100\% PCK on the validation set. With a lower threshold, the PCK would swing wildly if the distance between the keypoints and the ground truth keypoints is close to the threshold. This is why the PCK metric is not used in the evaluation of the models on the bikefitting dataset.
 
 \subsection{Object Keypoint Similarity (OKS)}
 The Object Keypoint Similarity (OKS) metric is a widely used metric for evaluating pose estimation models. It calculates the similarity between the predicted keypoints and the ground truth keypoints based on the distance between the keypoints and defined variance for each keypoint.
@@ -682,7 +682,7 @@ It calculates a score between 0 and 1, where 1 means that the predicted keypoint
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\linewidth]{obrazky-figures/oks.png}
-    \caption{Diffent variances in the OKS metric for different keypoints. The keypoint similarity for the eye and wrist keypoints are different, even though the Euclidean distance is the same. Taken from \cite{oks}.}
+    \caption{Diffent variances in the OKS metric for different keypoints. The variance for the eye and wrist keypoints are different, leading to different keypoint similarities (0.25 and 0.75), even though the Euclidean distance to ground truth is the same for both keypoints. Taken from \cite{oks}.}
     \label{fig:oks}
 \end{figure}
 
@@ -713,7 +713,7 @@ The NME for keypoint $i$ is then averaged over all keypoints to obtain the NME f
 
 \section{Initial Evaluation of Pre-Trained Models}
 \label{initial_evaluation}
-This section evaluates the performance of the pre-trained pose estimation models on the bikefitting dataset. This is done, since there can be a significant difference in the performance of the models on COCO dataset and the bikefitting dataset. The models are evaluated using the NME metric, described in section \ref{evaluation_metrics}.
+This section evaluates the performance of the pre-trained pose estimation models on the bikefitting dataset. This is done, because there can be a significant difference in the performance of the models on COCO dataset and the bikefitting dataset. The models are evaluated using the NME metric, described in section \ref{evaluation_metrics}.
 
 The models are evaluated using the MMPose framework \cite{mmpose2020}, with the Inferencer API and the PyTorch backend. Topdown models (models that require inputs cropped to the bounding box of the person) use the RTMDet-nano model \cite{rtmdet} from the MMDetetection framework \cite{mmdetection} for person detection.
 
@@ -726,7 +726,7 @@ At first the models are evaluated using only the 6 keypoints that are both in th
 
 
 
-\begin{table}[htbp]
+\begin{table}[htb]
     \begin{tabular}{l cccc}
         \toprule
         Architecture          & Input Size & Trained On     & Keypoints & NME (\%)      \\
@@ -766,7 +766,7 @@ Overall, we can see few unsurprising results. Models that are larger, or trained
 \subsection{8 Keypoint Evaluation}
 The models which also output heel and foot fingers keypoints are evaluated on all of the 8 keypoints present in the bikefitting dataset. Meaning the camera facing fifth foot metatarsal and heel are also evaluated. The results are shown in table \ref{tab:evaluation_results_wholebody}. We can see, that the Normalized Mean Error (NME) for the foot and heel keypoints is much higher than for the other keypoints. This highlights the difficulty of predicting the foot and heel keypoints, as these keypoints are less represented in the training datasets. The models that output the WholeBody keypoints perform slightly worse than the models that only output Halpe26 keypoints, but the difference is smaller than when comparing only the 6 keypoints. What is surprising, is that the COCO-WholeBody models perform better than the Halpe26 on the foot and heel keypoints. This can be because the COCO-WholeBody dataset keypoints may match the foot and heel keypoints defined in the bikefitting better than the Halpe26 dataset. However, overall the best performing models are still the RTMPose models trained on the Body8 dataset, with the RTMPose-m 384x288 model achieving the best results with a mean NME of \textbf{2.49\%}.
 
-\begin{table}[htbp]
+\begin{table}[htb]
     \setlength{\tabcolsep}{4pt}
     \centering
     \begin{tabular}{l cccccc}
@@ -846,12 +846,12 @@ To train a model using the MMPose framework, the model needs to have a custom co
 Custom datasets in MMPose are easiest to define using the COCO format. The dataset is defined in a JSON file, which contains the paths to the images, the annotations and the categories. The annotations contain the bounding box of the person and the keypoints. The keypoints are defined as a list of x and y coordinates and a visibility flag. The visibility flag is set to 2 if the keypoint is not visible, 1 if the keypoint is occluded and 0 if the keypoint is visible. MMPose internally uses only annotated keypoints (visibility flag 2 or 1) for training and evaluation and discards keypoints with visibility flag 0. The training set has all of the keypoints defined as annotated (visibility flags 1 or 2), so the models are trained on all of the keypoints. This ensures that the models do not unlearn the other keypoints. The validation set has only the 8 keypoints annotated by colored markers defined as annotated, so the models are evaluated only on these keypoints.
 
 \subsection{Training Procedure}
-The RTMPose models originally used the AdamW \cite{adamw} optimizer with base learning rate of 4e-3, linear warmup learning rate scheduler for first 1000 iterations and cosine annealing learning rate scheduler. The models were in total trained for 700 epochs with training batch size of 512. These are tuned for a large scale dataset like COCO. For the bikefitting dataset, smaller learning rate and batch size are used. The models are trained with the AdamW optimizer with base learning rate of 5e-4, no learning rate schedulerers were used as this slowed down the training. The batch size was reduced to 16, as this sped up the training significantly. The models were trained for 130 iterations, which corresponds to 1 epoch on the bikefitting dataset. Using larger batch sizes of 32 and 64 resulted in much slower training, where the models needed 5-10 epochs of training and still achieved worse results then when using batch size of 16. The models were fast enough to be trained on an single Intel i7-7500U CPU.
+The RTMPose models originally used the AdamW \cite{adamw} optimizer with base learning rate of 4e-3, linear warmup learning rate scheduler for first 1000 iterations and cosine annealing learning rate scheduler. The models were in total trained for 700 epochs with training batch size of 512. These are tuned for a large scale dataset like COCO. For the bikefitting dataset, smaller learning rate and batch size are used. The models are trained with the AdamW optimizer with base learning rate of 5e-4, no learning rate schedulerers were used as this slowed down the training. The batch size was reduced to 16, as this sped up the training significantly. The models were trained for 130 iterations, which corresponds to 1 epoch on the bikefitting dataset.
+This low number of iterations was chosen, so that the models do not overfit on the bikefitting dataset. Using larger batch sizes of 32 and 64 resulted in much slower training, where the models needed 5-10 epochs of training and still achieved worse results then when using batch size of 16. The models were fast enough to be trained on an single Intel i7-7500U CPU.
 
 
-Figure \ref{fig:fine_tuning_loss} shows the loss of the models during the fine-tuning. The RTMPose large and medium models with 256x192 input size achieve basically the same loss throughout the training. The RTMPose-m 384x288 model has significantly lower loss than the other models throughout the whole training. Since its validation results are on par with the 256x192 models (as discussed in the next section), it is probably because different parameters are used to construct the ground truth heatmaps for the 384x288 model, which results in lower loss. Overall the loss of the models is decreasing throughout the training, at first rapidl and then about step 60 more slowly. However, experiments showed that while the loss is not decreasing very fast, the results are still improving.
-% TODO: add more details about the training procedure
-\begin{figure}
+Figure \ref{fig:fine_tuning_loss} shows the loss of the models during the fine-tuning. The RTMPose large and medium models with 256x192 input size achieve basically the same loss throughout the training. The RTMPose-m 384x288 model has significantly lower loss than the other models throughout the whole training. Since its validation results are on par with the 256x192 models (as discussed in the next section), it is probably because different parameters are used to construct the ground truth heatmaps for the 384x288 model, which results in lower loss. Overall the loss of the models is decreasing throughout the training, at first rapidly and then from step 60 forward more slowly.
+\begin{figure}[htb]
 
     \centering
     \includegraphics[width=1\linewidth]{obrazky-figures/loss.pdf}
@@ -863,12 +863,12 @@ Figure \ref{fig:fine_tuning_loss} shows the loss of the models during the fine-t
 
 \section{Evaluation Of Fine-Tuned Models}
 \label{fine_tuning_results}
-Table \ref{tab:finetune_results} shows the results of the fine-tuned models on the bikefitting dataset. The models are evaluated using the NME metric, described in section \ref{evaluation_metrics}. All of the fine-tuned models achieve significantly better results than the pre-trained models. Despite the differences in the performance of medium and large pre-trained models, the fine-tuned models achieve similar results. The best results are achieved by the RTMPose-m 384x288 model, which achieves a mean NME of \textbf{1.50\%}, but the other fine-tuned models achieve very similar results. The fine-tuned models achieve a significant improvement in the accuracy of the foot and heel keypoints. The foot and heel keypoints are still the most difficult to predict, but the fine-tuned models achieve much better results than the pre-trained models. Because there is not a significant difference in the performance of the fine-tuned models, the RTMPose-m 256x192 model is selected for the bikefit application, as it is the smallest and fastest model that achieves good results.
+Table \ref{tab:finetune_results} shows the results for the models before and after fine-tuning on the bikefitting dataset. The models are evaluated using the NME metric, described in section \ref{evaluation_metrics}. All of the fine-tuned models achieve significantly better results than the pre-trained models. Despite the differences in the performance of medium and large pre-trained models, all of the fine-tuned models achieve similar results. The best results are achieved by the RTMPose-m 384x288 model, which achieves a mean NME of \textbf{1.50\%}, but the other fine-tuned models achieve very similar results. The fine-tuned models achieve a significant improvement in the accuracy of the foot and heel keypoints. The foot and heel keypoints are still the most difficult to predict, but the fine-tuned models achieve much better results than the pre-trained models. Because there is not a significant difference in the performance of the fine-tuned models, the RTMPose-m 256x192 model is selected for the bikefit application, as it is the smallest and fastest model that achieves good results.
 
 \def\imgwidth{0.48\textwidth}
 \def\smallimgwidth{1.0\textwidth}
 
-\begin{table}[htbp]
+\begin{table}[htb]
     \setlength{\tabcolsep}{4pt}
     \centering
     \begin{tabular}{l cccccc}
@@ -883,13 +883,13 @@ Table \ref{tab:finetune_results} shows the results of the fine-tuned models on t
         RTMPose-l    & 256x192    & Body8-Halpe26   & 26        & 3.56          & 3.21          & 2.64          \\
         \bottomrule
     \end{tabular}
-    \caption{Evaluation results for the fine-tuned models on the custom bike fitting dataset. The models are fine-tuned on the bikefitting dataset for 130 iterations. The results are sorted by the Normalized Mean Error, defined in section \ref{nme}. It is an average distance between the predicted keypoints and the ground truth keypoints, normalized by the average bounding box dimension, expressed as a percentage. All of the fine-tuned models achieve significantly better results than the pre-trained models.}
+    \caption{Evaluation results for the models before and after fine-tuning on the custom bike fitting dataset. The models are fine-tuned on the bikefitting dataset for 130 iterations. The results are sorted by the Normalized Mean Error, defined in section \ref{nme}. It is an average distance between the predicted keypoints and the ground truth keypoints, normalized by the average bounding box dimension, expressed as a percentage. All of the fine-tuned models achieve significantly better results than the pre-trained models.}
     \label{tab:finetune_results}
 
 \end{table}
 
 Figure \ref{fig:trained_examples} shows example predictions of the RTMPose-m 256x192 model before and after fine-tuning. The fine-tuned model achieves much better results on the foot and heel keypoints. It also shifts the knee and shoulder keypoints more closely to the location which are used for example in the Retul bikefitting system. However, it also shifts the hip keypoint closer to the knee keypoint, which is not desirable. Similarly, the wrist keypoint is now no longer predicted on the center of rotation of the wrist joint, but more upwards. These changes are probably caused by misplacement of the colored markers, which is especially hard to avoid when muliple poses and camera angles are present in the dataset. Nevertheless, the fine-tuned model overall achieves better results than the pre-trained model and is used in the bikefit application.
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \begin{subfigure}[t]{\imgwidth}
         \centering
@@ -915,15 +915,16 @@ Figure \ref{fig:trained_examples} shows example predictions of the RTMPose-m 256
 \chapter{Bikefit Web Application}
 \label{ch:bikefit_application}
 
-This chapter describes the web application for bike fitting. Implementing the application as a web application has several advantages over implementing it as a mobile or desktop application. The web application can be used on any device with a web browser. This allows the application to be used on mobile devices, tablets, laptops and desktop computers. The user also does not need to download and install anything.
+This chapter describes the web application for bike fitting. Implementing the application as a web application has several advantages over implementing it as a mobile or desktop application. The web application can be used on any device with a web browser. This allows the application to be used on mobile devices, tablets, laptops and desktop computers. The user also does not need to manually download and install anything.
 
 Most web applications are implemented using the client-server architecture with the video processing and other more complicated tasks (such as pose estimation) being performed on the server. This has several disadvantages. The server needs to be powerful enough to handle the load of multiple users. This can be quite expensive for heavy models and a lot of users. The user data also needs to be sent to the server, which means the user needs to be online when using the application and the users can be concerned about their privacy.
 
 To avoid these disadvantages, all of the logic of the application (including video processing, keypoint estimation and generation of the suggestions) is implemented on the client side.
 
-The application is implemented using the Svelte framework\footnote{\url{https://svelte.dev/}} . Svelte is a component framework similar to React\footnote{\url{https://react.dev/}} or Vue\footnote{\url{https://vuejs.org/}}. It is used to create reactive user interfaces. Svelte compiles the application to vanilla JavaScript, which means the application does not need to include a large framework library. This makes the application smaller and faster. Svelte also has a built-in state management system, which is used to store the application state.
+The application is implemented using the Svelte framework\footnote{\url{https://svelte.dev/}} . Svelte is a component framework similar to React\footnote{\url{https://react.dev/}} or Vue\footnote{\url{https://vuejs.org/}}. It is used to create reactive user interfaces.
 
-User can upload a video of the cyclist from side view. The video is processed frame by frame by the pose estimation model. The keypoint predictions are then used to compute the joint angles. The joint angles are used to generate the suggestions for the bike fit. The suggestions are displayed to the user. The application from the user perspective is more thoroughly described in section \ref{application_structure}.
+The application consists of several parts. The user can upload a video of the cyclist from the side view. The video is then processed frame by frame by the pose estimation model. The keypoint predictions are then used to compute the joint angles. The joint angles are used to generate the suggestions for the bike fit. The suggestions are displayed to the user. The application from the user perspective is more thoroughly described in section \ref{application_structure}.
+
 
 The following sections describe the implementation of the application in more detail. To process the video frame by frame, the application uses the WebCodecs API. The details of the implementation are described in section \ref{video_upload_and_processing}. To estimate the keypoint positions, the application uses the RTMPose-m Body8-Halpe26 pose estimation model, which was fine-tuned on the bikefitting dataset. The details of the deployment and implementation are described in section \ref{pose_estimation}. From the keypoint positions, the application computes various joint angles and measurements. The details of the implementation are described in section \ref{computing_joint_angles}. The application then uses the computed joint angles and measurements to generate the suggestions for the bike fit. The details of the implementation are described in section \ref{generating_suggestions}. Lastly, to play the video with the keypoint predictions overlaid on the video, a custom canvas based video player is implemented. The details of the implementation are described in section \ref{video_player}.
 \section{User Interface}
@@ -971,9 +972,7 @@ After the user clicks on the "Process Video" button, the video is processed by t
     \label{fig:step3-top}
 \end{figure}
 
-Figure \ref{fig:step3-bottom} shows the second part of the last step of the application. The "Recommendations" section shows the bike type and fit goal selected by the user. The user can also see the assessment and suggested changes to their saddle height, saddle setback, handlebar height and handlebar reach. For each measurement, the user sees a verbal assesment of a measurement (e.g. "Too high", "Too far back", "Withing range", etc.) a graphical representation of the measurement by a colored slider input and a verbal suggestion for the change (e.g. "Lower by 1 cm", "Move saddle forward by 1 cm", etc.).
-
-The "Results" section shows the recommended ranges and measured values for the angles and measurements in each of the pedal positions (bottom, top and front). The measurements are organized in a table-like structure, with columns for the measurement name, the measured value, a colored slider input indicating the measurement value and the recommended range. Additionally, the user can click on the visibility indicator on the left to hide or show the measurement in the video player. After clicking on a row in the table, the row expands to show more detailed information about the measurement. The user can see a chart with the angle values for each pedal stroke, with sections of the chart colored according to the recommended ranges (green for within range, yellow for close to the range and red for outside of the range). The user can also see the minimum, maximum, median and range of the measurement. In the future, additional information about the measurement and its effect on the bike fit could be added.
+Figure \ref{fig:step3-bottom} shows the second part of the last step of the application. The "Recommendations" section shows the bike type and fit goal selected by the user. The user can also see the assessment and suggested changes to their saddle height, saddle setback, handlebar height and handlebar reach. For each measurement, the user sees a verbal assesment of a measurement (e.g. "Too high", "Too far back", "Withing range", etc.) a graphical representation of the measurement by a colored slider input and a verbal suggestion for the change (e.g. "Lower by 1 cm", "Move saddle forward by 1 cm", etc.). The "Results" section shows the recommended ranges and measured values for the angles and measurements in each of the pedal positions (bottom, top and front). The measurements are organized in a table-like structure, with columns for the measurement name, the measured value, a colored slider input indicating the measurement value and the recommended range. Additionally, the user can click on the visibility indicator on the left to hide or show the measurement in the video player. After clicking on a row in the table, the row expands to show more detailed information about the measurement. The user can see a chart with the angle values for each pedal stroke, with sections of the chart colored according to the recommended ranges (green for within range, yellow for close to end of the range and red for outside of the range). The user can also see the minimum, maximum, median and range of the measurement. In the future, additional information about the measurement and its effect on the bike fit could be added.
 
 \begin{figure}[htbp]
     \centering
@@ -994,81 +993,46 @@ At first, the video needs to be uploaded to the application. The video is upload
 
 To accurately estimate the keypoints, the application needs to access all of the video frames and process them. This is not trivial to do in the browser. The browser does not allow the application to access the video frames directly.
 
-To process the video frame by frame, the application uses the WebCodecs API\footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API}}. The WebCodecs API is a low-level API for encoding and decoding audio and video. It gives developers access to the invididual frames of the video. It is the only way to access the frames of the video in the browser. Simple and commonly used method is to simultaneously play the video and draw the video  frames to a canvas element and then access the pixels of the canvas. However, this method only does not work well if the processing is computationally expensive, since the video is played in real time. This leads to skipping of the frames and not all of the frames are processed. The WebCodecs API allows the application to process the video at its own pace.
+To process the video frame by frame, the application uses the WebCodecs API\footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API}}. The WebCodecs API is a low-level API for encoding and decoding audio and video. It gives developers access to the invididual frames of the video. It is the only way to access the frames of the video in the browser. Simple and commonly used method is to simultaneously play the video and draw the video  frames to a canvas element and then access the pixels of the canvas. However, this method does not work well if the processing is computationally expensive, since the video is played in real time, and callbacks to process the frames are called only at best effort to keep up with the video playback. This leads to skipping of the frames and not all of the frames are processed. The WebCodecs API allows the application to process the video at its own pace.
 
-Because the API is relatively new, it is not yet supported by all browsers. Figure \ref{fig:caniuseWebcodecs} shows the browser support for the WebCodecs API as of January 2024. The API is supported by all browsers based on Chromium (Google Chrome, Microsoft Edge, Opera, Brave, etc.). It is Partially supported by Safari and Safari on iOS (video only) and not supported by Firefox. Overall based on CanIUse data\footnote{\url{https://caniuse.com/webcodecs}}, the API is supported by 87.6\% of the users, where 74.5\% of the users have full support and 13.1\% of the users have partial support.
+Because the API is relatively new, it is not yet supported by all browsers. Data from CanIUse.com\footnote{\url{https://caniuse.com/webcodecs}} show that the API is currently supported by all browsers based on Chromium (Google Chrome, Microsoft Edge, Opera, Brave, etc.). It is Partially supported by Safari and Safari on iOS (video only) and not supported by Firefox. Overall, the API is supported by 87.6\% of the users, where 74.5\% of the users have full support and 13.1\% of the users have partial support.
 
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{obrazky-figures/caniuseWebcodecs.png}
-    \caption{Browser support as of January 2024 for the WebCodecs API. Green color indicates full support, yellow color indicates partial support and red color indicates no support. Taken from \url{https://caniuse.com/webcodecs}.}
-    \label{fig:caniuseWebcodecs}
-\end{figure}
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=\textwidth]{obrazky-figures/caniuseWebcodecs.png}
+%     \caption{Browser support as of January 2024 for the WebCodecs API. Green color indicates full support, yellow color indicates partial support and red color indicates no support. Taken from .}
+%     \label{fig:caniuseWebcodecs}
+% \end{figure}
 
-Due to the low-level design of the WebCodecs API, it is not easy to use. Moreover, the API is quite new and not very well documented so there is not a lot of examples. The developer also needs to take care of demuxing the media containers. This work uses the getVideoFrames.js library\footnote{\url{https://github.com/josephrocca/getVideoFrames.js}} from josephrocca. The library internally uses the WebCodecs API and MP4Box.js\footnote{\url{https://github.com/gpac/mp4box.js/}} for demuxing mp4 files, but provides a simple interface for accessing the video frames. The library is used to get the video frames and then the frames are processed as described in sections \ref{marker_based_tracking} and \ref{pose_estimation}. It defines three callback functions. The \texttt{onFrame} callback is called for each frame of the video. The \texttt{onConfig} callback is called when the video metadata is loaded. The \texttt{onFinish} callback is called when all of the frames are processed. Overall, WebCodecs API is a powerful tool for processing video in the browser, but it relies on third party demuxing libraries and is not yet supported by all browsers.
+Due to the low-level design of the WebCodecs API, it is not easy to use. Moreover, the API is quite new and not very well documented so there is not a lot of examples. The developer also needs to take care of demuxing the media containers. This work uses the getVideoFrames.js library\footnote{\url{https://github.com/josephrocca/getVideoFrames.js}} from josephrocca. The library internally uses the WebCodecs API and MP4Box.js\footnote{\url{https://github.com/gpac/mp4box.js/}} for demuxing mp4 files, but provides a simple interface for accessing the video frames.  It defines three callback functions. The \texttt{onFrame} callback is called for each frame of the video. The \texttt{onConfig} callback is called when the video metadata, which contains the total number of frames and other useful information, is loaded. The \texttt{onFinish} callback is called when all of the frames are processed. Overall, WebCodecs API is a powerful tool for processing video in the browser, but it relies on third party demuxing libraries and is not yet supported by all browsers.
 
-% \begin{lstlisting}[style=htmlcssjs, caption={Example usage of the getVideoFrames.js library. Taken from \url{https://github.com/josephrocca/getVideoFrames.js/}.}, label={getVideoFrames}]
-%     <canvas id="canvasEl"></canvas>
-%     <br>
-%     <input type="file" accept="video/mp4" onchange="start(this.files[0])">
-%     <script type="module">
-%       import getVideoFrames from "https://deno.land/x/get_video_frames@v0.0.10/mod.js"
-
-%       let frameCount = 0;
-
-%       window.start = async function(file) {
-%         let ctx = canvasEl.getContext("2d"); 
-
-%         // `getVideoFrames` requires a video URL as input.
-%         // If you have a file/blob instead of a videoUrl, turn it into a URL like this:
-%         let videoUrl = URL.createObjectURL(file);
-
-%         await getVideoFrames({
-%           videoUrl,
-%           onFrame(frame) {  // `frame` is a VideoFrame object: https://developer.mozilla.org/en-US/docs/Web/API/VideoFrame
-%             ctx.drawImage(frame, 0, 0, canvasEl.width, canvasEl.height);
-%             frame.close();
-%             frameCount++;
-%           },
-%           onConfig(config) {
-%             canvasEl.width = config.codedWidth;
-%             canvasEl.height = config.codedHeight;
-%           },
-%           onFinish() {
-%             console.log("finished!");
-%             console.log("frameCount", frameCount);
-%           },
-%         });
-
-%         URL.revokeObjectURL(file); // revoke URL to prevent memory leak
-%       }
-%     </script> 
-% \end{lstlisting}
 
 
 
 \section{Pose Estimation}
 \label{pose_estimation}
-To get the locations of the 8 keypoints (foot, heel, ankle, knee, hip, shoulder, elbow, wrist) in the video, the RTMPose-m 256x192 Body8-Halpe26 model is used. The model is trained on the custom bike fitting dataset, as described in chapter \ref{training_pose_estimation_model_for_bikefitting}. The model is run on each frame of the video and the keypoints are extracted.
+To get the locations of the 8 keypoints (foot, heel, ankle, knee, hip, shoulder, elbow, wrist) in the video, the RTMPose-m 256x192 Body8-Halpe26 model is used. The model was trained on the custom bikefitting dataset, as described in chapter \ref{fine_tuning}. The model is run on each frame of the video and the keypoints are extracted.
 
 Since JavaScript is single-threaded and the model is computationally expensive, the model is run in a Web Worker. Web Worker is a JavaScript feature that allows the application to run a script in a separate thread. This allows the application to run long tasks in the background without blocking the main thread.
 
 The keypoints are then used to compute the joint angles and generate the suggestions for the bike fit.
 \subsection{Model Conversion and Deployment}
-The RTMPose models are originally trained in the PyTorch framework. To run the model in the browser, the model needs to be converted to either ONNX or TensorFlow.js format. ONNX model can be run in the browser using ONNX Runtime Web \footnote{\url{https://onnxruntime.ai/docs/tutorials/web/}}. However, the ONNX Runtime Web only provides API for running the model, but does not provide tensor operations needed for preprocessing the input and postprocessing the output. Due to these reasons, TensorFlow.js is used instead.
+The RTMPose models are originally stored in the PyTorch \texttt{.pt} format. To run the model in the browser, the model needs to be converted to either ONNX or TensorFlow.js format. ONNX model can be run in the browser using ONNX Runtime Web\footnote{\url{https://onnxruntime.ai/docs/tutorials/web/}}. However, the ONNX Runtime Web only provides API for running the model, but does not provide tensor operations needed for preprocessing the input and postprocessing the output. Due to these reasons, TensorFlow.js is used instead.
 
 To convert the model to TensorFlow.js format, the model is first converted to ONNX format using the MMDeploy \cite{mmdeploy} toolset. The MMDeploy toolset is a set of tools for converting models from the various OpenMMLab frameworks (MMPose, MMAction, MMDetection, etc.) to ONNX and other formats and provides an easy way to deploy the RTMPose models.
 
-The ONNX model is then first converted to the TensorFlow SavedModel format using the unofficial onnx2tf \cite{onnx2tf} tool. The SavedModel format is a universal format for storing TensorFlow models. The SavedModel format is then converted to the TensorFlow.js format using the official TensorFlow.js converter \footnote{\url{https://github.com/tensorflow/tfjs/tree/master/tfjs-converter}} provided by the TensorFlow.js team.
+The ONNX model is then converted to the TensorFlow SavedModel format using the unofficial onnx2tf \cite{onnx2tf} tool. The SavedModel format is a universal format for storing TensorFlow models. The SavedModel format is then converted to the TensorFlow.js format using the official TensorFlow.js converter\footnote{\url{https://github.com/tensorflow/tfjs/tree/master/tfjs-converter}} provided by the TensorFlow.js team.
 
 The TensorFlow.js converter also quantizes the model to float16 to reduce the size of the model and speed up the inference. Quantization is a process of converting the weights and activations of the model from float32 to float16. This reduces the size of the model by half and can speed up the inference without significant loss of accuracy. The quantized model is then used in the application.
 
-TensorFlow.js provides several different backends for running the model. The CPU backend runs the model on CPU, using JavaScript for the computation and is the slowest, but has support for all of the operations. The WebGL backend runs the model on the GPU using WebGL shaders and is the faster, but introduces very noticeable latency when the model is first run, because the WebGL API is not designed for running deep learning models and the model needs to be compiled to the shaders. The WebAssembly backend runs the model on the CPU using WebAssembly and is the faster than the CPU backend, but slower than WebGL for the larger models. The WebGPU backend runs the model on the GPU and should be the fastest, because it is designed with deep learning in mind, but is not yet supported by all browsers. From the major browsers, the WebGPU backend is only supported by Google Chrome, Microsoft Edge and Chrome on Android. This application uses the WebGPU backend if it is available, otherwise it falls back to the WebGL backend.
+TensorFlow.js provides several different backends for running the model. CPU backend runs the model on CPU, using JavaScript for the computation and is the slowest, but has support for all of the operations. WebGL backend runs the model on the GPU using WebGL shaders and is the faster, but introduces very noticeable latency when the model is first run, because the WebGL API is not designed for running deep learning models and the model needs to be compiled to WebGL graphical shaders. WebAssembly backend runs the model on the CPU using WebAssembly, with support for SIMD instructions and multi-threading and is the faster than the CPU backend, but slower than WebGL for larger models. WebGPU backend runs the model on the GPU and should be the fastest, because it is designed with deep learning in mind, but is not yet supported by all browsers. According to CanIUse.com\footnote{\url{https://caniuse.com/webgpu}}, WebGPU is only supported by Google Chrome and Chromium based browsers as well as Chrome on Android, which combines for 70.5\% of the users. This application uses the WebGPU backend if it is available, otherwise it falls back to the WebGL backend, which is universally supported.
 \subsection{Preprocessing}
-The RTMPose models are a top-down pose estimation model, which means that the model requires the input image to be cropped around the person. To crop the image, the bounding box of the person is first detected using the COCO-SSD \footnote{\url{https://github.com/tensorflow/tfjs-models/tree/master/coco-ssd}} model, available in the TensorFlow.js model zoo. It is a Single Shot Detector (SSD) \cite{ssd} model trained on the COCO \cite{coco} dataset. To speed up processing the model is ran only once on the first frame of the video, because the person is assumed to be in the same position in all of the frames. The COCO-SSD is not the most accurate or the fastest model, but it is readily available in the TensorFlow.js model zoo and is good enough for using it on the first frame of the video.
+The RTMPose model is a top-down pose estimation model, which means that the model requires the input image to be cropped around the person. To crop the image, the bounding box of the person is first detected using the COCO-SSD\footnote{\url{https://github.com/tensorflow/tfjs-models/tree/master/coco-ssd}} model, available in the TensorFlow.js model zoo. It is a Single Shot Detector (SSD) \cite{ssd} model trained on the COCO \cite{coco} dataset. To speed up processing the detector model is ran only once on the first frame of the video, because the person is assumed to be in the same position in all of the frames.
 
 The bounding box of the person is then expanded by 2.5\% on the left and right and by 20\% on the bottom to account for changing legs position of the user due to pedaling. The bounding box is then used to crop the image. The cropped image is then resized to 256x192 pixels, which is the input size of the RTMPose model and normalized by the mean and standard deviation of the Body8 dataset (mean = [123.675, 116.28, 103.53], std = [58.395, 57.12, 57.375]).
+
+The COCO-SSD is not the most accurate or the fastest model, but it is readily available in the TensorFlow.js model zoo and is good enough for using it on the first frame of the video.
 
 \subsection{Postprocessing}
 The RTMPose models output a SimCC \cite{simcc} heatmap, which is a heatmap of the keypoints where the x and y axis are separated. This significantly reduces the number of parameters of the model and speeds up the inference. For each keypoint, the model outputs a list of scores for x and y axis. To find the location of the keypoint, the argmax of x and y axis is taken. The x and y coordinates are then divided by 2 because the models output the coordinates multiplied by 2 to increase accuracy. The x and y coordinates are then adjusted for the resizing and added to the bounding box coordinates to get the coordinates in the original image. Only 8 body keypoints on the camera facing side (foot, heel, ankle, knee, hip, shoulder, elbow, wrist) are used further, the other keypoints are discarded. The keypoints over all of the frames are then smoothed usign a Savitzky-Golay filter \cite{savgol} to reduce the noise in the predictions.
@@ -1078,13 +1042,12 @@ The RTMPose models output a SimCC \cite{simcc} heatmap, which is a heatmap of th
 
 After the location of the 8 keypoints is estimated, the joint angles and measurements for the current frame are computed. Joint angles are specified either by three keypoints if the angle is computed between two bones or by two keypoint if the angle is computed between one bone and the horizontal axis.
 
-Other than joint angles, application also computes the knee forward of foot measurement, which is the distance between the knee and the vertical line through the foot. Due to the absence of real world units in the video, the measurement is expressed as the percentage of the length from the fifth metatarsal to the heel. This measurement is used to determine saddle setback as its very similar to the widely used knee over pedal spindle (KOPS) measurement.
+Other than joint angles, application also computes the knee forward of foot measurement, which is the distance between the knee and the vertical line going through the fifth metatarsal of the foot. Due to the absence of real world units in the video, the measurement is expressed as the percentage of the length from the fifth metatarsal to the heel. This measurement is used to determine saddle setback as its very similar to the widely used knee over pedal spindle (KOPS) measurement.
 
 \subsection{Determining the Pedal Position}
+For measurements that barely change over the pedal stroke (mainly upper body joint angles), the average value over all of the frames can be used. But for measurements that change over the pedal stroke (lower body measurements such as knee angle, knee forward of foot, ankle angle), the measurements are compared to the recommended ranges in a specific pedal position (bottom, top, front). To do that, the current pedal position needs to be determined for every frame, and frames for each pedal position need to be determined.
 
-For most of the measurments, the values for every frame are not in themselves very useful. For measurements that barely change over the pedal stroke (mainly upper body joint angles), the average value over all of the frames is used. For measurements that change over the pedal stroke (lower body measurements such as knee angle, knee forward of foot, ankle angle), are compared to the recommended ranges in a specific pedal position (bottom, top, front). Therefore the current pedal position needs to be determined.
-
-To determine the pedal position for each frame, invididual pedal strokes need to be detected. To do that, a circle is fitted to the foot keypoints over all of the frames using a least squares method. This circle is then used to determine the pedal position. For example, to determine the front pedal position, the angle of the foot keypoint on the circle is computed for each frame in a pedal stroke. The front pedal position is then determined as the frame with the angle closest to 90 degrees (horizontal forward). Similarly, the bottom pedal position is determined as the frame with the angle closest to 180 degrees (vertical down) and the top pedal position is determined as the frame with the angle closest to 0 degrees or 360 degrees (vertical up). After obtaining the list of frames for each pedal position, and list of frames for each pedal stroke, we can finally compute the measurements and joint angles for each pedal position. To do this, median value of the measurements for each pedal position is used. This is done to avoid the influence of the outliers in the measurements.
+To determine the pedal position for each frame, invididual pedal strokes need to be detected. To do that, a circle is fitted to the locations of the foot keypoint over all of the frames using a least squares method. This circle is then used to determine the pedal position. For example, to determine the front pedal position, the angle of the foot keypoint on the circle is computed for each frame in a pedal stroke. The front pedal position is then determined as the frame with the angle closest to 90 degrees (horizontal forward). Similarly, the bottom pedal position is determined as the frame with the angle closest to 180 degrees (vertical down) and the top pedal position is determined as the frame with the angle closest to 0 degrees or 360 degrees (vertical up). After obtaining the list of frames for each pedal position, and list of frames for each pedal stroke, we can finally compute the measurements and joint angles for each pedal position. To do this, median value of the measurements for each pedal position is used. This is done to avoid the influence of the outliers in the measurements.
 
 
 \section{Generating Suggestions}
@@ -1093,14 +1056,16 @@ After the joint angles and measurements are computed for each pedal position, th
 
 In total, suggestions are generated for the saddle height, saddle setback, handlebar height and handlebar reach. As was mentioned before, saddle height is determined by the median knee angle at the bottom of the pedal stroke. Saddle setback is determined by the median knee forward of foot measurement at the front of the pedal stroke. Handlebar height is determined by the median shoulder angle at all of the frames and handlebar reach is determined by the median shoulder angle at all of the frames.
 
+The recommended ranges that are used to generate the suggestions are shifted by the selected bike type and fit goal. For example, the recommended back angle will be increased for gravel and mountain bikes to recommend a more upright position. Similarly, the comfort fit goal also prioritize a more upright position. Conversely, the performance fit goal will prioritize more aerodynamic position with a lower back angle, higher shoulder angle and a higher knee angle at the bottom of the pedal stroke, resulting in a slightly higher saddle height and overall more aggressive position.
+
 Basing suggestions only on a single measurement is not ideal, because in reality the bike fit is a complex process and the measurements are interdependent. For example, increasing the saddle height will also increase the saddle setback, handlebar reach also influences back angle not only shoulder angle and so on. In the future, the suggestions could be generated using a more complex model, which would take into account all of the measurements and their interdependencies.
 \section{Video Player}
 \label{video_player}
 To play the video with the predicted keypoints and measurements overlaid on the video, the application implements a custom video player based on the HTML canvas and video elements. The video is played on a hidden video element and the frames are drawn to a canvas element. This is done so that joint angles and measurements can be drawn on top of the video frames. The video player allows the user to play the video, seek to a specific time, seek to the next or previous pedal position and seek to the next or previous pedal stroke. The video player also allows the user to adjust the speed of the video.
 
-However, there does not exist a standard way to get the index of the current frame of the video. The video element has a \texttt{currentTime} property, which returns the current time of the video in seconds, but there is no property that returns the current frame index, or even the video frames per second. Another reason why relying on the \texttt{currentTime} property is not ideal is that the \texttt{currentTime} property returns the time of the video but the video can be longer than the video track, also the video track can have variable frame rate.
+However, there does not exist a standard way to get the index of the current frame of the video, which is needed to get the current joint angles and measurements and draw them on the video. The video element has a \texttt{currentTime} property, which returns the current time of the video in seconds, but there is no property that returns the current frame index, or even the video frames per second. Another reason why relying on the \texttt{currentTime} property is not ideal is that the \texttt{currentTime} property returns the time of the video but the video can be longer than the video track, also the video track can have variable frame rate.
 
-This is why, to get the current frame index, the application saves the frame timestamps obtained when processing the video with the WebCodecs API. And then uses the requestVideoFrameCallback \footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement/requestVideoFrameCallback}} to get the current frame index. The requestVideoFrameCallback is a new API that allows the application to accurately get the current video track time using the \texttt{metadata.mediaTime} property. The \texttt{metadata.mediaTime} property returns the current time of the video track in seconds. The application then finds the closest frame timestamp to the current video track time and uses the index of the frame timestamp as the current frame index. This way the application can accurately get the current frame index of the video.
+This is why, to get the current frame index, the application saves the frame timestamps obtained when processing the video with the WebCodecs API. And then uses the requestVideoFrameCallback\footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement/requestVideoFrameCallback}} to get the current frame index. The requestVideoFrameCallback is a new API that allows the application to accurately get the current video track time using the \texttt{metadata.mediaTime} property. The \texttt{metadata.mediaTime} property returns the current time of the video track in seconds. The application then finds the closest frame timestamp to the current video track time and uses the index of the frame timestamp as the current frame index. This way the application can accurately get the current frame index of the video.
 
 
 %TODO: all of the types of the bike and fit goals
@@ -1110,7 +1075,7 @@ This is why, to get the current frame index, the application saves the frame tim
 \chapter{Web Application Experiments}
 \label{experiments}
 
-This chapter describes the experiments done to evaluate the bikefitting web application. The experiments are divided into two parts. Section \ref{assesment_of_multiple_saddle_heights} tests the application's ability to to asses and make suggestions for saddle height. Section \ref{speed_of_the_video_processing} measures how long the application takes to process one frame of the video on different devices.
+This chapter describes the experiments done to evaluate the bikefitting web application. The experiments are divided into two parts. Section \ref{assesment_of_multiple_saddle_heights} tests the application's ability to assess and make suggestions for saddle height. Section \ref{speed_of_the_video_processing} measures how long the application takes to process one frame of the video on different devices.
 
 \section{Testing Multiple Saddle Heights}
 \label{assesment_of_multiple_saddle_heights}
