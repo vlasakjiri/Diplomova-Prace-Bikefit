@@ -505,16 +505,16 @@ Table \ref{tab:evaluation_params} compares the performance of the models with th
 
 \chapter{Pose Estimation Dataset for Bikefitting}
 \label{ch:dataset}
-To evaluate and improve the performance of a pose estimation models in the setting of bikefitting, it is necessary to have a dataset that most closely resembles the real-world use case (videos of cyclists pedaling on an indoor trainer, usually in a side view). Since there is no such dataset, a new small dataset was created.
+To evaluate and improve the performance of pose estimation models in the setting of bikefitting, it is necessary to have a dataset that most closely resembles the real-world use case (videos of cyclists pedaling their bikes, usually in a side view). Since there is no such dataset, a new small dataset was created.
 
 % TODO: schema
 \section{Video Acquisition}
 
-To construct the dataset, at first, the author shot 23 videos of himself pedaling on an indoor trainer or leaning on a wall and pedaling a bike. The videos feature both a road bike and a mountain bike. To ensure variety, they were shot on multiple days in different lighting conditions and enviroments, with various camera angles, clothes and riding positions. The videos were shot in FullHD resolution at 30 or 60 FPS using a Redmi Note 10 Pro smartphone. Both the standard and ultra-wide camera lens were used. The videos are 8-35 seconds long. Figure \ref{fig:examples} shows examples of some of the videos present in the dataset.
+To construct the dataset, the author shot 23 videos of himself pedaling on an indoor trainer or leaning on a wall and pedaling a bike. The videos feature both a road bike and a mountain bike. To ensure variety, they were shot on multiple days in different lighting conditions and enviroments, with various camera angles, clothes and riding positions. The videos were shot in FullHD resolution at 30 or 60 FPS using a Redmi Note 10 Pro smartphone. Both the standard and ultra-wide camera lens were used. The videos are 8-35 seconds long. Figure \ref{fig:examples} shows examples of some of the videos present in the dataset.
 
 \def\imgwidth{0.325\textwidth}
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \begin{subfigure}[b]{\imgwidth}
         \centering
@@ -593,25 +593,14 @@ To construct the dataset, at first, the author shot 23 videos of himself pedalin
 
 
 \section{Obtaining Ground Truth Annotations}
-Before shooting the videos, orange colored markers were placed on the camera-facing side of the rider's body. These markers were placed on the following locations: fifth metatarsal of the foot, heel, ankle, knee, hip, shoulder, elbow and wrist. Manually placing markers should be more accurate than annotating the keypoints in the video. The marker placement was guided by the instructions from the Retül bike fitting system \footnote{\url{https://youtu.be/kF0ZjtpO4FE?si=JRLX7lDNZ72oTaiC}}. These markers were the tracked using the methodology described in chapter \ref{marker_based_tracking}. The application tracks the markers in a lower resolution. To get the ground truth annotations, the marker positions were then scaled to the original resolution of the video.
-
-% \begin{figure}[htbp]
-
-%     \centering
-%     \includegraphics[width=1\linewidth]{obrazky-figures/eval_dataset_in_hoods.png}
-
-%     \includegraphics[width=1\linewidth]{obrazky-figures/eval_dataset_out_aero.png}
-
-%     \caption{Examples of the evaluation dataset. The first video shows the rider pedaling indoors on the hoods. The second video shows the rider pedaling outdoors in the aero position on the hoods. The orange stickers are used as ground truth annotations.}
+Before shooting the videos, colored markers were placed on the camera-facing side of the rider's body. These markers were placed on the following locations: fifth metatarsal of the foot, heel, ankle, knee, hip, shoulder, elbow and wrist. The marker placement was guided by the instructions from the Retül bike fitting system\footnote{\url{https://youtu.be/kF0ZjtpO4FE?si=JRLX7lDNZ72oTaiC}}. These markers were then tracked using the methodology described in chapter \ref{marker_based_tracking}.
+In contrast to manual annotation, tracking the placed markers allows for obtaining the ground truth locations of the keypoints for all of the frames in the videos. Another advantage is that feeling the keypoint locations in real world should be more accurate than annotating the keypoints in the video.
 
 
-%     \label{fig:evaluation_markers}
-% \end{figure}
 
+After obtaining annotations for the 8 markers facing the camera, the annotations for the remaining keypoints need to be obtained. To do this, the RTMPose-l 256x192 model was used to predict the keypoints for the videos. The model was trained on the Body8 dataset and predicts 26 keypoints. These keypoints are not needed for evaluation of the models for bikefitting, but are needed for the fine-tuning of the models. If the models are fine-tuned only on the 8 keypoints, the model will unlearn how to localize the other keypoints. Another reason for predicting the keypoints is to get the bounding box of the person. The bounding box is needed to crop the frames to the bounding box of the person. The bounding box is predicted by the RTMDet-nano model \cite{rtmdet} from the MMDetection framework \cite{mmdetection}. Figure \ref{fig:dataset_annotations} shows an example frame from the dataset with the annotations.
 
-After obtaining annotations for the 8 markers facing the camera, the annotations for the remaining keypoints need to be obtained. To do this, the RTMPose-l-256x192 model was used to predict the keypoints for the videos. The model was trained on the Body8 dataset and predicts 26 keypoints. These keypoints are not needed for evaluation of the models for bikefitting, but are needed for the fine-tuning of the models. If the models are fine-tuned only on the 8 keypoints, the model will unlearn how to localize the other keypoints. Another reason for predicting the keypoints is to get the bounding box of the person. The bounding box is needed to crop the frames to the bounding box of the person. The bounding box is predicted by the RTMDet-nano model \cite{rtmdet} from the MMDetection framework \cite{mmdetection}. Figure \ref{fig:dataset_annotations} shows an example frame from the dataset with the annotations.
-
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{obrazky-figures/annotations_1.jpg}
 
@@ -645,7 +634,7 @@ The inpainting was done using the opencv library \cite{opencv}. The library cont
 
 \section{Training and Validation Split}
 \label{evaluation_dataset}
-The extracted frames are split into training and validation sets. Frames from the same video are not split between the training and validation sets. The training set \textbf{1833} frames extracted from \textbf{19} videos and the validation set contains \textbf{476} frames extracted from \textbf{4} videos.
+The extracted frames are split into training and validation sets. Frames from the same video are not split between the training and validation sets. The training set contains \textbf{1833} frames extracted from \textbf{19} videos and the validation set contains \textbf{476} frames extracted from \textbf{4} videos.
 
 
 
