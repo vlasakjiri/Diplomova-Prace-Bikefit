@@ -507,7 +507,6 @@ Table \ref{tab:evaluation_params} compares the performance of the models with th
 \label{ch:dataset}
 To evaluate and improve the performance of pose estimation models in the setting of bikefitting, it is necessary to have a dataset that most closely resembles the real-world use case (videos of cyclists pedaling their bikes, usually in a side view). Since there is no such dataset, a new small dataset was created.
 
-% TODO: schema
 \section{Video Acquisition}
 
 To construct the dataset, the author shot 23 videos of himself pedaling on an indoor trainer or leaning on a wall and pedaling a bike. The videos feature both a road bike and a mountain bike. To ensure variety, they were shot on multiple days in different lighting conditions and enviroments, with various camera angles, clothes and riding positions. The videos were shot in FullHD resolution at 30 or 60 FPS using a Redmi Note 10 Pro smartphone. Both the standard and ultra-wide camera lens were used. The videos are 8-35 seconds long. Figure \ref{fig:examples} shows examples of some of the videos present in the dataset.
@@ -1027,6 +1026,10 @@ The ONNX model is then converted to the TensorFlow SavedModel format using the u
 The TensorFlow.js converter also quantizes the model to float16 to reduce the size of the model and speed up the inference. Quantization is a process of converting the weights and activations of the model from float32 to float16. This reduces the size of the model by half and can speed up the inference without significant loss of accuracy. The quantized model is then used in the application.
 
 TensorFlow.js provides several different backends for running the model. CPU backend runs the model on CPU, using JavaScript for the computation and is the slowest, but has support for all of the operations. WebGL backend runs the model on the GPU using WebGL shaders and is the faster, but introduces very noticeable latency when the model is first run, because the WebGL API is not designed for running deep learning models and the model needs to be compiled to WebGL graphical shaders. WebAssembly backend runs the model on the CPU using WebAssembly, with support for SIMD instructions and multi-threading and is the faster than the CPU backend, but slower than WebGL for larger models. WebGPU backend runs the model on the GPU and should be the fastest, because it is designed with deep learning in mind, but is not yet supported by all browsers. According to CanIUse.com\footnote{\url{https://caniuse.com/webgpu}}, WebGPU is only supported by Google Chrome and Chromium based browsers as well as Chrome on Android, which combines for 70.5\% of the users. This application uses the WebGPU backend if it is available, otherwise it falls back to the WebGL backend, which is universally supported.
+
+\subsection{Model Download and Caching}
+
+To run the pose estimation model, it first needs to be downloaded to the user's device. The converted RTMPose model takes up 26.6 MB of space. The COCO-SSD object detection model requires a download of 18.1 MB. This amounts to a total of 44.7 MB of data that needs to be downloaded. The models are then cached and do not need to be downloaded again for the next session. 
 \subsection{Preprocessing}
 The RTMPose model is a top-down pose estimation model, which means that the model requires the input image to be cropped around the person. To crop the image, the bounding box of the person is first detected using the COCO-SSD\footnote{\url{https://github.com/tensorflow/tfjs-models/tree/master/coco-ssd}} model, available in the TensorFlow.js model zoo. It is a Single Shot Detector (SSD) \cite{ssd} model trained on the COCO \cite{coco} dataset. To speed up processing the detector model is ran only once on the first frame of the video, because the person is assumed to be in the same position in all of the frames.
 
@@ -1068,7 +1071,7 @@ However, there does not exist a standard way to get the index of the current fra
 This is why, to get the current frame index, the application saves the frame timestamps obtained when processing the video with the WebCodecs API. And then uses the requestVideoFrameCallback\footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement/requestVideoFrameCallback}} to get the current frame index. The requestVideoFrameCallback is a new API that allows the application to accurately get the current video track time using the \texttt{metadata.mediaTime} property. The \texttt{metadata.mediaTime} property returns the current time of the video track in seconds. The application then finds the closest frame timestamp to the current video track time and uses the index of the frame timestamp as the current frame index. This way the application can accurately get the current frame index of the video.
 
 
-%TODO: all of the types of the bike and fit goals
+%TODO: kde to funguje, kolik se stahuje
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
