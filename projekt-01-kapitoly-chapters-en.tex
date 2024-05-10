@@ -316,15 +316,14 @@ Due to these serious limitations, the marker-based approach was not used in the 
 \chapter{Pose Estimation Models}
 \label{ch:pose_estimation}
 
-This chapter describes some of the good performing pose estimation algorithms and compares their performance on the task of side view pose estimation of cyclists.
 
-Pose estimation is a computer vision task that involves predicting the locations of keypoints on a person in an image or a video. The keypoints are usually the joints of the person, such as the ankle, knee, hip, shoulder, elbow, wrist, etc. The pose estimation models are usually trained on datasets that contain images or videos with annotated keypoints. The models are then evaluated on the same datasets.
 
-There are multiple approaches to pose estimation. The most common approaches are the top-down approach and the bottom-up approach. The top-down approach first detects people in the image and then predicts the keypoints for each person. The bottom-up approach first predicts the keypoints and then groups them into poses using hand writte post processing algorithms. Another approach is the one-stage approach, which predicts the keypoints directly from the image without the need for post processing. This work evaluates three pose estimation models using the top-down approach (RTMPose, HRNet and ViPNAS), described in sections \ref{rtmpose}, \ref{hrnet} and \ref{vipnas} and one pose estimation model using the one-stage approach (YOLOX-Pose), described in section \ref{yolox-pose}.
+Pose estimation is a computer vision task that involves predicting the locations of keypoints of a person in an image or a video. The keypoints are usually the joints of the person, such as the ankle, knee, hip, shoulder, elbow, wrist, etc, but can also be other points of interest, such as the nose, eyes, ears, etc. The pose estimation models are trained on datasets that contain images or videos with annotated keypoints. The models are then evaluated on the same datasets.
 
-Not all of the models predict the same keypoints. The models predict either 17 keypoints, as defined in the COCO dataset \cite{coco}, 26 keypoints, as defined in the Halpe26 dataset \cite{halpe}, or 133 keypoints, as defined in the COCO-WholeBody dataset \cite{coco-wholebody}. Figure \ref{fig:subfigures} shows the sets of keypoints used by the MS-COCO dataset, the Halpe26 dataset and the COCO-WholeBody dataset.
+Not all of the models predict the same keypoints. The models usually predict 17 keypoints, as defined in the COCO dataset \cite{coco} These keypoints are composed of prominent joints and few head keypoints. As the need for more keypoints and better understanding of the human pose has increased, the COCO-WholeBody dataset \cite{coco-wholebody} was created. This dataset contains 133 keypoints, which include the 17 COCO keypoints and additional keypoints such as the fingers, toes, heels, etc. However, the models often struggle to predict all of the keypoints accurately due to the low amount of data for some of the keypoints. Another newly created dataset is Halpe26 dataset \cite{halpe}, which contains 26 keypoints. This dataset is designed to be more lightweight than the COCO-WholeBody dataset, while still containing more keypoints than the COCO dataset. Figure \ref{fig:subfigures} shows the sets of keypoints used by the MS-COCO dataset, the Halpe26 dataset and the COCO-WholeBody dataset.
 
-\begin{figure}[htbp]
+
+\begin{figure}[htb]
     \centering
     \begin{subfigure}[b]{0.2\textwidth}
         \centering
@@ -354,6 +353,11 @@ Not all of the models predict the same keypoints. The models predict either 17 k
     \label{fig:subfigures}
 \end{figure}
 
+There are multiple approaches to pose estimation. The two most common approaches are the top-down approach and the bottom-up approach. The top-down approach first detects the people in the image and their location and then predicts the keypoints for each person. The bottom-up approach first predicts the keypoints and then groups them into poses using hand written post processing algorithms. Another approach is the one-stage approach, which predicts the keypoints directly from the image without the need for separate person detecting or post processing step. This chapter describes three pose estimation models using the top-down approach (RTMPose, HRNet and ViPNAS), described in sections \ref{rtmpose}, \ref{hrnet} and \ref{vipnas} and one pose estimation model using the one-stage approach (YOLOX-Pose), described in section \ref{yolox-pose}.
+
+
+
+
 
 
 \section{RTMPose}
@@ -367,10 +371,9 @@ The RTMPose models are designed to be lightweight and fast. The authors claim, t
 
 The RTMPose models are based on the top-down pose estimation approach. They use a two-stage prediction, where the first stage is a person detector and the second stage is a pose estimator. The person detector is used to crop the image to the bounding box of the person. The pose estimator then predicts the keypoints for the cropped image. The authors claim that this approach is more accurate than the bottom-up approach, while still being faster in cases where the number of people in the image is lower than 6.
 
-The CSPNeXt backbone is used in the RTMPose models. This backbone is primarly designed for object detection. Authors claim that backbones designed for image classification, are not optimal for dense tasks such as pose estimation, object detection, semantic segmentation, etc. Some backbones using high-resolution feature maps or advanced transformer architectures achieve good results, but suffer from high computional cost, high latency or difficulties in deployment. The CSPNeXt backbone is designed to have a good balance of speed and accuracy.
-Figure \ref{fig:rtmpose_architecture} shows the architecture of the RTMPose models.
+The CSPNeXt backbone is used in the RTMPose models. This backbone is primarly designed for object detection. Authors claim that backbones designed for image classification (such as ResNet, MobileNet, etc.), are not optimal for dense tasks such as pose estimation, object detection, semantic segmentation, etc. Some backbones using high-resolution feature maps or advanced transformer architectures achieve good results, but suffer from high computional cost, high latency or difficulties in deployment. The CSPNeXt backbone is designed to have a good balance of speed and accuracy. Figure \ref{fig:rtmpose_architecture} shows the architecture of the RTMPose models.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\textwidth]{obrazky-figures/rtmpose_architecture.png}
     \caption{Architecture of the RTMPose models, which comprises of a CSPNeXt backbone, a convolutional layer, a fully-connected layer, and a Gated Attention Unit (GAU) designed to enhance K keypoint representations. Subsequently, the process of 2D pose estimation is treated as two separate classification tasks for the x-axis and y-axis coordinates. This involves predicting the horizontal and vertical positions of keypoints. Taken from \cite{rtmpose}.}
@@ -446,11 +449,9 @@ This work evaluates the modified S-ViPNet model with the MobileNetV3 \cite{mobil
 \section{Results On The COCO Keypoint Dataset}
 To compare the potential of the methods, the results of the models on the COCO dataset are shown in table \ref{tab:evaluation_results_coco}. All of the methods were trained only on the COCO dataset and predict the same keypoints. The results are taken from MMPose documentation \cite{mmpose2020}.
 
-The RTMPose models achieve strong results, with the RTMPose-l-256x192 model achieving the best results. The HRNet-W32 model also performs well but it is a much larger and slower model. However, the other lightweight models such as YOLOX-Pose and ViPNAS-MobileNetV3 perform significantly worse than even the medium and small RTMPose models. Overall the RTMPose models show very promising results compared to the other models.
+The RTMPose models achieve strong results, with the RTMPose-l 256x192 model achieving the best results. The HRNet-W32 model also performs well but it is a much larger and slower model. However, the other lightweight models such as YOLOX-Pose and ViPNAS-MobileNetV3 perform significantly worse than even the medium and small RTMPose models. Overall the RTMPose models show very promising results compared to the other models.
 
-Table \ref{tab:evaluation_params} compares the performance of the models with their computational costs. The RTMPose models are the most computationally efficient. Especially the m model, which achieves similaar results to the HRNet-W32 model, but is much faster and smaller. The YOLOX-Pose model computational costs are higher, because it is a one-stage model, which predicts the keypoints directly from the image. The ViPNAS-MobileNetV3 model is also very small and fast but it achieves significantly worse results than the RTMPose models.
-
-\begin{table}[htbp]
+\begin{table}[htb]
 
     \centering
     \begin{tabular}{lcccccc}
@@ -473,9 +474,12 @@ Table \ref{tab:evaluation_params} compares the performance of the models with th
 
 \end{table}
 
-% TODO: POPIS
+Table \ref{tab:evaluation_params} compares the performance of the models with their computational costs. The RTMPose models are the most computationally efficient. Especially the medium model, which achieves similar results to the HRNet-W32 model, but is much faster and smaller. The YOLOX-Pose model computational costs are higher, because it is a one-stage model, which predicts the keypoints directly from the image. The ViPNAS-MobileNetV3 model is also very small and fast but it achieves significantly worse results than the RTMPose models.
 
-\begin{table}[htbp]
+
+
+
+\begin{table}[htb]
 
     \centering
     \begin{tabular}{lcccc}
